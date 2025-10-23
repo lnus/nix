@@ -44,6 +44,7 @@
   in {
     nixosConfigurations = {
       nixvm = mkHost {hostname = "nixvm";};
+      mantis = mkHost {hostname = "mantis";};
     };
   };
 }
