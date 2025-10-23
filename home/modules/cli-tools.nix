@@ -1,5 +1,8 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.tree];
+  home.packages = [
+    pkgs.tree
+    pkgs.gh # easy auth while working
+  ];
 
   programs.atuin = {
     enable = true;
