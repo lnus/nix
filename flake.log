@@ -1,0 +1,34 @@
+warning: Git tree '/home/linus/nixos' is dirty
+building the system configuration...
+warning: Git tree '/home/linus/nixos' is dirty
+error:
+       … while calling the 'head' builtin
+         at /nix/store/sqilaxdxljyalv530z1qrd1q3nd4lyxq-source/lib/attrsets.nix:1696:13:
+         1695|           if length values == 1 || pred here (elemAt values 1) (head values) then
+         1696|             head values
+             |             ^
+         1697|           else
+
+       … while evaluating the attribute 'value'
+         at /nix/store/sqilaxdxljyalv530z1qrd1q3nd4lyxq-source/lib/modules.nix:1118:7:
+         1117|     // {
+         1118|       value = addErrorContext "while evaluating the option `${showOption loc}':" value;
+             |       ^
+         1119|       inherit (res.defsFinal') highestPrio;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/sqilaxdxljyalv530z1qrd1q3nd4lyxq-source/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `home-manager.users.linus.home.file."/home/linus/.config/niri-config".enable':
+
+       … while evaluating definitions from `/nix/store/3mpbr1q5dpbqpa3g1zvryyv2yvicn5dj-source/modules/misc/xdg.nix':
+
+       … while evaluating the option `home-manager.users.linus.xdg.configFile.niri-config.enable':
+
+       … while evaluating definitions from `/nix/store/3mpbr1q5dpbqpa3g1zvryyv2yvicn5dj-source/nixos/common.nix':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: The option `home-manager.users.linus.programs.niri.finalConfig' in `/nix/store/3mpbr1q5dpbqpa3g1zvryyv2yvicn5dj-source/nixos/common.nix' is already declared in `/nix/store/q2xn3jz9zbd8dxzqg700jr26cka2dhgl-source/home/modules/niri.nix'.
+Command 'nix --extra-experimental-features 'nix-command flakes' build --print-out-paths '.#nixosConfigurations."nixvm".config.system.build.toplevel' --no-link' returned non-zero exit status 1.

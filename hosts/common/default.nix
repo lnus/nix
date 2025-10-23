@@ -2,13 +2,11 @@
   imports = [
     ./networking.nix
     ./audio.nix
-    # Add more common modules here
+    ./locale.nix
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
-
   nixpkgs.config.allowUnfree = true;
-  time.timeZone = "Europe/Stockholm";
 
   environment.systemPackages = with pkgs; [
     git
