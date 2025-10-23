@@ -1,10 +1,20 @@
-{ config, pkgs, ... }:
-
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+
+  imports = [
+    ./hardware-configuration.nix
+  ];
+
+  users.users.linus = {
+    isNormalUser = true;
+    description = "linus";
+    extraGroups = ["wheel"];
+  };
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
@@ -12,8 +22,6 @@
 
   networking.hostName = "nixvm";
   networking.networkmanager.enable = true;
-
-  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   time.timeZone = "Europe/Stockholm";
 
@@ -35,34 +43,16 @@
     pulse.enable = true;
   };
 
-  users.users.linus = {
-    isNormalUser = true;
-    description = "linus";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      tree
-    ];
-  };
-
   programs.firefox.enable = true;
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-     helix
-     ghostty
-     git
-     tealdeer
-     xclip
-     bat
-     spice
-     spice-vdagent
-     spice-gtk
-     davfs2
+    helix
+    ghostty
+    git
+    bat
   ];
 
-  services.spice-webdavd.enable = true;
-  services.spice-vdagentd.enable = true;
   services.qemuGuest.enable = true;
-  
   system.stateVersion = "25.05";
 }
