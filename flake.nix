@@ -16,12 +16,19 @@
     home-manager,
     ...
   } @ inputs: let
-    mkHost = hostname:
+    inherit (nixpkgs) lib;
+
+    mkHost = {
+      hostname,
+      system ? "x86_64-linux",
+      users ? ["linus"],
+    }:
       nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux"; # FIX: take from attrset
+        inherit system;
         specialArgs = {inherit inputs;};
         modules = [
           ./hosts/${hostname}
+          ./hosts/common
 
           home-manager.nixosModules.home-manager
           {
@@ -29,7 +36,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = {inherit inputs;};
-              users.linus = import ./home.nix;
+              users = lib.genAttrs users (user: import ./home/${user});
             };
           }
         ];
