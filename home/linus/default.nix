@@ -4,7 +4,8 @@
     ../modules/editors.nix
     ../modules/cli-tools.nix
     ../modules/terminals.nix
-    ../modules/niri.nix
+    ../modules/browsers.nix
+    ../modules/niri
   ];
 
   home.username = "linus";
