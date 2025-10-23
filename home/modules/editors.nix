@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  config,
   ...
 }: {
   programs.helix = {
@@ -118,19 +117,19 @@
           command = "${lib.getExe pkgs.tinymist}";
         };
 
-        # TODO: Correct for NixOS, later
         # https://github.com/helix-editor/helix/issues/14003#issuecomment-3093186464
         nixd = {
           command = "${lib.getExe pkgs.nixd}";
           args = ["--semantic-tokens=true"];
           config.nixd = let
-            hmFlake = "(builtins.getFlake (toString ${config.home.homeDirectory}/.config/home-manager))";
-            hmOpts = "${hmFlake}.homeConfigurations.${config.home.username}.options";
+            myFlake = "(builtins.getFlake (toString /home/linus/nix))";
+            nixosOpts = "${myFlake}.nixosConfigurations.manin.options";
           in {
-            nixpkgs.expr = "import ${hmFlake}.inputs.nixpkgs { }";
+            nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
             formatting.command = ["${lib.getExe pkgs.alejandra}"];
             options = {
-              home-manager.expr = "${hmOpts}";
+              nixos.expr = nixosOpts;
+              home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
             };
           };
         };
