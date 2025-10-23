@@ -43,7 +43,7 @@
       };
   in {
     nixosConfigurations = {
-      nixvm = mkHost "nixvm";
+      nixvm = mkHost {hostname = "nixvm";};
     };
   };
 }
