@@ -1,30 +1,34 @@
-{pkgs, ...}: {
-  # FIX: use stylix probably
-  # yanked from old hm config, just using random colors now
-  # https://www.nordtheme.com/
+{
+  config,
+  pkgs,
+  ...
+}: {
+  # FIX: more dynamic stylix stuff, all of it is very
+  # interlinked right now. will break if stylix is not
+  # enabled for a user
   home.file.".config/niri/config.kdl".text = builtins.readFile (
     pkgs.substitute {
       src = ./niri.kdl;
       substitutions = [
         "--subst-var-by"
         "backdrop_color"
-        "#2e3440"
+        "#${config.lib.stylix.colors.base00}"
 
         "--subst-var-by"
         "shadow_color"
-        "#2e344050"
+        "#${config.lib.stylix.colors.base03}50"
 
         "--subst-var-by"
         "active_color"
-        "#8fbcbb"
+        "#${config.lib.stylix.colors.base0D}"
 
         "--subst-var-by"
         "inactive_color"
-        "#4c566a"
+        "#${config.lib.stylix.colors.base01}"
 
         "--subst-var-by"
         "urgent_color"
-        "#b48ead"
+        "#${config.lib.stylix.colors.base08}"
       ];
     }
   );
