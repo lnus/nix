@@ -134,12 +134,15 @@ layout {
 // --- Spawn processes ---
 // Most handled with systemd services (swayidle, swaybg, etc.)
 // https://github.com/YaLTeR/niri/wiki/Example-systemd-Setup
-// TODO start as systemd service instead
-// spawn-at-startup "xwayland-satellite"
+// 
+// TODO: do more with systemd here
+spawn-at-startup "noctalia-shell"
+spawn-at-startup "xwayland-satellite"
 
 environment {
     DISPLAY ":0"
 }
+
 
 // --- Misc ---
 prefer-no-csd
@@ -222,20 +225,42 @@ binds {
 
     Mod+B hotkey-overlay-title="Firefox" { spawn "firefox"; }
     Mod+Return hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
-    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
 
-    // https://www.nushell.sh/book/configuration.html#scenarios
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
-    // XF86AudioRaiseVolume allow-when-locked=true { spawn "nu" "-l" "-c" "volctl-notify 0.1+"; }
-    // XF86AudioLowerVolume allow-when-locked=true { spawn "nu" "-l" "-c" "volctl-notify 0.1-"; }
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
-
-    XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
-    XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
-    XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+    // https://docs.noctalia.dev/getting-started/keybinds
+    Mod+D hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
+                                                                    "ipc" "call" \
+                                                                    "launcher" "toggle"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" \
+                                                                    "ipc" "call" \
+                                                                    "lockScreen" "toggle"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "volume" "increase"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "volume" "decrease"; }
+    XF86AudioMute allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "volume" "muteOutput"; }
+    XF86AudioMicMute allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "volume" "muteInput"; }
+    XF86AudioPlay allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "media" "playPause"; }
+    XF86AudioNext allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "media" "next"; }
+    XF86AudioPrev allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "media" "previous"; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "brightness" "increase"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia-shell" \
+                                                    "ipc" "call" \
+                                                    "brightness" "decrease"; }
+    
 
     Mod+O repeat=false { toggle-overview; }
 
@@ -398,5 +423,8 @@ binds {
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
+    Mod+Shift+E hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
+                                                                            "ipc" "call" \
+                                                                            "sessionMenu" "toggle"; }
     Ctrl+Alt+Delete { quit; }
 }

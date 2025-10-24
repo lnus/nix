@@ -1,8 +1,9 @@
 {...}: {
   imports = [
     ./hardware-configuration.nix
-    # ../common/desktops/gnome.nix
+
     ../common/niri.nix
+    ../common/noctalia.nix
   ];
 
   networking.hostName = "mantis";
