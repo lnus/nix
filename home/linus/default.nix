@@ -8,6 +8,7 @@
     ../modules/niri
     ../modules/noctalia.nix
     ../modules/vesktop.nix
+    ../modules/stylix.nix
   ];
 
   home.username = "linus";

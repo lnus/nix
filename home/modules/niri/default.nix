@@ -1,4 +1,5 @@
 {pkgs, ...}: {
+  # FIX: use stylix probably
   # yanked from old hm config, just using random colors now
   # https://www.nordtheme.com/
   home.file.".config/niri/config.kdl".text = builtins.readFile (

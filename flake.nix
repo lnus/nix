@@ -19,12 +19,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.quickshell.follows = "quickshell";
     };
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
+    stylix,
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
@@ -40,6 +46,8 @@
         modules = [
           ./hosts/${hostname}
           ./hosts/common
+
+          stylix.nixosModules.stylix
 
           home-manager.nixosModules.home-manager
           {
