@@ -6,6 +6,8 @@
     ../modules/terminals.nix
     ../modules/browsers.nix
     ../modules/niri
+    ../modules/noctalia.nix
+    ../modules/vesktop.nix
   ];
 
   home.username = "linus";

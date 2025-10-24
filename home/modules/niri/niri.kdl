@@ -232,7 +232,7 @@ binds {
                                                                     "launcher" "toggle"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" \
                                                                     "ipc" "call" \
-                                                                    "lockScreen" "toggle"; }
+                                                                    "lockScreen" "lock"; }
     XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia-shell" \
                                                     "ipc" "call" \
                                                     "volume" "increase"; }
