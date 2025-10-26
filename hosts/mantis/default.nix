@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
 
+    ../common
     ../common/niri.nix
     ../common/noctalia.nix
   ];
