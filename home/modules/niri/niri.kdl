@@ -136,7 +136,6 @@ layout {
 // https://github.com/YaLTeR/niri/wiki/Example-systemd-Setup
 // 
 // TODO: do more with systemd here
-spawn-at-startup "noctalia-shell"
 spawn-at-startup "xwayland-satellite"
 
 environment {

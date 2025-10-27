@@ -2,35 +2,31 @@
   inputs,
   config,
   ...
-}
-: let
-  c = config.lib.stylix.colors;
-in {
+}: {
   imports = [
     inputs.noctalia.homeModules.default
   ];
 
-  # FIX: this is kinda jank
-  # i attempted an overlay but i messed it up and i cba
-  home.file.".config/noctalia/colors.json".text = builtins.toJSON {
-    mPrimary = "#${c.base0B}";
-    mOnPrimary = "#${c.base00}";
-    mSecondary = "#${c.base0A}";
-    mOnSecondary = "#${c.base00}";
-    mTertiary = "#${c.base0D}";
-    mOnTertiary = "#${c.base00}";
-    mError = "#${c.base08}";
-    mOnError = "#${c.base00}";
-    mSurface = "#${c.base00}";
-    mOnSurface = "#${c.base07}";
-    mSurfaceVariant = "#${c.base01}";
-    mOnSurfaceVariant = "#${c.base06}";
-    mOutline = "#${c.base03}";
-    mShadow = "#${c.base00}";
-  };
-
-  programs.noctalia-shell = {
+  programs.noctalia-shell = with config.lib.stylix.colors; {
     enable = true;
+
+    # FIX: Make this only run if stylix is enabled
+    colors = {
+      mError = "#${base08}";
+      mOnError = "#${base00}";
+      mOnPrimary = "#${base00}";
+      mOnSecondary = "#${base00}";
+      mOnSurface = "#${base04}";
+      mOnSurfaceVariant = "#${base04}";
+      mOnTertiary = "#${base00}";
+      mOutline = "#${base02}";
+      mPrimary = "#${base0B}";
+      mSecondary = "#${base0A}";
+      mShadow = "#${base00}";
+      mSurface = "#${base00}";
+      mSurfaceVariant = "#${base01}";
+      mTertiary = "#${base0D}";
+    };
 
     settings = {
       bar = {
@@ -43,12 +39,13 @@ in {
       };
 
       # FIX: dynamic per user
+      # Potentially ditch this and use swww
       wallpaper = {
         enabled = true;
         directory = "/home/linus/Pictures/Wallpapers";
       };
 
-      # FIX: stylix fonts
+      # FIX: stylix fonts IF enabled
       ui = {
         fontDefault = "Roboto";
         fontFixed = "DejaVu Sans Mono";
