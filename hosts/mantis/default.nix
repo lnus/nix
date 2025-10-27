@@ -5,6 +5,7 @@
     ../common
     ../common/niri.nix
     ../common/noctalia.nix
+    ../common/gaming.nix
   ];
 
   networking.hostName = "mantis";
