@@ -1,4 +1,4 @@
-{...}: {
+{
   imports = [
     ./helix.nix
     ./cli.nix

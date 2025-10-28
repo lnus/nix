@@ -44,8 +44,8 @@
         inherit system;
         specialArgs = {inherit inputs;};
         modules = [
+          ./nixos/core
           ./hosts/${hostname}
-          ./hosts/common
 
           stylix.nixosModules.stylix
 
@@ -55,7 +55,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = {inherit inputs;};
-              users = lib.genAttrs users (user: import ./home/users/${user});
+              users = lib.genAttrs users (user: import ./users/${user}.nix);
             };
           }
         ];
