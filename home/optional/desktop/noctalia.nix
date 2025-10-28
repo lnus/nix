@@ -8,9 +8,15 @@
     inputs.noctalia.homeModules.default
   ];
 
-  programs.noctalia-shell = with config.lib.stylix.colors; {
+  programs.noctalia-shell = {
     enable = true;
 
+    # TODO: this will break if stylix isn't enabled
+    # not really sure what I was thinking here?????
+    # config.stylix won't exist if I don't pull in stylix...
+    # I guess I could lib.mkDefault false and then
+    # enable it afterwards?
+    # FIX FIX FIX
     colors = lib.mkIf config.stylix.enable (
       with config.lib.stylix.colors; {
         mError = "#${base08}";
@@ -40,21 +46,11 @@
         radiusRatio = 0.0;
       };
 
+      # TEMP Potentially ditch this and use swww
       # FIX: dynamic per user
-      # Potentially ditch this and use swww
       wallpaper = {
         enabled = true;
         directory = "/home/linus/Pictures/Wallpapers";
-      };
-
-      # FIX: stylix fonts IF enabled
-      ui = {
-        fontDefault = "Roboto";
-        fontFixed = "DejaVu Sans Mono";
-        fontDefaultScale = 1;
-        fontFixedScale = 1;
-        tooltipsEnabled = true;
-        panelsOverlayLayer = true;
       };
 
       colorSchemes = {
@@ -62,4 +58,14 @@
       };
     };
   };
+
+  # FIX same issue as colors above
+  programs.noctalia-shell.settings.ui =
+    {
+      # Any non-conditional
+    }
+    // (lib.optionalAttrs config.stylix.enable {
+      fontFixed = config.stylix.fonts.monospace.name;
+      fontDefault = config.stylix.fonts.sansSerif.name;
+    });
 }
