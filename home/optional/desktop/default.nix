@@ -1,0 +1,16 @@
+{lib, ...}: {
+  # TODO: this does nothing right now, but maybe some day
+  options.optional.desktop.environment = lib.mkOption {
+    type = lib.types.enum ["niri"];
+    default = "niri";
+    description = "Which desktop environment to use";
+  };
+
+  imports = [
+    ./browsers.nix
+    ./discord.nix
+    ./ghostty.nix
+    ./noctalia.nix
+    ./niri
+  ];
+}

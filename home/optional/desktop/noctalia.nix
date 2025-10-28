@@ -1,6 +1,7 @@
 {
   inputs,
   config,
+  lib,
   ...
 }: {
   imports = [
@@ -10,23 +11,24 @@
   programs.noctalia-shell = with config.lib.stylix.colors; {
     enable = true;
 
-    # FIX: Make this only run if stylix is enabled
-    colors = {
-      mError = "#${base08}";
-      mOnError = "#${base00}";
-      mOnPrimary = "#${base00}";
-      mOnSecondary = "#${base00}";
-      mOnSurface = "#${base04}";
-      mOnSurfaceVariant = "#${base04}";
-      mOnTertiary = "#${base00}";
-      mOutline = "#${base02}";
-      mPrimary = "#${base0B}";
-      mSecondary = "#${base0A}";
-      mShadow = "#${base00}";
-      mSurface = "#${base00}";
-      mSurfaceVariant = "#${base01}";
-      mTertiary = "#${base0D}";
-    };
+    colors = lib.mkIf config.stylix.enable (
+      with config.lib.stylix.colors; {
+        mError = "#${base08}";
+        mOnError = "#${base00}";
+        mOnPrimary = "#${base00}";
+        mOnSecondary = "#${base00}";
+        mOnSurface = "#${base04}";
+        mOnSurfaceVariant = "#${base04}";
+        mOnTertiary = "#${base00}";
+        mOutline = "#${base02}";
+        mPrimary = "#${base0B}";
+        mSecondary = "#${base0A}";
+        mShadow = "#${base00}";
+        mSurface = "#${base00}";
+        mSurfaceVariant = "#${base01}";
+        mTertiary = "#${base0D}";
+      }
+    );
 
     settings = {
       bar = {

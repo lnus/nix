@@ -55,7 +55,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = {inherit inputs;};
-              users = lib.genAttrs users (user: import ./home/${user});
+              users = lib.genAttrs users (user: import ./home/users/${user});
             };
           }
         ];

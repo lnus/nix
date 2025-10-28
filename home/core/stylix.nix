@@ -5,16 +5,15 @@
 {
   inputs,
   pkgs,
+  lib,
   ...
 }: {
-  # FIX: Might move this since I use/will use it in
-  # other modules to pull colors, ex. noctalia.nix
   imports = [inputs.stylix.homeModules.stylix];
 
   # FIX: Make theme adjustable
   # FIX: user based firefox profile
   stylix = {
-    enable = true;
+    enable = lib.mkDefault true; # TODO: default to false
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
     polarity = "dark";
     targets.firefox.profileNames = ["linus"];
