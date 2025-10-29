@@ -72,6 +72,9 @@
       };
     };
 
+    # TODO: fix all these references.
+    # TEMP these packages should probably not be global but be in dev flake...
+    # but it's fine
     languages = {
       language = [
         {
@@ -91,6 +94,20 @@
         {
           name = "python";
           auto-format = true;
+        }
+        {
+          # TEMP
+          name = "markdown";
+          auto-format = true;
+          formatter = {
+            command = "${lib.getExe pkgs.deno}";
+            args = [
+              "fmt"
+              "-"
+              "--ext"
+              "md"
+            ];
+          };
         }
       ];
 

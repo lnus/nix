@@ -4,6 +4,7 @@
 
     ../../nixos/optional/desktop
     ../../nixos/optional/desktop/gaming.nix
+    ../../nixos/optional/desktop/misc.nix
   ];
 
   networking.hostName = "mantis";
