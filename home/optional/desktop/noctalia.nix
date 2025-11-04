@@ -46,6 +46,10 @@
         showCapsule = false;
       };
 
+      dock = {
+        enabled = false;
+      };
+
       general = {
         radiusRatio = 0.0;
       };
@@ -56,6 +60,20 @@
 
       colorSchemes = {
         useWallpaperColors = false;
+        generateTemplatesForPredefined = false;
+      };
+
+      location = {
+        name = "Stockholm";
+        showWeekNumberInCalendar = true;
+      };
+
+      brightness = {
+        enforceMinimum = false;
+      };
+
+      nightLight = {
+        enabled = true;
       };
     };
   };
