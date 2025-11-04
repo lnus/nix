@@ -8,6 +8,10 @@
     inputs.noctalia.homeModules.default
   ];
 
+  # TEMP move somewhere nicer, maybe
+  # it might be fine here
+  services.swww.enable = true;
+
   programs.noctalia-shell = {
     enable = true;
 
@@ -46,11 +50,8 @@
         radiusRatio = 0.0;
       };
 
-      # TEMP Potentially ditch this and use swww
-      # FIX: dynamic per user
       wallpaper = {
-        enabled = true;
-        directory = "/home/linus/Pictures/Wallpapers";
+        enabled = false;
       };
 
       colorSchemes = {
