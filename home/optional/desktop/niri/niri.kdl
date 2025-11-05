@@ -92,15 +92,15 @@ output "DP-3" {
 // --- Window position and size ---
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
 layout {
-    // gaps 0
+    gaps 0
 
-    gaps 16
+    /* gaps 16
     struts {
-     // left 16
-     // right 16
-     top -4
-     bottom -4
-    }
+        left 16
+        right 16
+        top -4
+        bottom -4
+    } */
 
     center-focused-column "never"
     always-center-single-column

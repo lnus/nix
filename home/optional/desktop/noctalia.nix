@@ -42,6 +42,7 @@
 
     settings = {
       bar = {
+        position = "left";
         density = "compact";
         showCapsule = false;
       };
@@ -52,6 +53,7 @@
 
       general = {
         radiusRatio = 0.0;
+        enableShadows = false;
       };
 
       wallpaper = {

@@ -14,7 +14,7 @@
   # FIX: user based firefox profile
   stylix = {
     enable = lib.mkDefault true; # TODO: default to false
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/embers.yaml";
     polarity = "dark";
     targets.firefox.profileNames = ["linus"];
 
