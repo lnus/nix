@@ -64,6 +64,7 @@
     nixosConfigurations = {
       nixvm = mkHost {hostname = "nixvm";};
       mantis = mkHost {hostname = "mantis";};
+      miku = mkHost {hostname = "miku";};
     };
   };
 }
