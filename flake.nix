@@ -24,6 +24,11 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    conch = {
+      url = "github:lnus/conch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -31,6 +36,7 @@
     nixpkgs,
     home-manager,
     stylix,
+    conch,
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;

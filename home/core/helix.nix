@@ -25,10 +25,6 @@
           hidden = false;
         };
 
-        lsp = {
-          display-inlay-hints = true;
-        };
-
         statusline = {
           left = ["mode" "file-name" "spinner"];
           center = [];
@@ -68,6 +64,10 @@
             "collapse_selection"
             "keep_primary_selection"
           ];
+        };
+
+        insert = {
+          C-c = "toggle_comments";
         };
       };
     };
@@ -120,14 +120,6 @@
 
         ruff = {
           command = "${lib.getExe pkgs.ruff}";
-        };
-
-        rust-analyzer = {
-          config.rust-analyzer = {
-            inlayHints = {
-              maxLength = 30;
-            };
-          };
         };
 
         tinymist = {

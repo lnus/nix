@@ -10,6 +10,11 @@
         "privacy.donottrackheader.enabled" = true;
         "privacy.trackingprotection.enabled" = true;
       };
+
+      search = {
+        default = "ddg";
+        force = true;
+      };
     };
   };
 }

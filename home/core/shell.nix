@@ -2,8 +2,13 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }: {
+  home.packages = [
+    inputs.conch.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
+
   home.shell.enableNushellIntegration = true;
   home.shell.enableBashIntegration = true;
 
@@ -19,15 +24,15 @@
     cp = "cp --verbose --recursive --progress";
   };
 
-  programs.starship = {
-    enable = true;
-    settings.add_newline = false;
-  };
-
   programs.bash.enable = true;
 
   programs.nushell = {
     enable = true;
+
+    extraConfig = ''
+      $env.PROMPT_COMMAND = {|| conch}
+      $env.PROMPT_COMMAND_RIGHT = {||}
+    '';
 
     settings = {
       buffer_editor = "hx";

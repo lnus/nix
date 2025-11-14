@@ -7,8 +7,8 @@
     inputs.noctalia.nixosModules.default
   ];
 
-  environment.systemPackages = with pkgs; [
-    inputs.noctalia.packages.${system}.default
+  environment.systemPackages = [
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   services.noctalia-shell.enable = true;

@@ -15,4 +15,5 @@
   programs.yazi.enable = true;
   programs.zoxide.enable = true;
   programs.skim.enable = true;
+  programs.zellij.enable = true; # TODO config
 }

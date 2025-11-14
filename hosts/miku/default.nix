@@ -5,6 +5,7 @@
     ../../nixos/optional/desktop
     ../../nixos/optional/desktop/gaming.nix
     ../../nixos/optional/desktop/misc.nix
+    ../../nixos/optional/nvidia.nix
   ];
 
   networking.hostName = "miku";
@@ -26,4 +27,5 @@
     isNormalUser = true;
     description = "linus";
     extraGroups = ["wheel" "networkmanager"];
-  }; }
+  };
+}

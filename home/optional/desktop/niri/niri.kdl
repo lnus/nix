@@ -67,9 +67,7 @@ output "eDP-1" {
 }
 
 output "DP-4" {
-    // TEMP fix nvidia drivers
-    // mode "2560x1440@164.834"
-    mode "2560x1440@143.973"
+    mode "2560x1440@164.834"
 
     focus-at-startup
     scale 1.0
