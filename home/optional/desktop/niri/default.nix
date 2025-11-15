@@ -1,34 +1,44 @@
+# TODO: use niri flake
+# https://github.com/sodiboo/niri-flake
 {
   config,
   pkgs,
   ...
-}: {
-  # FIX: more dynamic stylix stuff, all of it is very
-  # interlinked right now. will break if stylix is not
-  # enabled for a user
+}: let
+  colors =
+    if (config.lib.stylix.colors or null) != null
+    then config.lib.stylix.colors
+    else {
+      base00 = "1e1e2e"; # fallback backdrop
+      base01 = "313244"; # fallback inactive
+      base03 = "45475a"; # fallback shadow
+      base08 = "f38ba8"; # fallback urgent
+      base0D = "89b4fa"; # fallback active
+    };
+in {
   home.file.".config/niri/config.kdl".text = builtins.readFile (
     pkgs.substitute {
       src = ./niri.kdl;
       substitutions = [
         "--subst-var-by"
         "backdrop_color"
-        "#${config.lib.stylix.colors.base00}"
+        "#${colors.base00}"
 
         "--subst-var-by"
         "shadow_color"
-        "#${config.lib.stylix.colors.base03}50"
+        "#${colors.base03}50"
 
         "--subst-var-by"
         "active_color"
-        "#${config.lib.stylix.colors.base0D}"
+        "#${colors.base0D}"
 
         "--subst-var-by"
         "inactive_color"
-        "#${config.lib.stylix.colors.base01}"
+        "#${colors.base01}"
 
         "--subst-var-by"
         "urgent_color"
-        "#${config.lib.stylix.colors.base08}"
+        "#${colors.base08}"
       ];
     }
   );

@@ -5,7 +5,6 @@
 {
   inputs,
   pkgs,
-  lib,
   ...
 }: {
   imports = [inputs.stylix.homeModules.stylix];
@@ -13,7 +12,7 @@
   # FIX: Make theme adjustable
   # FIX: user based firefox profile
   stylix = {
-    enable = lib.mkDefault true; # TODO: default to false
+    enable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/embers.yaml";
     polarity = "dark";
     targets.firefox.profileNames = ["linus"];

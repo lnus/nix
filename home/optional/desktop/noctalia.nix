@@ -9,19 +9,13 @@
   ];
 
   # TEMP move somewhere nicer, maybe
-  # it might be fine here
   services.swww.enable = true;
 
   programs.noctalia-shell = {
     enable = true;
 
-    # TODO: this will break if stylix isn't enabled
-    # not really sure what I was thinking here?????
-    # config.stylix won't exist if I don't pull in stylix...
-    # I guess I could lib.mkDefault false and then
-    # enable it afterwards?
-    # FIX FIX FIX
-    colors = lib.mkIf config.stylix.enable (
+    # TODO: this might break if stylix isn't enabled
+    colors = lib.mkIf (config.stylix.enable or false) (
       with config.lib.stylix.colors; {
         mError = "#${base08}";
         mOnError = "#${base00}";
@@ -80,12 +74,11 @@
     };
   };
 
-  # FIX same issue as colors above
   programs.noctalia-shell.settings.ui =
     {
       # Any non-conditional
     }
-    // (lib.optionalAttrs config.stylix.enable {
+    // (lib.optionalAttrs (config.stylix.enable or false) {
       fontFixed = config.stylix.fonts.monospace.name;
       fontDefault = config.stylix.fonts.sansSerif.name;
     });
