@@ -25,6 +25,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     conch = {
       url = "github:lnus/conch";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,6 +42,7 @@
     home-manager,
     stylix,
     conch,
+    nur,
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
@@ -54,6 +60,10 @@
           ./hosts/${hostname}
 
           stylix.nixosModules.stylix
+
+          {
+            nixpkgs.overlays = [nur.overlays.default];
+          }
 
           home-manager.nixosModules.home-manager
           {
