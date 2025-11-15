@@ -43,15 +43,8 @@ in {
     }
   );
 
+  # FIX wl-clip, pavucontrol, and nm-applet should not be here
   home.packages = with pkgs; [
-    firefox
-    fuzzel
-    mako
-    waybar
-    swaylock
-    swayidle
-    grim
-    slurp
     wl-clipboard
     networkmanagerapplet
     pavucontrol
