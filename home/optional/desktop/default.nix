@@ -7,10 +7,10 @@
   };
 
   imports = [
-    ./browsers.nix
     ./discord.nix
     ./ghostty.nix
     ./noctalia.nix
+    ./browsers
     ./niri
   ];
 }
