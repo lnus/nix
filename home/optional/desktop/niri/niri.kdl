@@ -93,15 +93,7 @@ output "DP-3" {
 // --- Window position and size ---
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Layout
 layout {
-    gaps 0
-
-    /* gaps 16
-    struts {
-        left 16
-        right 16
-        top -4
-        bottom -4
-    } */
+    gaps 8
 
     center-focused-column "never"
     always-center-single-column
@@ -197,6 +189,11 @@ window-rule {
 window-rule {
     match app-id=r#"firefox$"# title="^Picture-in-Picture$"
     open-floating true
+}
+
+window-rule {
+    match app-id=r#"firefox$"# title="Firefox"
+    open-maximized true
 }
 
 window-rule {

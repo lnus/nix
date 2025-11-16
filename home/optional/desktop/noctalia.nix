@@ -34,7 +34,7 @@ in {
 
     settings = {
       bar = {
-        position = "left";
+        position = "bottom";
         density = "compact";
         showCapsule = false;
       };
