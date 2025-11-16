@@ -76,11 +76,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1763320975,
-        "narHash": "sha256-vZcr2WiOXWgZzg6bpkgJLCcJUtaTZs7Z3iedrXiLKjY=",
+        "lastModified": 1763321609,
+        "narHash": "sha256-eAS9vsK5Ofm1Rp/XpNzmkQPNzWTTgiLtMLQHDjX6XYQ=",
         "owner": "lnus",
         "repo": "conch",
-        "rev": "eed229f6c88efba7d586df17015416485c60c562",
+        "rev": "55e4895e97754b52865be8f76f1e6a5092fd11c1",
         "type": "github"
       },
       "original": {
