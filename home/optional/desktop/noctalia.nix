@@ -3,18 +3,16 @@
   config,
   lib,
   ...
-}: {
+}: let
+  wallpaperDir = "${config.home.homeDirectory}/Pictures/Wallpapers";
+in {
   imports = [
     inputs.noctalia.homeModules.default
   ];
 
-  # TEMP move somewhere nicer, maybe
-  services.swww.enable = true;
-
   programs.noctalia-shell = {
     enable = true;
 
-    # TODO: this might break if stylix isn't enabled
     colors = lib.mkIf (config.stylix.enable or false) (
       with config.lib.stylix.colors; {
         mError = "#${base08}";
@@ -51,7 +49,24 @@
       };
 
       wallpaper = {
-        enabled = false;
+        enabled = true;
+        directory = "${wallpaperDir}";
+        defaultWallpaper = "${wallpaperDir}/default.png";
+
+        # TEMP Probably change this I think, doesn't feel great
+        # or at least track within flake...
+        monitors = [
+          {
+            directory = "${wallpaperDir}";
+            name = "DP-3";
+            wallpaper = "${wallpaperDir}/long.png";
+          }
+          {
+            directory = "${wallpaperDir}";
+            name = "DP-4";
+            wallpaper = "${wallpaperDir}/wide.png";
+          }
+        ];
       };
 
       colorSchemes = {

@@ -10,10 +10,10 @@
   imports = [inputs.stylix.homeModules.stylix];
 
   # FIX: Make theme adjustable
-  # FIX: user based firefox profile
   stylix = {
     enable = true;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/embers.yaml";
+    # base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
+    base16Scheme = ./charcoal-tweak.yaml;
     polarity = "dark";
     targets.firefox.profileNames = ["linus"];
 

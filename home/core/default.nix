@@ -4,6 +4,6 @@
     ./cli.nix
     ./input.nix
     ./shell.nix
-    ./stylix.nix
+    ./stylix
   ];
 }
