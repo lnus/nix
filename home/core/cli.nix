@@ -21,12 +21,26 @@
       show_startup_tips = false;
 
       simplified_ui = true;
+      pane_frames = false;
+      default_layout = "compact";
+      copy_on_select = false;
+
+      plugins = {
+        compact-bar = {
+          location = "zellij:compact-bar";
+          tooltip = "F1";
+        };
+      };
     };
+  };
+
+  programs.direnv = {
+    enable = true;
+    silent = true;
   };
 
   programs.fd.enable = true;
   programs.carapace.enable = true;
-  programs.direnv.enable = true;
   programs.yazi.enable = true;
   programs.zoxide.enable = true;
   programs.skim.enable = true;
