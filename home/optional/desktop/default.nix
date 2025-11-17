@@ -13,5 +13,6 @@
     ./hypridle.nix
     ./browsers
     ./niri
+    ./misc
   ];
 }

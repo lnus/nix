@@ -114,7 +114,7 @@
       language-server = {
         codebook = {
           # spell checker
-          command = "${lib.getExe pkgs.codebook}";
+          command = "codebook";
           args = ["serve"];
         };
 
