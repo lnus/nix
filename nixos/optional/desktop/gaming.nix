@@ -11,5 +11,6 @@
     itch
     lutris
     wine
+    bolt-launcher
   ];
 }
