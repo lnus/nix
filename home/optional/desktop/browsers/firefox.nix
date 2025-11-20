@@ -7,17 +7,34 @@
     if (config.lib.stylix.colors or null) != null
     then config.lib.stylix.colors
     else {
-      base00 = "1c1b22"; # urlbar not focused
-      base01 = "333333"; # tab inactive
-      base02 = "41404c"; # urlbar focused
-      base04 = "888888"; # text inactive
-      base05 = "eeeeee"; # text active
+      # TODO: consider doing this at a higher level,
+      # defining "colorScheme" global-ish derived from either
+      # stylix or default fallback
+      #
+      # Falling back to charcoal-dark for now
+      # https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/charcoal-dark.yaml
+      base00 = "0f0b05";
+      base01 = "231b0e";
+      base02 = "2a2012";
+      base03 = "57462c";
+      base04 = "a88c62";
+      base05 = "c3a983";
+      base06 = "dec8a7";
+      base07 = "231b0e";
+      base08 = "a88c62";
+      base09 = "dec8a7";
+      base0A = "dec8a7";
+      base0B = "dec8a7";
+      base0C = "dec8a7";
+      base0D = "c3a983";
+      base0E = "a88c62";
+      base0F = "876e48";
     };
 
   userChrome_font =
     if (config.stylix.fonts.monospace.name or null) != null
     then config.stylix.fonts.monospace.name
-    else "DejaVu Sans Mono"; # not pretty, but should werk
+    else "DejaVu Sans Mono"; # not pretty, but should werk as fallback
 in {
   xdg.configFile."tridactyl/blank.html".text = ''
     <!DOCTYPE html>
@@ -36,13 +53,40 @@ in {
     </html>
   '';
 
+  # pulling from dracula as a base is strange-ish but it looks nice
+  # TODO consider writing a style manually
+  xdg.configFile."tridactyl/themes/stylix.css".text =
+    builtins.readFile "${
+      builtins.fetchGit {
+        url = "https://github.com/dracula/tridactyl";
+        ref = "main";
+        rev = "4c988ef06076566e86d2c1e0d6c825e8f8fdad60";
+      }
+    }/dracula.css"
+    + ''
+      :root {
+        --bg: #${colors.base00};
+        --currentline: #${colors.base01};
+        --fg: #${colors.base05};
+        --comment: #${colors.base03};
+        --cyan: #${colors.base0C};
+        --green: #${colors.base0B};
+        --orange: #${colors.base09};
+        --pink: #${colors.base0E};
+        --purple: #${colors.base0D};
+        --red: #${colors.base08};
+        --yellow: #${colors.base0A};
+        --font: ${userChrome_font}, monospace;
+      }
+    '';
+
   xdg.configFile."tridactyl/tridactylrc".text = ''
     unbind G
     bind ge scrollto 100
 
     set newtab about:blank
     set editorcmd ghostty -e hx
-    set theme shydactyl
+    set theme stylix
   '';
 
   programs.firefox = {
