@@ -53,30 +53,28 @@ in {
     </html>
   '';
 
-  # pulling from dracula as a base is strange-ish but it looks nice
-  # TODO consider writing a style manually
   xdg.configFile."tridactyl/themes/stylix.css".text =
     builtins.readFile "${
       builtins.fetchGit {
-        url = "https://github.com/dracula/tridactyl";
-        ref = "main";
-        rev = "4c988ef06076566e86d2c1e0d6c825e8f8fdad60";
+        url = "https://github.com/tridactyl/tridactyl";
+        ref = "master";
+        rev = "030ef4d2ab8e20d36a5db19074c7e904a1963344";
       }
-    }/dracula.css"
+    }/src/static/themes/quake/quake.css"
     + ''
       :root {
-        --bg: #${colors.base00};
-        --currentline: #${colors.base01};
-        --fg: #${colors.base05};
-        --comment: #${colors.base03};
-        --cyan: #${colors.base0C};
-        --green: #${colors.base0B};
-        --orange: #${colors.base09};
-        --pink: #${colors.base0E};
-        --purple: #${colors.base0D};
-        --red: #${colors.base08};
-        --yellow: #${colors.base0A};
-        --font: ${userChrome_font}, monospace;
+        --tridactyl-bg: #${colors.base00};
+        --tridactyl-fg: #${colors.base05};
+        --tridactyl-scrollbar-color: var(--tridactyl-fg);
+
+        --tridactyl-hintspan-fg: var(--tridactyl-bg);
+        --tridactyl-hintspan-bg: var(--tridactyl-fg);
+
+        --tridactyl-hint-active-fg: var(--tridactyl-fg);
+        --tridactyl-hint-active-bg: rgba(0,0,0,0.3);
+        --tridactyl-hint-active-outline: none;
+        --tridactyl-hint-bg: rgba(0,0,0,0.3);
+        --tridactyl-hint-outline: none;
       }
     '';
 
