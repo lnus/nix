@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   config,
   inputs,
   ...
@@ -29,7 +28,7 @@
         {
           name = "launch_yazi";
           modifier = "Alt";
-          keycode = "char_.";
+          keycode = "char_z";
           mode = ["vi_insert" "vi_normal"];
           event = {
             send = "executehostcommand";
