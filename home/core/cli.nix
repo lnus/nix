@@ -39,6 +39,7 @@
     silent = true;
   };
 
+  programs.jujutsu.enable = true;
   programs.ripgrep.enable = true;
   programs.fd.enable = true;
   programs.carapace.enable = true;
