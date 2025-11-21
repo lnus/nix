@@ -39,6 +39,7 @@
     silent = true;
   };
 
+  programs.ripgrep.enable = true;
   programs.fd.enable = true;
   programs.carapace.enable = true;
   programs.yazi.enable = true;
