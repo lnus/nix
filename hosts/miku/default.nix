@@ -22,6 +22,12 @@
     _1password-gui
   ];
 
+  my.greeter = {
+    type = "none";
+    user = "linus";
+    session = "${pkgs.niri}/bin/niri-session";
+  };
+
   # TODO: consider defining users elsewhere
   users.users.linus = {
     isNormalUser = true;
