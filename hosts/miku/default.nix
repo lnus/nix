@@ -1,37 +1,87 @@
-{pkgs, ...}: {
+{lib, ...}: {
   imports = [
     ./hardware-configuration.nix
 
-    ../../nixos/optional/desktop
-    ../../nixos/optional/desktop/gaming.nix
-    ../../nixos/optional/desktop/misc.nix
-    ../../nixos/optional/nvidia.nix
+    ../common
+    ../features/desktop
+    ../features/stylix
   ];
 
-  networking.hostName = "miku";
+  features = {
+    stylix.enable = true;
 
+    desktop = {
+      niri.enable = true;
+      gaming.enable = true;
+      greeter = {
+        enable = true;
+        type = "none";
+        user = "linus";
+        session = "niri-session";
+      };
+    };
+  };
+
+  # VM/Qemu
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 8192;
+      cores = 8;
+      qemu.options = [
+        "-vga none"
+        "-device virtio-vga-gl"
+        "-display gtk,gl=on"
+      ];
+    };
+
+    services.xserver.videoDrivers = lib.mkForce [];
+    hardware.nvidia.package = lib.mkForce null;
+  };
+
+  # GPU
+  hardware.graphics.enable = true;
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    open = false;
+    nvidiaSettings = true;
+  };
+
+  services.xserver.videoDrivers = ["nvidia"];
+
+  # CPU
+  powerManagement.cpuFreqGovernor = "performance";
+
+  # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # TEMP TODO: move this into core
-  services.tailscale.enable = true;
+  # Networking
+  networking.hostName = "miku";
+  networking.networkmanager.enable = true;
 
-  # TEMP TODO: move into core or swap for keepassxc later
-  environment.systemPackages = with pkgs; [
-    _1password-cli
-    _1password-gui
-  ];
+  # Locale
+  time.timeZone = "Europe/Stockholm";
+  i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = "us";
 
-  my.greeter = {
-    type = "none";
-    user = "linus";
-    session = "${pkgs.niri}/bin/niri-session";
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
   };
 
-  # TODO: consider defining users elsewhere
-  users.users.linus = {
-    isNormalUser = true;
-    description = "linus";
-    extraGroups = ["wheel" "networkmanager"];
+  # Audio
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
   };
+
+  system.stateVersion = "25.05";
 }

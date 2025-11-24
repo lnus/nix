@@ -1,33 +1,74 @@
-{pkgs, ...}: {
+{lib, ...}: {
   imports = [
     ./hardware-configuration.nix
 
-    ../../nixos/optional/desktop
-    ../../nixos/optional/desktop/gaming.nix
-    ../../nixos/optional/desktop/misc.nix
+    ../common
+    ../features/desktop
+    ../features/stylix
   ];
 
-  networking.hostName = "mantis";
+  features = {
+    stylix.enable = true;
 
+    desktop = {
+      niri.enable = true;
+      gaming.enable = true;
+      greeter = {
+        enable = true;
+        type = "tuigreet";
+        user = "linus";
+        session = "niri-session";
+      };
+    };
+  };
+
+  # VM/Qemu
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 4096;
+      cores = 4;
+      qemu.options = [
+        "-vga none"
+        "-device virtio-vga-gl"
+        "-display gtk,gl=on"
+      ];
+    };
+  };
+
+  # GPU
+  hardware.graphics.enable = true;
+
+  # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # This drive conflicts and borks my trackpad
+  # This driver conflicts and borks my trackpad
   boot.blacklistedKernelModules = ["elan_i2c"];
 
-  # TEMP TODO: move this into core
-  services.tailscale.enable = true;
+  # Networking
+  networking.hostName = "mantis";
+  networking.networkmanager.enable = true;
 
-  # TEMP TODO: move into core or swap for keepassxc later
-  environment.systemPackages = with pkgs; [
-    _1password-cli
-    _1password-gui
-  ];
+  # Locale
+  time.timeZone = "Europe/Stockholm";
+  i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = "us";
 
-  # TODO: consider defining users elsewhere
-  users.users.linus = {
-    isNormalUser = true;
-    description = "linus";
-    extraGroups = ["wheel" "networkmanager"];
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
   };
+
+  # Audio
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  system.stateVersion = "25.05";
 }

@@ -1,5 +1,5 @@
 {
-  description = "wow";
+  description = "System flake, so cute!!!!";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -9,19 +9,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.quickshell.follows = "quickshell";
-    };
-
     stylix = {
       url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nur = {
-      url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -29,52 +18,53 @@
       url = "github:lnus/conch";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
-    home-manager,
-    stylix,
-    nur,
     ...
   } @ inputs: let
-    inherit (nixpkgs) lib;
+    inherit (self) outputs;
 
-    mkHost = {
-      hostname,
-      system ? "x86_64-linux",
-      users ? ["linus"],
-    }:
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {inherit inputs;};
+    systems = [
+      "aarch64-linux"
+      "i686-linux"
+      "x86_64-linux"
+      "aarch64-darwin"
+      "x86_64-darwin"
+    ];
+    forAllSystems = nixpkgs.lib.genAttrs systems;
+  in {
+    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    overlays = import ./overlays {inherit inputs;};
+
+    nixosConfigurations = {
+      miku = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
         modules = [
-          ./nixos/core
-          ./hosts/${hostname}
-
-          stylix.nixosModules.stylix
-
-          {
-            nixpkgs.overlays = [nur.overlays.default];
-          }
-
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              extraSpecialArgs = {inherit inputs;};
-              users = lib.genAttrs users (user: import ./users/${user}.nix);
-            };
-          }
+          inputs.stylix.nixosModules.stylix
+          ./hosts/miku
         ];
       };
-  in {
-    nixosConfigurations = {
-      nixvm = mkHost {hostname = "nixvm";};
-      mantis = mkHost {hostname = "mantis";};
-      miku = mkHost {hostname = "miku";};
+
+      mantis = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
+        modules = [
+          inputs.stylix.nixosModules.stylix
+          ./hosts/mantis
+        ];
+      };
     };
   };
 }
