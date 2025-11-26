@@ -6,7 +6,6 @@
   ...
 }: let
   cfg = config.features.desktop.noctalia;
-  wallpaperDir = "${config.home.homeDirectory}/Pictures/Wallpapers";
 in {
   imports = [
     inputs.noctalia.homeModules.default
@@ -46,6 +45,8 @@ in {
           fontDefault = f.name;
         };
 
+        sessionMenu.countdownDuration = 3000;
+
         bar = {
           position = "bottom";
           density = "compact";
@@ -61,27 +62,6 @@ in {
           enableShadows = false;
         };
 
-        # TEMP Probably change this I think, doesn't feel great
-        # TODO define config in home/host/user.nix instead
-        wallpaper = {
-          enabled = true;
-          directory = "${wallpaperDir}";
-          defaultWallpaper = "${wallpaperDir}/default.png";
-
-          monitors = [
-            {
-              directory = "${wallpaperDir}";
-              name = "DP-3";
-              wallpaper = "${wallpaperDir}/long.png";
-            }
-            {
-              directory = "${wallpaperDir}";
-              name = "DP-4";
-              wallpaper = "${wallpaperDir}/wide.png";
-            }
-          ];
-        };
-
         colorSchemes = {
           useWallpaperColors = false;
           generateTemplatesForPredefined = false;
@@ -90,10 +70,6 @@ in {
         location = {
           name = "Stockholm";
           showWeekNumberInCalendar = true;
-        };
-
-        brightness = {
-          enforceMinimum = false;
         };
 
         nightLight = {

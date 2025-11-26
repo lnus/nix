@@ -22,7 +22,6 @@
     };
   };
 
-  # VM/Qemu
   virtualisation.vmVariant = {
     virtualisation = {
       memorySize = 8192;
@@ -38,7 +37,6 @@
     hardware.nvidia.package = lib.mkForce null;
   };
 
-  # GPU
   hardware.graphics.enable = true;
 
   hardware.nvidia = {
@@ -50,19 +48,14 @@
   };
 
   services.xserver.videoDrivers = ["nvidia"];
-
-  # CPU
   powerManagement.cpuFreqGovernor = "performance";
 
-  # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Networking
   networking.hostName = "miku";
   networking.networkmanager.enable = true;
 
-  # Locale
   time.timeZone = "Europe/Stockholm";
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "us";
@@ -72,7 +65,6 @@
     variant = "";
   };
 
-  # Audio
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
 

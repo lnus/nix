@@ -1,4 +1,4 @@
-{lib, ...}: {
+{...}: {
   imports = [
     ./hardware-configuration.nix
 
@@ -22,7 +22,6 @@
     };
   };
 
-  # VM/Qemu
   virtualisation.vmVariant = {
     virtualisation = {
       memorySize = 4096;
@@ -35,21 +34,21 @@
     };
   };
 
-  # GPU
   hardware.graphics.enable = true;
 
-  # Boot
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # This driver conflicts and borks my trackpad
   boot.blacklistedKernelModules = ["elan_i2c"];
 
-  # Networking
   networking.hostName = "mantis";
   networking.networkmanager.enable = true;
 
-  # Locale
+  hardware.bluetooth.enable = true;
+  services.tuned.enable = true;
+  services.upower.enable = true;
+
   time.timeZone = "Europe/Stockholm";
   i18n.defaultLocale = "en_US.UTF-8";
   console.keyMap = "us";
@@ -59,7 +58,6 @@
     variant = "";
   };
 
-  # Audio
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
 
