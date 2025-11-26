@@ -147,6 +147,13 @@ animations {
     // slowdown 0.1
 }
 
+// --- Layer rules ---
+// https://docs.noctalia.dev/getting-started/compositor-settings/
+layer-rule {
+  match namespace="^noctalia-overview*"
+  place-within-backdrop true
+}
+
 // --- Window rules ---
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
 window-rule {

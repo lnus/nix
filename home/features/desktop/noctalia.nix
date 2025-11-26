@@ -62,6 +62,8 @@ in {
           enableShadows = false;
         };
 
+        wallpaper.overviewEnabled = true;
+
         colorSchemes = {
           useWallpaperColors = false;
           generateTemplatesForPredefined = false;
