@@ -13,6 +13,7 @@
     desktop = {
       niri.enable = true;
       gaming.enable = true;
+      kdePackages.enable = true;
       greeter = {
         enable = true;
         type = "none";
