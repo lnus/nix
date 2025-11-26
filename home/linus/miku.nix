@@ -65,7 +65,7 @@
     in {
       enabled = true;
       directory = "${wallpapers}";
-      defaultWallpaper = "${wallpapers}/default.png";
+      setWallpaperOnAllMonitors = false;
 
       monitors = [
         {

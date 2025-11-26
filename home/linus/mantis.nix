@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     ./home.nix
     ../features/cli
@@ -47,7 +51,18 @@
     };
   };
 
-  programs.noctalia-shell.settings = {
+  programs.noctalia-shell.settings = let
+    pictures = "${config.home.homeDirectory}/Pictures";
+  in {
     appLauncher.terminalCommand = "footclient -e";
+    general.avatarImage = "${pictures}/pfp.jpg";
+
+    wallpaper = let
+      wallpapers = "${pictures}/Wallpapers";
+    in {
+      enabled = true;
+      directory = "${wallpapers}";
+      defaultWallpaper = "${wallpapers}/default.png";
+    };
   };
 }
