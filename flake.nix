@@ -49,6 +49,8 @@
     packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
     overlays = import ./overlays {inherit inputs;};
 
+    formatter = forAllSystems (pkgs: pkgs.alejandra);
+
     nixosConfigurations = {
       miku = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};

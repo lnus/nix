@@ -8,9 +8,5 @@
 
   home.stateVersion = "25.05";
 
-  home.sessionVariables = {
-    EDITOR = "hx";
-  };
-
   programs.home-manager.enable = true;
 }

@@ -9,58 +9,40 @@ in {
   options.features.cli.helix.enable = lib.mkEnableOption "enable helix configuration";
 
   config = lib.mkIf cfg.enable {
+    home.sessionVariables.EDITOR = "hx";
+
+    # TODO
+    # - move this out of the actual editor config so it can be used generally
+    home.packages = with pkgs; [
+      nixd # nix lsp
+      alejandra # nix formatter
+
+      prettier # markdown + general purpose formatter
+      # (i want something smaller/more specific but this is okay)
+    ];
+
     programs.helix = {
       enable = true;
-
-      extraPackages = with pkgs; [
-        vscode-langservers-extracted
-        python313Packages.jedi-language-server
-      ];
 
       settings = {
         editor = {
           line-number = "relative";
           mouse = false;
           bufferline = "multiple";
+          soft-wrap.enable = true;
 
           cursor-shape = {
+            normal = "block";
             insert = "bar";
+            select = "underline";
           };
 
           file-picker = {
             hidden = false;
           };
 
-          statusline = {
-            left = ["mode" "file-name" "spinner"];
-            center = [];
-            right = ["diagnostics" "selections" "position" "position-percentage" "file-encoding" "file-type"];
-            separator = "│";
-            mode.normal = "normal";
-            mode.insert = "insert";
-            mode.select = "select";
-          };
-
           indent-guides = {
             render = true;
-            character = "┊";
-            skip-levels = 0;
-          };
-
-          whitespace = {
-            render = {
-              nbsp = "all";
-              tab = "all";
-            };
-
-            characters = {
-              space = "·";
-              nbsp = "⍽";
-              nnbsp = "␣";
-              tab = "→";
-              newline = "⏎";
-              tabpad = "·";
-            };
           };
         };
 
@@ -70,6 +52,13 @@ in {
               "collapse_selection"
               "keep_primary_selection"
             ];
+
+            # NOTE verbose, but leaving so i remember the config for later
+            "space" = {
+              t = {
+                i = ":toggle lsp.display-inlay-hints";
+              };
+            };
           };
 
           insert = {
@@ -78,19 +67,18 @@ in {
         };
       };
 
-      # TODO: fix all these references.
-      # TEMP these packages should probably not be global but be in dev flake...
-      # but it's fine
       languages = {
         language = [
           {
             name = "typst";
-            auto-format = true;
-            formatter.command = "${lib.getExe pkgs.typstyle}";
             language-servers = ["codebook" "tinymist"];
+            formatter.command = "typstyle";
+            auto-format = true;
           }
           {
             name = "nix";
+            language-servers = ["nixd"];
+            formatter.command = "alejandra";
             auto-format = true;
           }
           {
@@ -98,20 +86,13 @@ in {
             auto-format = true;
           }
           {
-            name = "python";
-            auto-format = true;
-          }
-          {
-            # TEMP
             name = "markdown";
             auto-format = true;
             formatter = {
-              command = "${lib.getExe pkgs.deno}";
+              command = "prettier";
               args = [
-                "fmt"
-                "-"
-                "--ext"
-                "md"
+                "--parser"
+                "markdown"
               ];
             };
           }
@@ -119,34 +100,8 @@ in {
 
         language-server = {
           codebook = {
-            # spell checker
-            command = "codebook";
+            command = "codebook-lsp";
             args = ["serve"];
-          };
-
-          ruff = {
-            command = "${lib.getExe pkgs.ruff}";
-          };
-
-          tinymist = {
-            command = "${lib.getExe pkgs.tinymist}";
-          };
-
-          # https://github.com/helix-editor/helix/issues/14003#issuecomment-3093186464
-          nixd = {
-            command = "${lib.getExe pkgs.nixd}";
-            args = ["--semantic-tokens=true"];
-            config.nixd = let
-              myFlake = "(builtins.getFlake (toString /home/linus/nix))";
-              nixosOpts = "${myFlake}.nixosConfigurations.manin.options";
-            in {
-              nixpkgs.expr = "import ${myFlake}.inputs.nixpkgs { }";
-              formatting.command = ["${lib.getExe pkgs.alejandra}"];
-              options = {
-                nixos.expr = nixosOpts;
-                home-manager.expr = "${nixosOpts}.home-manager.users.type.getSubOptions []";
-              };
-            };
           };
         };
       };
