@@ -33,7 +33,6 @@
     enable = true;
 
     settings = {
-      default_shell = "${lib.getExe pkgs.nushell}";
       show_startup_tips = false;
 
       simplified_ui = true;

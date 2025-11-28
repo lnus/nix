@@ -19,3 +19,7 @@ $env.ZELLIJ_AUTO_ATTACH = false;
 $env.ZELLIJ_AUTO_EXIT = true;
 
 start_zellij
+
+if $nu.is-interactive and ($env.YAZI_ID? | default "" | is-empty) {
+  yy
+}
