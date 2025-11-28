@@ -29,19 +29,6 @@ in {
           vi_insert = "line";
           vi_normal = "block";
         };
-
-        keybindings = [
-          {
-            name = "launch_yazi";
-            modifier = "Alt";
-            keycode = "char_z";
-            mode = ["vi_insert" "vi_normal"];
-            event = {
-              send = "executehostcommand";
-              cmd = "yy"; # yazi nushell integration
-            };
-          }
-        ];
       };
 
       shellAliases =
