@@ -38,14 +38,14 @@
     hardware.nvidia.package = lib.mkForce null;
   };
 
-  hardware.graphics.enable = true;
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
     open = false;
-    nvidiaSettings = true;
   };
 
   services.xserver.videoDrivers = ["nvidia"];
