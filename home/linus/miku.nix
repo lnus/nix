@@ -34,7 +34,7 @@
     _1password-cli
 
     # unlimited bacon (games)
-    mangohud
+    protonup-ng
     bolt-launcher
     lutris
 
@@ -42,6 +42,10 @@
     qbittorrent
     spotify
   ];
+
+  home.sessionVariables = {
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
+  };
 
   programs = {
     mpv.enable = true;
