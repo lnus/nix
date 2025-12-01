@@ -18,6 +18,7 @@
     desktop = {
       firefox.enable = true;
       noctalia.enable = true;
+      ui.enable = true; # icons + cursor
 
       idle = {
         enable = true;
