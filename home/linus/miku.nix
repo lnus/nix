@@ -39,6 +39,7 @@
     lutris
 
     # media
+    chatterino2
     qbittorrent
     spotify
   ];
