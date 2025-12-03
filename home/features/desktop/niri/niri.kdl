@@ -214,11 +214,6 @@ window-rule {
     clip-to-geometry true
 }
 
-window-rule {
-    match is-focused=false
-    opacity 0.90
-}
-
 // --- Keybind settings ---
 // /usr/include/X11/keysymdef.h
 // https://github.com/jwrdegoede/wev
