@@ -40,6 +40,8 @@
 
     # media
     spotify
+    mpv
+    qbittorrent
   ];
 
   programs = {

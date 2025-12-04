@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./hardware-configuration.nix
 
@@ -44,6 +44,10 @@
 
   networking.hostName = "mantis";
   networking.networkmanager.enable = true;
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
+  };
 
   hardware.bluetooth.enable = true;
   services.tuned.enable = true;
