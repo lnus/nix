@@ -27,7 +27,6 @@ in {
       settings = {
         editor = {
           line-number = "relative";
-          mouse = false;
           bufferline = "multiple";
           soft-wrap.enable = true;
 
