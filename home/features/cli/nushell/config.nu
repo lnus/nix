@@ -1,8 +1,10 @@
 $env.PROMPT_COMMAND = {|| conch}
 $env.PROMPT_COMMAND_RIGHT = {||}
 
+# Probably don't set these here but whatever
 $env.ZELLIJ_AUTO_ATTACH = false;
 $env.ZELLIJ_AUTO_EXIT = true;
+$env.YAZI_AUTO_START = false;
 
 def start_zellij [] {
   if 'ZELLIJ' not-in ($env | columns) and 'ZELLIJ_DISABLE' not-in ($env | columns) {
@@ -47,6 +49,9 @@ $env.config.keybindings = [
     }
 ]
 
-if $nu.is-interactive and ($env.YAZI_ID? | default "" | is-empty) and 'ZELLIJ' not-in ($env | columns) {
+if ($nu.is-interactive
+    and ($env.YAZI_AUTO_START? | default false)
+    and ($env.YAZI_ID? | default "" | is-empty)
+    and 'ZELLIJ' not-in ($env | columns)) {
   yy
 }
