@@ -35,6 +35,7 @@
     lutris
 
     # media
+    chatterino2
     spotify
     mpv
     qbittorrent
