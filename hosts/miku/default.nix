@@ -100,7 +100,7 @@
   };
 
   services.samba = {
-    enable = true;
+    enable = false;
     settings = {
       global = {
         "workgroup" = "WORKGROUP";
@@ -120,9 +120,7 @@
     };
   };
 
-  services.jellyfin = {
-    enable = true;
-  };
+  services.jellyfin.enable = true;
 
   system.stateVersion = "25.05";
 }
