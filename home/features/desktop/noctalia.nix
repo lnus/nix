@@ -51,6 +51,12 @@ in {
           position = "bottom";
           density = "compact";
           showCapsule = false;
+
+          widgets.left = [
+            {id = "ControlCenter";}
+            {id = "SystemMonitor";}
+            {id = "ActiveWindow";}
+          ];
         };
 
         dock = {
@@ -58,7 +64,7 @@ in {
         };
 
         general = {
-          radiusRatio = 0.0;
+          radiusRatio = 0.2;
           enableShadows = false;
         };
 
@@ -72,6 +78,8 @@ in {
         location = {
           name = "Stockholm";
           showWeekNumberInCalendar = true;
+          weatherShowEffects = false;
+          firstDayOfWeek = 1;
         };
 
         nightLight = {
