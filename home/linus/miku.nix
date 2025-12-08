@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./home.nix
     ../features/cli
@@ -59,33 +55,9 @@
     };
   };
 
-  programs.noctalia-shell.settings = let
-    pictures = "${config.home.homeDirectory}/Pictures";
-  in {
+  programs.noctalia-shell.settings = {
     appLauncher.terminalCommand = "footclient -e";
-    general.avatarImage = "${pictures}/pfp.jpg";
     network.wifiEnabled = false;
-
-    wallpaper = let
-      wallpapers = "${pictures}/Wallpapers";
-    in {
-      enabled = true;
-      directory = "${wallpapers}";
-      setWallpaperOnAllMonitors = false;
-
-      monitors = [
-        {
-          directory = "${wallpapers}";
-          name = "DP-3";
-          wallpaper = "${wallpapers}/long.png";
-        }
-        {
-          directory = "${wallpapers}";
-          name = "DP-4";
-          wallpaper = "${wallpapers}/wide.png";
-        }
-      ];
-    };
 
     bar.widgets.right = [
       {id = "Tray";}

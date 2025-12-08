@@ -37,7 +37,9 @@ in {
         mTertiary = c.hex.base0D;
       };
 
-      settings = {
+      settings = let
+        pictures = "${config.home.homeDirectory}/Pictures";
+      in {
         ui = let
           f = stylixLib.getFont config;
         in {
@@ -66,9 +68,18 @@ in {
         general = {
           radiusRatio = 0.2;
           enableShadows = false;
+          avatarImage = "${pictures}/pfp.jpg";
         };
 
-        wallpaper.overviewEnabled = true;
+        wallpaper = let
+          wallpapers = "${pictures}/Wallpapers";
+        in {
+          enabled = true;
+          overviewEnabled = true;
+
+          directory = "${wallpapers}";
+          setWallpaperOnAllMonitors = false;
+        };
 
         colorSchemes = {
           useWallpaperColors = false;
