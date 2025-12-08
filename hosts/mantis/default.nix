@@ -45,6 +45,11 @@
 
   networking.hostName = "mantis";
   networking.networkmanager.enable = true;
+
+  services.tailscale = {
+    enable = true;
+  };
+
   services.mullvad-vpn = {
     enable = true;
     package = pkgs.mullvad-vpn;
