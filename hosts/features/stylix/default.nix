@@ -11,7 +11,7 @@ in {
   config = lib.mkIf cfg.enable {
     stylix = {
       enable = true;
-      base16Scheme = ./charcoal-tweak.yaml;
+      base16Scheme = ./compline.yaml;
       polarity = "dark";
 
       fonts = {
