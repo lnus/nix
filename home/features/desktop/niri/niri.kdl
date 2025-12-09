@@ -231,7 +231,8 @@ binds {
     Mod+D hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
                                                                     "ipc" "call" \
                                                                     "launcher" "toggle"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" \
+    // https://github.com/noctalia-dev/noctalia-shell/issues/977                                              
+    Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" \
                                                                     "ipc" "call" \
                                                                     "lockScreen" "lock"; }
     XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia-shell" \
