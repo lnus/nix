@@ -22,19 +22,19 @@
 
             "--subst-var-by"
             "shadow_color"
-            "${colors.hex.base03}50"
+            "${colors.hex.base00}50"
 
             "--subst-var-by"
             "active_color"
-            colors.hex.base0D
+            colors.hex.base04
 
             "--subst-var-by"
             "inactive_color"
-            colors.hex.base01
+            colors.hex.base00
 
             "--subst-var-by"
             "urgent_color"
-            colors.hex.base08
+            colors.hex.base0F
           ];
         }
       );

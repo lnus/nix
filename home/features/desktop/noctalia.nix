@@ -47,17 +47,60 @@ in {
           fontDefault = f.name;
         };
 
-        sessionMenu.countdownDuration = 3000;
+        sessionMenu.countdownDuration = 2000;
 
         bar = {
           position = "bottom";
           density = "compact";
           showCapsule = false;
+          outerCorners = false;
 
           widgets.left = [
             {id = "ControlCenter";}
             {id = "SystemMonitor";}
             {id = "ActiveWindow";}
+          ];
+        };
+
+        audio.visualizerType = "none";
+
+        calendar.cards = [
+          {
+            enabled = true;
+            id = "calendar-header-card";
+          }
+          {
+            enabled = true;
+            id = "calendar-month-card";
+          }
+          {
+            enabled = true;
+            id = "weather-card";
+          }
+          {
+            enabled = true;
+            id = "timer-card";
+          }
+        ];
+
+        controlCenter = {
+          cards = [
+            {
+              enabled = true;
+              id = "profile-card";
+            }
+            {
+              enabled = true;
+              id = "shortcuts-card";
+            }
+            {
+              enabled = true;
+              id = "audio-card";
+            }
+            {
+              enabled = true;
+              id = "media-sysmon-card";
+            }
           ];
         };
 
@@ -67,7 +110,9 @@ in {
 
         general = {
           radiusRatio = 0.2;
+          animationDisabled = true;
           enableShadows = false;
+
           avatarImage = "${pictures}/pfp.jpg";
         };
 
@@ -95,6 +140,7 @@ in {
 
         nightLight = {
           enabled = true;
+          nightTemp = "3000";
         };
       };
     };
