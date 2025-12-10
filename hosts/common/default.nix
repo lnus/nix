@@ -43,6 +43,8 @@ in {
     optimise.automatic = true;
   };
 
+  services.speechd.enable = false;
+
   environment.systemPackages = with pkgs; [
     git
     helix
