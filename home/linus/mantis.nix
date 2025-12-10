@@ -53,5 +53,15 @@
 
   programs.noctalia-shell.settings = {
     appLauncher.terminalCommand = "footclient -e";
+
+    bar.widgets.right = [
+      {id = "Tray";}
+      {id = "NotificationHistory";}
+      {id = "ScreenRecorder";}
+      {id = "Volume";}
+      {id = "Brightness";}
+      {id = "Battery";}
+      {id = "Clock";}
+    ];
   };
 }
