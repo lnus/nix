@@ -26,6 +26,9 @@
   };
 
   home.packages = with pkgs; [
+    # misc
+    xfce.thunar
+
     # password manager
     _1password-gui
     _1password-cli
