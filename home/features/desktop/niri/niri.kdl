@@ -78,15 +78,15 @@ output "DP-3" {
 
     transform "90"
     scale 1.0
+
+    layout {
+        default-column-width { proportion 1.0; }
+    }
 }
 
 // --- Named workspaces ---
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Named-Workspaces
 // workspace "browser" {
-//     open-on-output "DP-3"
-// }
-
-// workspace "chat" {
 //     open-on-output "DP-3"
 // }
 
@@ -98,7 +98,6 @@ layout {
     center-focused-column "never"
     always-center-single-column
 
-    // NOTE Mod+R
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
@@ -114,7 +113,6 @@ layout {
         inactive-color "@inactive_color@"
     }
 
-    // NOTE: can probably be removed
     border {
         // off
         width 1
@@ -125,16 +123,12 @@ layout {
 }
 
 // --- Spawn processes ---
-// Most handled with systemd services (swayidle, swaybg, etc.)
 // https://github.com/YaLTeR/niri/wiki/Example-systemd-Setup
-// 
-// TODO: do more with systemd here
 spawn-at-startup "xwayland-satellite"
 
 environment {
     DISPLAY ":0"
 }
-
 
 // --- Misc ---
 prefer-no-csd
@@ -144,7 +138,6 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Animations
 animations {
     off
-    // slowdown 0.1
 }
 
 // --- Layer rules ---
@@ -158,16 +151,6 @@ layer-rule {
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
 window-rule {
     match app-id=r#"pavucontrol"#
-    open-floating true
-}
-
-window-rule {
-    match app-id="Darktable"
-    open-floating true
-}
-
-window-rule {
-    match app-id=r#"^kitty$"# title=r#"rmpc-floating"#
     open-floating true
 }
 
@@ -199,18 +182,13 @@ window-rule {
 }
 
 window-rule {
-    match app-id=r#"firefox$"# title="Firefox"
-    open-maximized true
-}
-
-window-rule {
     match app-id=r#"firefox$"# title="^Extension:"
     open-floating true
 }
 
 // -- global window rule
 window-rule {
-    geometry-corner-radius 0 // leaving in case i want to round later
+    geometry-corner-radius 0
     clip-to-geometry true
 }
 
@@ -218,12 +196,10 @@ window-rule {
 // /usr/include/X11/keysymdef.h
 // https://github.com/jwrdegoede/wev
 // `wev`
+// nix run nixpkgs#wev
 binds {
-    // Mod-?,
-    Mod+Shift+Slash { show-hotkey-overlay; }
-
+    Mod+Shift+Slash { show-hotkey-overlay; } // Mod-?
     Mod+B hotkey-overlay-title="Firefox" { spawn "firefox"; }
-
     Mod+Return hotkey-overlay-title="Open a Terminal: foot (client)" { spawn "footclient"; }
     Mod+Shift+Return hotkey-overlay-title="Open a Terminal: foot (fallback)" { spawn "foot"; }
 
@@ -231,7 +207,8 @@ binds {
     Mod+D hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
                                                                     "ipc" "call" \
                                                                     "launcher" "toggle"; }
-    // https://github.com/noctalia-dev/noctalia-shell/issues/977                                              
+
+    // https://github.com/noctalia-dev/noctalia-shell/issues/977
     Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" \
                                                                     "ipc" "call" \
                                                                     "lockScreen" "lock"; }
