@@ -119,7 +119,10 @@
     };
   };
 
-  services.jellyfin.enable = true;
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
 
   system.stateVersion = "25.05";
 }
