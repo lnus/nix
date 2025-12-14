@@ -18,35 +18,9 @@ in {
       enable = true;
       systemd.enable = true; # systemd startup service, consider making option
 
-      colors = let
-        c = stylixLib.mkBase16 config;
-      in {
-        mError = c.hex.base08;
-        mOnError = c.hex.base00;
-        mOnPrimary = c.hex.base00;
-        mOnSecondary = c.hex.base00;
-        mOnSurface = c.hex.base04;
-        mOnSurfaceVariant = c.hex.base04;
-        mOnTertiary = c.hex.base00;
-        mOutline = c.hex.base02;
-        mPrimary = c.hex.base0B;
-        mSecondary = c.hex.base0A;
-        mShadow = c.hex.base00;
-        mSurface = c.hex.base00;
-        mSurfaceVariant = c.hex.base01;
-        mTertiary = c.hex.base0D;
-      };
-
       settings = let
         pictures = "${config.home.homeDirectory}/Pictures";
       in {
-        ui = let
-          f = stylixLib.getFont config;
-        in {
-          fontFixed = f.name;
-          fontDefault = f.name;
-        };
-
         sessionMenu.countdownDuration = 2000;
 
         bar = {
