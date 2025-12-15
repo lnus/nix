@@ -12,9 +12,13 @@
     };
 
     desktop = {
-      firefox.enable = true;
       noctalia.enable = true;
       ui.enable = true; # icons + cursor
+
+      browsers = {
+        firefox.enable = true;
+        qutebrowser.enable = true;
+      };
 
       idle = {
         enable = true;

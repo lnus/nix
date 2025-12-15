@@ -5,5 +5,6 @@
     ./idle.nix
     ./ui.nix
     ./niri
+    ./browsers
   ];
 }
