@@ -88,35 +88,13 @@
     pulse.enable = true;
   };
 
-  # Media+Samba+Jellyfin
-  # TODO: split out? maybe not necessary
+  # Media + Jellyfin
   systemd.tmpfiles.rules = [
     "d /srv/media 0775 linus media - -"
   ];
 
   users.groups.media = {
     members = ["linus" "jellyfin"];
-  };
-
-  services.samba = {
-    enable = false;
-    settings = {
-      global = {
-        "workgroup" = "WORKGROUP";
-        "server string" = "Media";
-        "security" = "user";
-      };
-
-      media = {
-        "path" = "/srv/media";
-        "browseable" = "yes";
-        "writable" = "yes";
-        "valid users" = "linus";
-        "force group" = "media";
-        "create mask" = "0664";
-        "directory mask" = "0775";
-      };
-    };
   };
 
   services.jellyfin = {
