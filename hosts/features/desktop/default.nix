@@ -3,7 +3,7 @@
     ./niri.nix
     ./greeter.nix
     ./gaming.nix
-    ./i18n.nix
+    ./ime.nix
     ./fonts.nix
   ];
 }
