@@ -14,21 +14,15 @@ in {
       base16Scheme = ./compline.yaml;
       polarity = "dark";
 
-      fonts = {
-        serif = {
-          package = pkgs.nerd-fonts.go-mono;
-          name = "GoMono Nerd Font";
+      fonts = let
+        monaspace = {
+          package = pkgs.nerd-fonts.monaspace;
+          name = "MonaspiceKr Nerd Font";
         };
-
-        sansSerif = {
-          package = pkgs.nerd-fonts.go-mono;
-          name = "GoMono Nerd Font";
-        };
-
-        monospace = {
-          package = pkgs.nerd-fonts.go-mono;
-          name = "GoMono Nerd Font";
-        };
+      in {
+        serif = monaspace;
+        sansSerif = monaspace;
+        monospace = monaspace;
       };
     };
   };
