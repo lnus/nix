@@ -4,5 +4,6 @@
     ./greeter.nix
     ./gaming.nix
     ./i18n.nix
+    ./fonts.nix
   ];
 }
