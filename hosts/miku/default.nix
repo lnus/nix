@@ -17,6 +17,7 @@
     desktop = {
       niri.enable = true;
       gaming.enable = true;
+      ime.enable = true;
       greeter = {
         enable = true;
         type = "none";
