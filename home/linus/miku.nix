@@ -42,11 +42,13 @@
     protonup-ng
     bolt-launcher
     lutris
+    prismlauncher
 
     # media
     chatterino2
     qbittorrent
     spotify
+    obs-studio
   ];
 
   home.sessionVariables = {
