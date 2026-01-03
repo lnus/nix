@@ -52,6 +52,14 @@
     mpv.enable = true;
     vesktop.enable = true;
 
+    retroarch = {
+      enable = true;
+
+      cores = {
+        desmume.enable = true;
+      };
+    };
+
     foot = {
       enable = true;
       server.enable = true;
