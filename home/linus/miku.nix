@@ -43,6 +43,7 @@
     bolt-launcher
     lutris
     prismlauncher
+    dolphin-emu
 
     # media
     chatterino2
@@ -58,6 +59,15 @@
   programs = {
     mpv.enable = true;
     vesktop.enable = true;
+
+    retroarch = {
+      enable = true;
+
+      cores = {
+        melonds.enable = true;
+        dolphin.enable = true; # This is... okay, not great though
+      };
+    };
 
     foot = {
       enable = true;
