@@ -50,6 +50,10 @@
     qbittorrent
     spotify
     obs-studio
+
+    # ai st00f
+    claude-code
+    codex
   ];
 
   home.sessionVariables = {

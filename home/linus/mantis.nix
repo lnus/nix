@@ -46,6 +46,10 @@
     spotify
     mpv
     qbittorrent
+
+    # ai st00f
+    claude-code
+    codex
   ];
 
   programs = {
