@@ -14,6 +14,10 @@
     desktop = {
       noctalia.enable = true;
       ui.enable = true; # icons + cursor
+      zed = {
+        enable = true;
+        nvidia = true;
+      };
 
       browsers = {
         firefox.enable = true;
