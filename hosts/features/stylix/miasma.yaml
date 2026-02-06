@@ -1,0 +1,21 @@
+system: "base16"
+name: "Miasma"
+author: "xero (https://github.com/xero/miasma.nvim)"
+variant: "dark"
+palette:
+  base00: "#222222" # bg
+  base01: "#2f2f2d" # bg -> fg (8%)
+  base02: "#3c3c39" # bg -> fg (16%)
+  base03: "#666666" # bright black
+  base04: "#868680" # base03 -> fg (35%)
+  base05: "#c2c2b0" # fg
+  base06: "#cec397" # fg -> white (55%)
+  base07: "#d7c483" # "white" from miasma
+  base08: "#685742" # red
+  base09: "#b36d43" # yellow slot in miasma, but reads as orange/brown
+  base0A: "#c9a554" # cyan slot in miasma, but reads as gold/yellow
+  base0B: "#5f875f" # green
+  base0C: "#c9a554" # cyan (same; miasma doesn’t have a distinct teal)
+  base0D: "#78824b" # blue (olive)
+  base0E: "#bb7744" # magenta (amber)
+  base0F: "#865232" # derived darker brown from base09

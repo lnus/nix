@@ -11,7 +11,7 @@ in {
   config = lib.mkIf cfg.enable {
     stylix = {
       enable = true;
-      base16Scheme = ./compline.yaml;
+      base16Scheme = ./miasma.yaml;
       polarity = "dark";
 
       fonts = let
