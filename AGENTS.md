@@ -34,8 +34,9 @@
 - Prefer `jj` for VCS actions; use `jj desc -m "<scope>: <subject>"` to set commit messages.
 - To see information about current change, use `jj show`.
 - Commit messages use domain-based scopes and short subjects; keep scopes stable over time.
+  - Always use multi-line commit messages (subject + body), even for small changes.
   - Prefer brief, casual phrasing; lowercase is fine and longer explanations are usually overkill.
-  - Examples: `home: add ai cli tools`, `host: update system fonts`, `pkgs: bump ripgrep`
+  - Examples: `home: add ai cli tools`, `host: update system fonts`, `overlay: bump ripgrep`, `infra: update flake inputs`
 - Scope set should stay small (e.g., `host`, `home`, `pkgs`, `overlay`, `doc`, `infra`); only add new scopes if they stay broadly useful.
 - For mixed changes, pick the highest-impact scope and mention secondary areas in the body.
 - Body format: one short summary line, then host bullets when relevant.
