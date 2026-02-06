@@ -1,11 +1,7 @@
-{
-  pkgs,
-  lib,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./nushell
-    ./helix.nix
+    ./helix
   ];
 
   # Consider moving
