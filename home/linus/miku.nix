@@ -48,6 +48,7 @@
     lutris
     prismlauncher
     dolphin-emu
+    shipwright
 
     # media
     chatterino2
