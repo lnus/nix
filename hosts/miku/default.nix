@@ -20,7 +20,7 @@
       ime.enable = true;
       greeter = {
         enable = true;
-        type = "none";
+        type = "tuigreet";
         user = "linus";
         session = "niri-session";
       };
