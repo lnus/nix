@@ -59,6 +59,8 @@
     qbittorrent
     spotify
     obs-studio
+    nicotine-plus
+    fooyin
 
     # ai st00f
     claude-code
