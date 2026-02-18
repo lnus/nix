@@ -57,7 +57,8 @@
     lutris
     prismlauncher
     dolphin-emu
-    shipwright
+    # add back eventually...
+    # shipwright
 
     # media
     chatterino2

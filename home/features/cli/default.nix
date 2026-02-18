@@ -56,5 +56,6 @@
   programs.carapace.enable = true;
   programs.yazi.enable = true;
   programs.zoxide.enable = true;
-  programs.skim.enable = true;
+  # maybe add back
+  # programs.skim.enable = true;
 }
