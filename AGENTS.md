@@ -32,7 +32,7 @@
   - Always use multi-line commit messages (subject + body), even for small changes.
   - Prefer brief, concrete phrasing; lowercase is fine; avoid parenthetical notes in the subject.
   - Avoid vague verbs like "tweak"; state what changed. Put rationale in the body.
-  - Examples: `flake.lock: update inputs`, `nixvim: update treesitter grammars`, `linux-xanmod: 6.18.8 -> 6.18.10`
+  - Examples: `flake.lock: update noctalia`, `nixvim: update treesitter grammars`, `linux-xanmod: 6.18.8 -> 6.18.10`
 - Scope set should stay small (e.g., `pkgs`, `overlay`, `doc`, `infra`), but module/host namespaces are allowed.
   - Host/user scoping:
     - Single host + single user: `<hostname>/<user>` (e.g., `mantis/linus`).
@@ -41,12 +41,12 @@
   - Multiple hosts: use `infra` as the scope and list hosts in the body.
   - Examples: `nixos/nvidia`, `mantis/linus`, `mantis`, `linus`, `infra`.
 - Version updates: use `old -> new` in the subject.
-- Lockfile updates: subject must be `flake.lock: update inputs`.
-  - Body is required and must include a prettified diff of input updates.
+- Lockfile updates: subject must be `flake.lock: update <inputs>` on fewer than 3 inputs updated, else, `flake.lock: update`.
+  - Body is required and must include a diff of input updates, ideally verbatim from `nix flake update`.
   - Example body:
-    - `inputs:`
-      - `nixpkgs 24.11 -> 24.11.20260214`
-      - `home-manager 24.11 -> 24.11.20260213`
+    - Updated input 'noctalia':
+      - github:noctalia-dev/noctalia-shell/a6283d2962cde6a397da5f197dcceaa586505dd3?narHash=sha256-DgxfTDv3swv/bc2J2AxINf5XpVHjVlycQj17x5vjGHA%3D' (2026-02-06)
+      - → 'github:noctalia-dev/noctalia-shell/cb77a08243a5956ebed2d0960f161d0644295f83?narHash=sha256-li7Pd9wOtiYuFq%2Bu%2BlMbbaoNySBz7fVTeYTxOSLcBTI%3D' (2026-02-18)
 - For mixed changes, pick the highest-impact scope and mention secondary areas in the body.
   - If `pkgs` or `overlay` is touched, prefer that scope over host/user scopes.
   - Example: `pkgs: +helium 0.9.2.1` (body lists host/user enablement).
