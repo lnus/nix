@@ -27,6 +27,7 @@
         helium.enable = true;
         firefox.enable = true;
         qutebrowser.enable = false;
+        default = "firefox";
       };
 
       idle = {
@@ -37,6 +38,9 @@
       };
     };
   };
+
+  # Prefer Vesktop for discord:// URLs.
+  xdg.mimeApps.defaultApplications."x-scheme-handler/discord" = "vesktop.desktop";
 
   home.packages = with pkgs; [
     # misc

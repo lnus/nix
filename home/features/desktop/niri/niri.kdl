@@ -199,7 +199,7 @@ window-rule {
 // nix run nixpkgs#wev
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; } // Mod-?
-    Mod+B hotkey-overlay-title="Firefox" { spawn "firefox"; }
+    Mod+B hotkey-overlay-title="Browser" { spawn "browser-new-window"; }
     Mod+Return hotkey-overlay-title="Open a Terminal: foot (client)" { spawn "footclient"; }
     Mod+Shift+Return hotkey-overlay-title="Open a Terminal: foot (fallback)" { spawn "foot"; }
 

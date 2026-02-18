@@ -9,12 +9,12 @@
   stylixLib,
   ...
 }: let
-  cfg = config.features.desktop.firefox; # Turn into a browser.nix thingy later maybe
+  cfg = config.features.desktop.browsers.firefox;
   c = stylixLib.mkBase16 config;
   isStylix = stylixLib.isStylix config;
   font_mono = stylixLib.getFont config;
 in {
-  options.features.desktop.firefox.enable = lib.mkEnableOption "enable firefox";
+  options.features.desktop.browsers.firefox.enable = lib.mkEnableOption "enable firefox";
 
   config = lib.mkMerge [
     # Currently, firefox theming is disabled in stylix. But...
