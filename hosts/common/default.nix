@@ -27,7 +27,9 @@ in {
 
   nixpkgs = {
     overlays = [
-      # TODO add overlays, if any
+      # NOTE: Leaving this as default, might change to `additions` later.
+      # See `../../overlays/default.nix` for reference
+      outputs.overlays.default
     ];
 
     config = {

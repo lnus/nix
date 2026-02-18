@@ -24,8 +24,9 @@
       };
 
       browsers = {
+        helium.enable = true;
         firefox.enable = true;
-        qutebrowser.enable = true;
+        qutebrowser.enable = false;
       };
 
       idle = {
