@@ -67,6 +67,7 @@
     obs-studio
     nicotine-plus
     fooyin
+    krita
 
     # ai st00f
     claude-code
