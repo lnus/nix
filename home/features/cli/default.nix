@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ./nushell
     ./helix
@@ -50,7 +54,23 @@
     silent = true;
   };
 
-  programs.jujutsu.enable = true;
+  programs.difftastic.enable = true;
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      user = {
+        name = "Linus";
+        email = "17277861+lnus@users.noreply.github.com";
+      };
+      ui.default-command = "log";
+      ui.diff-formatter = [
+        "${lib.getExe pkgs.difftastic}"
+        "--color=always"
+        "$left"
+        "$right"
+      ];
+    };
+  };
   programs.ripgrep.enable = true;
   programs.fd.enable = true;
   programs.carapace.enable = true;
