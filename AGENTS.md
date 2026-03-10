@@ -41,6 +41,7 @@
   - Multiple hosts: use `infra` as the scope and list hosts in the body.
   - Examples: `nixos/nvidia`, `mantis/linus`, `mantis`, `linus`, `infra`.
 - Version updates: use `old -> new` in the subject.
+- Version pins/overrides: use `<pkg> -> <version>` in the subject (e.g., `overlay: foot -> 1.25.0`).
 - Lockfile updates: subject must be `flake.lock: update <inputs>` on fewer than 3 inputs updated, else, `flake.lock: update`.
   - Body is required and must include a diff of input updates, ideally verbatim from `nix flake update`.
   - Example body:
