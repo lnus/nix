@@ -44,7 +44,7 @@
 
   home.packages = with pkgs; [
     # misc
-    xfce.thunar
+    thunar
     kdePackages.okular
 
     # password manager
