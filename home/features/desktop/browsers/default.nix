@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }: let
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}: let
   cfg = config.features.desktop.browsers;
   desktopFileFor = name: cfg.desktopFiles.${name};
 in {

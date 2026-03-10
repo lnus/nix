@@ -67,6 +67,12 @@
       - enable helium browser
 - PRs should include a brief summary, affected hosts, and any required rebuild steps.
 
+## Formatting Commit Convention
+
+- For treewide `nix fmt` runs, use:
+  - Subject: `infra: format nix files`
+  - Body: `run nix fmt across repo to normalize formatting`
+
 ## Configuration Tips
 
 - Host feature toggles live under `hosts/features`; shared Home Manager features live under `home/features`.
