@@ -74,7 +74,10 @@
   programs.ripgrep.enable = true;
   programs.fd.enable = true;
   programs.carapace.enable = true;
-  programs.yazi.enable = true;
+  programs.yazi = {
+    enable = true;
+    shellWrapperName = "yy";
+  };
   programs.zoxide.enable = true;
   # maybe add back
   # programs.skim.enable = true;
