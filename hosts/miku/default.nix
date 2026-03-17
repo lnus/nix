@@ -18,6 +18,7 @@
       niri.enable = true;
       gaming.enable = true;
       ime.enable = true;
+      media.enable = true;
       greeter = {
         enable = true;
         type = "tuigreet";

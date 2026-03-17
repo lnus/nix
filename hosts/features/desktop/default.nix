@@ -5,5 +5,6 @@
     ./gaming.nix
     ./ime.nix
     ./fonts.nix
+    ./media.nix
   ];
 }
