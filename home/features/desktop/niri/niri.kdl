@@ -169,6 +169,16 @@ window-rule {
     open-focused true
 }
 
+window-rule {
+    exclude title=r#"RuneLite .+"#
+    match app-id="net-runelite-client-RuneLite"
+    opacity 0.4
+    open-floating false
+    open-maximized false
+    open-focused true
+    draw-border-with-background false
+}
+
 // gamescope is not affected by steam_app_*
 window-rule {
     match app-id=r#"^gamescope"#
@@ -242,6 +252,7 @@ binds {
                                                     "brightness" "decrease"; }
     
 
+    Mod+T repeat=false { toggle-window-rule-opacity; }
     Mod+O repeat=false { toggle-overview; }
 
     Mod+Q { close-window; }
