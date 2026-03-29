@@ -86,6 +86,11 @@
       enable = true;
       server.enable = true;
     };
+
+    vicinae = {
+      enable = true;
+      systemd.enable = true;
+    };
   };
 
   programs.noctalia-shell.settings = {

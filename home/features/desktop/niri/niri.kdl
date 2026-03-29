@@ -215,9 +215,10 @@ binds {
     Mod+Shift+Return hotkey-overlay-title="Open a Terminal: foot (fallback)" { spawn "foot"; }
 
     // https://docs.noctalia.dev/getting-started/keybinds
-    Mod+D hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
-                                                                    "ipc" "call" \
-                                                                    "launcher" "toggle"; }
+    // Mod+D hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
+    //                                                                 "ipc" "call" \
+    //                                                                 "launcher" "toggle"; }
+    Mod+D hotkey-overlay-title="Run Application: visinae" { spawn "vicinae" "open"; }
 
     // https://github.com/noctalia-dev/noctalia-shell/issues/977
     Super+Alt+L allow-when-locked=true hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" \
