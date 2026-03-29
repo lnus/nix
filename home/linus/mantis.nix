@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
     ./home.nix
     ../features/cli
@@ -56,6 +60,15 @@
     claude-code
     codex
   ];
+
+  services.udiskie = {
+    enable = true;
+    settings = {
+      program_options = {
+        file_manager = "${lib.getExe pkgs.thunar}";
+      };
+    };
+  };
 
   programs = {
     mpv.enable = true;

@@ -79,5 +79,7 @@
     pulse.enable = true;
   };
 
+  services.udisks2.enable = true;
+
   system.stateVersion = "25.05";
 }

@@ -90,6 +90,8 @@
     pulse.enable = true;
   };
 
+  services.udisks2.enable = true;
+
   # Media + Jellyfin
   systemd.tmpfiles.rules = [
     "d /srv/media 0775 linus media - -"
