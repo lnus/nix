@@ -21,6 +21,9 @@ in {
 
   config = lib.mkMerge [
     (lib.mkIf (cfg.enable && isStylix) {
+      # gtk4 no longer inherits gtk.theme by default in 26.05+
+      gtk.gtk4.theme = config.gtk.theme;
+
       stylix.icons = {
         enable = true;
         package = pkgs.tela-circle-icon-theme;
