@@ -68,6 +68,7 @@
     spotify
     nicotine-plus
     fooyin
+    stable.stremio-linux-shell
 
     # ai st00f
     claude-code
