@@ -9,15 +9,5 @@
     };
   };
 
-  modifications = final: prev: {
-    foot = prev.foot.overrideAttrs (_old: {
-      version = "1.25.0";
-      src = prev.fetchFromCodeberg {
-        owner = "dnkl";
-        repo = "foot";
-        rev = "1.25.0";
-        hash = "sha256-s7SwIdkWhBKcq9u4V0FLKW6CA36MBvDyB9ELB0V52O0=";
-      };
-    });
-  };
+  modifications = final: prev: {};
 }
