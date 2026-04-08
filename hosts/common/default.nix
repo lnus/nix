@@ -30,6 +30,7 @@ in {
       # See `../../overlays/default.nix` for reference
       outputs.overlays.additions
       outputs.overlays.modifications
+      outputs.overlays.stable
     ];
 
     config = {
