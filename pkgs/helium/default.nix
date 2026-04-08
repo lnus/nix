@@ -8,12 +8,12 @@
   fetchurl,
 }: let
   pname = "helium";
-  version = "0.9.4.1";
+  version = "0.10.8.1";
 
   architectures = {
     "x86_64-linux" = {
       arch = "x86_64";
-      hash = "sha256-N5gdWuxOrIudJx/4nYo4/SKSxakpTFvL4zzByv6Cnug=";
+      hash = "sha256-pN/Iw1ANggDOxxFb2CN436qbcrs8/bDcEqjZC80grQs=";
     };
   };
 
