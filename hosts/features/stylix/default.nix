@@ -15,14 +15,22 @@ in {
       polarity = "dark";
 
       fonts = let
-        monaspace = {
+        gfonts = pkgs.google-fonts.override {
+          fonts = ["Lora" "Inter"];
+        };
+      in {
+        serif = {
+          package = gfonts;
+          name = "Lora";
+        };
+        sansSerif = {
+          package = gfonts;
+          name = "Inter";
+        };
+        monospace = {
           package = pkgs.nerd-fonts.monaspace;
           name = "MonaspiceKr Nerd Font";
         };
-      in {
-        serif = monaspace;
-        sansSerif = monaspace;
-        monospace = monaspace;
       };
     };
   };
