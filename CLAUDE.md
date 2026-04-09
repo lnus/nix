@@ -44,6 +44,11 @@ lib/                   # Custom lib exposed as pkgs.liLib — currently wallhave
 
 **Home Manager specialArgs:** HM modules receive `inputs`, `outputs`, `stylixLib`, and `osConfig` (the NixOS config) via `extraSpecialArgs` in `hosts/common/default.nix`.
 
+## Style
+
+- Keep modules small and composable; use `features` modules for shared toggles.
+- Option names follow the pattern `features.desktop.niri.enable`.
+
 ## VCS: Jujutsu (`jj`)
 
 This repo uses `jj` (jujutsu), not plain git. Use `jj` for all VCS actions.
@@ -57,9 +62,11 @@ This repo uses `jj` (jujutsu), not plain git. Use `jj` for all VCS actions.
 Format: `<scope>: <subject>` with a required body.
 
 **Scopes:**
-- `pkgs`, `overlays`, `infra`, `doc` — canonical fixed scopes
-- `<hostname>` (e.g. `miku`, `mantis`) — entire host
-- `<hostname>/<user>` (e.g. `miku/linus`) — host + user
+- `pkgs`, `overlays`, `infra`, `doc` — canonical fixed scopes; use `overlays` (not `overlay`)
+- `home/<module>` (e.g. `home/niri`, `home/cli`) — HM feature module changes
+- `hosts/<module>` (e.g. `hosts/media`) — host feature module changes
+- `<hostname>` (e.g. `miku`, `mantis`) — entire host system config
+- `<hostname>/<user>` (e.g. `miku/linus`) — host + user profile changes
 - `<user>` (e.g. `linus`) — user only (rare)
 - Multiple hosts → use `infra` scope, list hosts in body
 - If `pkgs` or `overlays` is touched, prefer that scope over host/user
@@ -67,7 +74,9 @@ Format: `<scope>: <subject>` with a required body.
 **Subject rules:**
 - Version updates: `old -> new` (e.g. `pkgs: helium 0.9.4.1 -> helium 0.10.8.1`)
 - First pin: `overlays: foot -> foot 1.25.0`; re-pin: `overlays: foot 1.25.0 -> foot 1.26.0`
-- `flake.lock` updates: `flake.lock: update <inputs>` (or just `flake.lock: update` for 3+); body must include verbatim diff from `nix flake update`
+- `flake.lock` bulk updates (3+ inputs): `flake.lock: update`; body must include verbatim diff from `nix flake update`
+- `flake.lock` single notable input: `flake.lock: noctalia v4.6.6 -> v4.7.2-git (e41c78e)` — version + short hash in subject, no body needed
+- `flake.lock` 2 inputs: `flake.lock: update <input1> <input2>`; body with diff
 - Treewide format runs: subject `infra: format nix files`, body `run nix fmt across repo to normalize formatting`
 
 **Body format:** one short summary line, then host bullets when more than one change or host is involved.
