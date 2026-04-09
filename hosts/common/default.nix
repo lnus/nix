@@ -31,6 +31,7 @@ in {
       outputs.overlays.additions
       outputs.overlays.modifications
       outputs.overlays.stable
+      outputs.overlays.liLib # TODO: Wire this properly!!!
     ];
 
     config = {

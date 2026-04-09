@@ -79,11 +79,37 @@
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
   };
 
-  services.udiskie = {
-    enable = true;
-    settings = {
-      program_options = {
-        file_manager = "${lib.getExe pkgs.thunar}";
+  services = {
+    udiskie = {
+      enable = true;
+      settings = {
+        program_options = {
+          file_manager = "${lib.getExe pkgs.thunar}";
+        };
+      };
+    };
+
+    hyprpaper = {
+      enable = true;
+
+      settings = let
+        wall = pkgs.liLib.wallhaven.fetch {
+          id = "3qwx1v";
+          ext = "jpg";
+          hash = "sha256-OTHyHblVbtbehA+7jvMnOi4hic80eB9Wo+hzFvShGTY=";
+        };
+      in {
+        preload = ["${wall}"];
+        wallpaper = [
+          {
+            monitor = "DP-3";
+            path = "${wall}";
+          }
+          {
+            monitor = "DP-4";
+            path = "${wall}";
+          }
+        ];
       };
     };
   };
@@ -119,9 +145,7 @@
     bar.widgets.right = [
       {id = "Tray";}
       {id = "NotificationHistory";}
-      {id = "ScreenRecorder";}
       {id = "Volume";}
-      {id = "Clock";}
     ];
   };
 }

@@ -2,7 +2,6 @@
   inputs,
   config,
   lib,
-  stylixLib,
   ...
 }: let
   cfg = config.features.desktop.noctalia;
@@ -11,71 +10,41 @@ in {
     inputs.noctalia.homeModules.default
   ];
 
-  options.features.desktop.noctalia.enable = lib.mkEnableOption "enable noctalia shell";
+  options.features.desktop.noctalia = {
+    enable = lib.mkEnableOption "enable noctalia shell";
+    wallpaper = lib.mkEnableOption "let noctalia manage wallpapers";
+  };
 
   config = lib.mkIf cfg.enable {
     programs.noctalia-shell = {
       enable = true;
-      systemd.enable = true; # systemd startup service, consider making option
+      systemd.enable = true;
 
       settings = let
         pictures = "${config.home.homeDirectory}/Pictures";
       in {
-        sessionMenu.countdownDuration = 2000;
+        sessionMenu.countdownDuration = 1200;
 
         bar = {
-          position = "bottom";
           density = "compact";
           showCapsule = false;
-          outerCorners = false;
+          enableExclusionZoneInset = false;
 
-          widgets.left = [
-            {id = "ControlCenter";}
-            {id = "SystemMonitor";}
-            {id = "ActiveWindow";}
-          ];
-        };
+          widgets = {
+            left = [
+              {
+                id = "ControlCenter";
+                useDistroLogo = true;
+              }
+              {id = "Workspace";}
+              {id = "ActiveWindow";}
+              {id = "SystemMonitor";}
+            ];
 
-        audio.visualizerType = "none";
-
-        calendar.cards = [
-          {
-            enabled = true;
-            id = "calendar-header-card";
-          }
-          {
-            enabled = true;
-            id = "calendar-month-card";
-          }
-          {
-            enabled = true;
-            id = "weather-card";
-          }
-          {
-            enabled = true;
-            id = "timer-card";
-          }
-        ];
-
-        controlCenter = {
-          cards = [
-            {
-              enabled = true;
-              id = "profile-card";
-            }
-            {
-              enabled = true;
-              id = "shortcuts-card";
-            }
-            {
-              enabled = true;
-              id = "audio-card";
-            }
-            {
-              enabled = true;
-              id = "media-sysmon-card";
-            }
-          ];
+            center = [
+              {id = "Clock";}
+            ];
+          };
         };
 
         dock = {
@@ -84,29 +53,54 @@ in {
 
         general = {
           radiusRatio = 0.2;
+          lockScreenBlur = 0.4;
+          lockScreenTint = 0.7;
           animationDisabled = true;
           enableShadows = false;
-
           avatarImage = "${pictures}/pfp.jpg";
         };
 
-        wallpaper = let
-          wallpapers = "${pictures}/Wallpapers";
-        in {
-          enabled = true;
+        controlCenter.cards = [
+          {
+            enabled = true;
+            id = "profile-card";
+          }
+          {
+            enabled = true;
+            id = "shortcuts-card";
+          }
+          {
+            enabled = true;
+            id = "audio-card";
+          }
+          {
+            enabled = false;
+            id = "brightness-card";
+          }
+          {
+            enabled = false;
+            id = "weather-card";
+          }
+          {
+            enabled = false;
+            id = "media-sysmon-card";
+          }
+        ];
+
+        notifications = {
+          density = "compact";
+        };
+
+        wallpaper = {
+          enabled = cfg.wallpaper;
           overviewEnabled = true;
 
-          directory = "${wallpapers}";
+          directory = "${pictures}/Wallpapers";
           setWallpaperOnAllMonitors = false;
         };
 
-        colorSchemes = {
-          useWallpaperColors = false;
-          generateTemplatesForPredefined = false;
-        };
-
         location = {
-          name = "Stockholm";
+          name = "Falun";
           showWeekNumberInCalendar = true;
           weatherShowEffects = false;
           firstDayOfWeek = 1;
@@ -114,7 +108,7 @@ in {
 
         nightLight = {
           enabled = true;
-          nightTemp = "3000";
+          nightTemp = "2500";
         };
       };
     };
