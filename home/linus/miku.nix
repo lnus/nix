@@ -88,6 +88,30 @@
         };
       };
     };
+
+    hyprpaper = {
+      enable = true;
+
+      settings = let
+        wall = pkgs.liLib.wallhaven.fetch {
+          id = "3qwx1v";
+          ext = "jpg";
+          hash = "sha256-OTHyHblVbtbehA+7jvMnOi4hic80eB9Wo+hzFvShGTY=";
+        };
+      in {
+        preload = ["${wall}"];
+        wallpaper = [
+          {
+            monitor = "DP-3";
+            path = "${wall}";
+          }
+          {
+            monitor = "DP-4";
+            path = "${wall}";
+          }
+        ];
+      };
+    };
   };
 
   programs = {

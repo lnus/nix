@@ -9,5 +9,10 @@
     };
   };
 
+  # TODO: Wire this properly!!!!!
+  liLib = final: _prev: {
+    liLib = import ../lib {pkgs = final;};
+  };
+
   modifications = final: prev: {};
 }
