@@ -79,11 +79,13 @@
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
   };
 
-  services.udiskie = {
-    enable = true;
-    settings = {
-      program_options = {
-        file_manager = "${lib.getExe pkgs.thunar}";
+  services = {
+    udiskie = {
+      enable = true;
+      settings = {
+        program_options = {
+          file_manager = "${lib.getExe pkgs.thunar}";
+        };
       };
     };
   };
@@ -119,9 +121,7 @@
     bar.widgets.right = [
       {id = "Tray";}
       {id = "NotificationHistory";}
-      {id = "ScreenRecorder";}
       {id = "Volume";}
-      {id = "Clock";}
     ];
   };
 }
