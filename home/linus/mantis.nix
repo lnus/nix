@@ -19,6 +19,8 @@
       noctalia.enable = true;
       ui.enable = true; # icons + cursor
 
+      bolt.enable = true;
+
       browsers = {
         helium.enable = true;
         firefox.enable = true;
@@ -61,11 +63,33 @@
     codex
   ];
 
-  services.udiskie = {
-    enable = true;
-    settings = {
-      program_options = {
-        file_manager = "${lib.getExe pkgs.thunar}";
+  services = {
+    udiskie = {
+      enable = true;
+      settings = {
+        program_options = {
+          file_manager = "${lib.getExe pkgs.thunar}";
+        };
+      };
+    };
+
+    hyprpaper = {
+      enable = true;
+
+      settings = let
+        wall = pkgs.liLib.wallhaven.fetch {
+          id = "vpy573";
+          ext = "jpg";
+          hash = "sha256-aKeMXlmAW2uo73NXkU5QY4Ym6ZQ9dZj+YyznMCNsisI=";
+        };
+      in {
+        preload = ["${wall}"];
+        wallpaper = [
+          {
+            monitor = "eDP-1";
+            path = "${wall}";
+          }
+        ];
       };
     };
   };
