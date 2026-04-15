@@ -123,8 +123,9 @@
     bar.widgets.right = [
       {id = "Tray";}
       {id = "NotificationHistory";}
-      {id = "Battery";}
       {id = "Volume";}
+      {id = "Network";}
+      {id = "Battery";}
       {id = "Brightness";}
     ];
   };
