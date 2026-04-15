@@ -79,14 +79,10 @@ Format: `<scope>: <subject>` with a required body.
 - `flake.lock` 2 inputs: `flake.lock: update <input1> <input2>`; body with diff
 - Treewide format runs: subject `infra: format nix files`, body `run nix fmt across repo to normalize formatting`
 
-**Body format:** one short summary line, then host bullets when more than one change or host is involved.
+**Body:** include only what the diff doesn't tell you — motivation, trade-offs, or cross-host scope. Skip it entirely for self-evident changes. When multiple hosts are affected, list them briefly.
 
 ```
 pkgs: +helium 0.9.2.1
 
-add helium package + hm feature
-miku/linus:
-  - enable helium browser
-mantis/linus:
-  - enable helium browser
+replaces chromium; enables on both hosts
 ```
