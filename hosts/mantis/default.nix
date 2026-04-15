@@ -14,7 +14,12 @@
       niri.enable = true;
       gaming.enable = true;
       ime.enable = true;
-      media.enable = true;
+
+      media = {
+        enable = true;
+        obs.enable = false;
+      };
+
       greeter = {
         enable = true;
         type = "tuigreet";
