@@ -56,7 +56,7 @@
 
     # unlimited bacon (games)
     protonup-ng
-    lutris
+    # lutris
     prismlauncher
     dolphin-emu
     # add back eventually...
