@@ -59,6 +59,7 @@
     spotify
     mpv
     qbittorrent
+    stable.stremio-linux-shell
 
     # ai st00f
     claude-code
