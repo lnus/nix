@@ -93,6 +93,11 @@
       };
     };
 
+    easyeffects = {
+      enable = true;
+      preset = "";
+    };
+
     hyprpaper = {
       enable = true;
 
