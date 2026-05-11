@@ -77,6 +77,8 @@
     codex
   ];
 
+  xdg.configFile."wireplumber/wireplumber.conf.d".source = ./wireplumber.conf.d;
+
   home.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
   };
