@@ -5,6 +5,7 @@
     ./ui.nix
     ./zed.nix
     ./bolt.nix
+    ./discord.nix
     ./niri
     ./browsers
   ];

@@ -21,6 +21,11 @@
 
       bolt.enable = true;
 
+      discord = {
+        enable = true;
+        vesktop = false;
+      };
+
       zed = {
         enable = true;
         nvidia = true;
@@ -41,9 +46,6 @@
       };
     };
   };
-
-  # Prefer Vesktop for discord:// URLs.
-  xdg.mimeApps.defaultApplications."x-scheme-handler/discord" = "vesktop.desktop";
 
   home.packages = with pkgs; [
     # misc
@@ -116,7 +118,6 @@
 
   programs = {
     mpv.enable = true;
-    vesktop.enable = true;
 
     retroarch = {
       enable = true;
