@@ -13,5 +13,5 @@
     packages = [inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.default];
   };
 
-  home-manager.users.linus = import ../../../home/linus/${config.networking.hostName}.nix;
+  home-manager.users.linus = import ../../../home/linus/${config.networking.hostName};
 }

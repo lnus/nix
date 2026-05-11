@@ -1,12 +1,12 @@
 {
-  lib,
   pkgs,
+  lib,
   ...
 }: {
   imports = [
-    ./home.nix
-    ../features/cli
-    ../features/desktop
+    ../home.nix
+    ../../features/cli
+    ../../features/desktop
   ];
 
   features = {
@@ -24,6 +24,11 @@
       discord = {
         enable = true;
         vesktop = false;
+      };
+
+      zed = {
+        enable = true;
+        nvidia = true;
       };
 
       browsers = {
@@ -45,25 +50,36 @@
   home.packages = with pkgs; [
     # misc
     thunar
+    kdePackages.okular
 
     # password manager
     _1password-gui
     _1password-cli
 
     # unlimited bacon (games)
-    itch
+    protonup-ng
     lutris
+    prismlauncher
+    dolphin-emu
+    # add back eventually...
+    # shipwright
 
     # media
     chatterino2
-    spotify
-    mpv
     qbittorrent
+    spotify
+    nicotine-plus
+    fooyin
+    stable.stremio-linux-shell
 
     # ai st00f
     claude-code
     codex
   ];
+
+  home.sessionVariables = {
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
+  };
 
   services = {
     udiskie = {
@@ -80,15 +96,19 @@
 
       settings = let
         wall = pkgs.liLib.wallhaven.fetch {
-          id = "vpy573";
+          id = "3qwx1v";
           ext = "jpg";
-          hash = "sha256-aKeMXlmAW2uo73NXkU5QY4Ym6ZQ9dZj+YyznMCNsisI=";
+          hash = "sha256-OTHyHblVbtbehA+7jvMnOi4hic80eB9Wo+hzFvShGTY=";
         };
       in {
         preload = ["${wall}"];
         wallpaper = [
           {
-            monitor = "eDP-1";
+            monitor = "DP-3";
+            path = "${wall}";
+          }
+          {
+            monitor = "DP-4";
             path = "${wall}";
           }
         ];
@@ -103,7 +123,8 @@
       enable = true;
 
       cores = {
-        desmume.enable = true;
+        melonds.enable = true;
+        dolphin.enable = true; # This is... okay, not great though
       };
     };
 
@@ -120,14 +141,12 @@
 
   programs.noctalia-shell.settings = {
     appLauncher.terminalCommand = "footclient -e";
+    network.wifiEnabled = false;
 
     bar.widgets.right = [
       {id = "Tray";}
       {id = "NotificationHistory";}
       {id = "Volume";}
-      {id = "Network";}
-      {id = "Battery";}
-      {id = "Brightness";}
     ];
   };
 }
