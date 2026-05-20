@@ -24,66 +24,9 @@ in {
     })
 
     (lib.mkIf cfg.enable {
-      xdg.configFile."tridactyl/blank.html".text = ''
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>New Tab</title>
-          <style>
-          body {
-            background-color: ${c.hex.base00};
-            margin: 0;
-            height: 100vh;
-          }
-          </style>
-        </head>
-        <body></body>
-        </html>
-      '';
-
-      xdg.configFile."tridactyl/themes/stylix.css".text =
-        builtins.readFile "${
-          fetchGit {
-            url = "https://github.com/tridactyl/tridactyl";
-            ref = "master";
-            rev = "030ef4d2ab8e20d36a5db19074c7e904a1963344";
-          }
-        }/src/static/themes/quake/quake.css"
-        + ''
-          :root {
-            --tridactyl-bg: ${c.hex.base00};
-            --tridactyl-fg: ${c.hex.base05};
-            --tridactyl-scrollbar-color: var(--tridactyl-fg);
-
-            --tridactyl-hintspan-fg: var(--tridactyl-bg);
-            --tridactyl-hintspan-bg: var(--tridactyl-fg);
-
-            --tridactyl-hint-active-fg: var(--tridactyl-fg);
-            --tridactyl-hint-active-bg: rgba(0,0,0,0.3);
-            --tridactyl-hint-active-outline: none;
-            --tridactyl-hint-bg: rgba(0,0,0,0.3);
-            --tridactyl-hint-outline: none;
-          }
-        '';
-
-      xdg.configFile."tridactyl/tridactylrc".text = ''
-        unbind G
-        bind ge scrollto 100
-
-        set newtab about:blank
-        set editorcmd ghostty -e hx
-        set theme stylix
-      '';
-
       programs.firefox = {
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
-
-        package = pkgs.firefox.override {
-          nativeMessagingHosts = [
-            pkgs.tridactyl-native
-          ];
-        };
 
         profiles.linus = {
           isDefault = true;
@@ -120,7 +63,6 @@ in {
             ublock-origin
             sponsorblock
             reddit-enhancement-suite
-            tridactyl
           ];
 
           settings = {
@@ -167,7 +109,6 @@ in {
             "browser.search.suggest.enabled" = false; # stops sending keystrokes to search engine
 
             # === MISC ===
-            "browser.startup.homepage" = "file://${config.home.homeDirectory}/.config/tridactyl/blank.html";
             "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
             "browser.compactmode.show" = true;
             "browser.uidensity" = 1;
