@@ -22,7 +22,7 @@ in {
     xdg.desktopEntries."Bolt" = let
       bolt-wrap = let
         timezone = ":${osConfig.time.timeZone}";
-        xre_path = "/home/${config.home.username}/.mozilla/firefox/${config.home.username}"; # firefox profile
+        xre_path = "${config.xdg.configHome}/mozilla/firefox/${config.home.username}"; # firefox profile
       in
         pkgs.writeShellScriptBin "bolt-wrap" ''
           export TZ="${timezone}"

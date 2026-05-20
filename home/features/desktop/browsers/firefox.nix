@@ -43,7 +43,7 @@ in {
 
       xdg.configFile."tridactyl/themes/stylix.css".text =
         builtins.readFile "${
-          builtins.fetchGit {
+          fetchGit {
             url = "https://github.com/tridactyl/tridactyl";
             ref = "master";
             rev = "030ef4d2ab8e20d36a5db19074c7e904a1963344";
@@ -77,6 +77,8 @@ in {
 
       programs.firefox = {
         enable = true;
+        configPath = "${config.xdg.configHome}/mozilla/firefox";
+
         package = pkgs.firefox.override {
           nativeMessagingHosts = [
             pkgs.tridactyl-native
@@ -88,7 +90,7 @@ in {
 
           userChrome = ''
             @import "${
-              builtins.fetchGit {
+              fetchGit {
                 url = "https://github.com/Dook97/firefox-qutebrowser-userchrome";
                 ref = "master";
                 rev = "12598c1371a70fa230844f681b9a904eb9eb3546";

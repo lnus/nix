@@ -103,9 +103,9 @@
 
       settings = let
         wall = pkgs.liLib.wallhaven.fetch {
-          id = "3qwx1v";
+          id = "oglrv9";
           ext = "jpg";
-          hash = "sha256-OTHyHblVbtbehA+7jvMnOi4hic80eB9Wo+hzFvShGTY=";
+          hash = "sha256-GXyBfPHxJWn/e3kVKkgRHXigRd4m3yCBV06COv61l9Q=";
         };
       in {
         preload = ["${wall}"];
