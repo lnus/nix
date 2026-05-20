@@ -1,0 +1,2792 @@
+// CLAUDE.md
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+This is a NixOS flake-based system configuration managing two hosts (`miku`, `mantis`) with Home Manager for user-level configuration. Formatter is `alejandra` (`nix fmt`).
+
+## Commands
+
+Do not run builds, checks, tests, or formatting as part of agent work. Ask before running any commands that change system state.
+
+For reference:
+- Format: `nix fmt`
+- Build/switch (via `nh`): `nh os switch` / `nh home switch`
+
+## Architecture
+
+```
+flake.nix              # Inputs, overlays, nixosConfigurations (miku, mantis)
+hosts/
+  common/              # Shared NixOS config: HM wiring, overlays, nix settings, nh
+  features/
+    desktop/           # Host-level desktop features (niri, gaming, ime, greeter, media)
+    stylix/            # Stylix theming integration + lib.nix helper
+  miku/                # miku-specific: hardware, nvidia, networking, services
+  mantis/              # mantis-specific config
+home/
+  linus/
+    home.nix           # Shared base HM config for linus
+    miku.nix           # miku profile: feature toggles + host-specific packages/services
+    mantis.nix         # mantis profile
+  features/
+    cli/               # nushell, helix, zellij, jujutsu, direnv, zoxide, yazi, etc.
+    desktop/           # HM-level: noctalia-shell, browsers, zed, bolt, idle, niri, ui
+pkgs/                  # Custom packages (e.g. helium browser)
+overlays/              # additions (pkgs), stable (nixpkgs-stable), modifications, liLib
+lib/                   # Custom lib exposed as pkgs.liLib — currently wallhaven.fetch
+```
+
+**Overlay wiring:** `outputs.overlays` are applied in `hosts/common/default.nix`. The `liLib` overlay exposes `pkgs.liLib` (e.g. `pkgs.liLib.wallhaven.fetch { id; ext; hash; }`).
+
+**Feature toggles:** Host-level toggles live under `hosts/features` and are set in `hosts/<hostname>/default.nix`. Home Manager feature toggles live under `home/features` and are set in `home/linus/<hostname>.nix` via `features.cli.*` and `features.desktop.*`.
+
+**Home Manager specialArgs:** HM modules receive `inputs`, `outputs`, `stylixLib`, and `osConfig` (the NixOS config) via `extraSpecialArgs` in `hosts/common/default.nix`.
+
+## Style
+
+- Keep modules small and composable; use `features` modules for shared toggles.
+- Option names follow the pattern `features.desktop.niri.enable`.
+
+## VCS: Jujutsu (`jj`)
+
+This repo uses `jj` (jujutsu), not plain git. Use `jj` for all VCS actions.
+
+- View current change: `jj show`
+- Set commit message: `jj desc -m "<scope>: <subject>"`
+- Multi-line messages are always required, even for small changes.
+
+## Commit Message Convention
+
+Format: `<scope>: <subject>` with a required body.
+
+**Scopes:**
+- `pkgs`, `overlays`, `infra`, `doc` — canonical fixed scopes; use `overlays` (not `overlay`)
+- `home/<module>` (e.g. `home/niri`, `home/cli`) — HM feature module changes
+- `hosts/<module>` (e.g. `hosts/media`) — host feature module changes
+- `<hostname>` (e.g. `miku`, `mantis`) — entire host system config
+- `<hostname>/<user>` (e.g. `miku/linus`) — host + user profile changes
+- `<user>` (e.g. `linus`) — user only (rare)
+- Multiple hosts → use `infra` scope, list hosts in body
+- If `pkgs` or `overlays` is touched, prefer that scope over host/user
+
+**Subject rules:**
+- Version updates: `old -> new` (e.g. `pkgs: helium 0.9.4.1 -> helium 0.10.8.1`)
+- First pin: `overlays: foot -> foot 1.25.0`; re-pin: `overlays: foot 1.25.0 -> foot 1.26.0`
+- `flake.lock` bulk updates (3+ inputs): `flake.lock: update`; body must include verbatim diff from `nix flake update`
+- `flake.lock` single notable input: `flake.lock: noctalia v4.6.6 -> v4.7.2-git (e41c78e)` — version + short hash in subject, no body needed
+- `flake.lock` 2 inputs: `flake.lock: update <input1> <input2>`; body with diff
+- Treewide format runs: subject `infra: format nix files`, body `run nix fmt across repo to normalize formatting`
+
+**Body:** include only what the diff doesn't tell you — motivation, trade-offs, or cross-host scope. Skip it entirely for self-evident changes. When multiple hosts are affected, list them briefly.
+
+```
+pkgs: +helium 0.9.2.1
+
+replaces chromium; enables on both hosts
+```
+
+// README.md
+# nixos config
+
+work in progress.
+
+## misc
+
+```nu
+fd -t file -E *.lock -E *.kdl
+| lines
+| each {|f| $"// ($f)\n(cat $f)\n"}
+| save structure.txt --force
+```
+
+// flake.nix
+{
+  description = "System flake, so cute!!!!";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    conch = {
+      url = "github:lnus/conch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: let
+    inherit (self) outputs;
+
+    systems = [
+      "aarch64-linux"
+      "i686-linux"
+      "x86_64-linux"
+      "aarch64-darwin"
+      "x86_64-darwin"
+    ];
+
+    forAllSystems = nixpkgs.lib.genAttrs systems;
+  in {
+    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    overlays = import ./overlays {inherit inputs;};
+
+    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+
+    nixosConfigurations = {
+      miku = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
+        modules = [
+          inputs.stylix.nixosModules.stylix
+          ./hosts/miku
+        ];
+      };
+
+      mantis = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
+        modules = [
+          inputs.stylix.nixosModules.stylix
+          ./hosts/mantis
+        ];
+      };
+    };
+  };
+}
+
+// home/features/cli/default.nix
+{
+  pkgs,
+  lib,
+  ...
+}: {
+  imports = [
+    ./nushell
+    ./helix
+  ];
+
+  # Consider moving
+  home.packages = with pkgs; [
+    tree
+    gh
+  ];
+
+  home.shellAliases = {
+    la = "ls --all";
+    ll = "ls --long";
+    lla = "ls --long --all";
+    sl = "ls";
+    e = "hx";
+    v = "hx";
+    mv = "mv --verbose";
+    rm = "rm --verbose";
+    cp = "cp --verbose --recursive --progress";
+  };
+
+  programs.bash.enable = true;
+  home.shell.enableBashIntegration = true;
+
+  programs.zellij = {
+    enable = true;
+
+    settings = {
+      show_startup_tips = false;
+
+      simplified_ui = true;
+      pane_frames = false;
+      default_layout = "compact";
+      copy_on_select = false;
+
+      plugins = {
+        compact-bar = {
+          location = "zellij:compact-bar";
+          tooltip = "F1";
+        };
+      };
+    };
+  };
+
+  programs.direnv = {
+    enable = true;
+    silent = true;
+  };
+
+  programs.difftastic.enable = true;
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      user = {
+        name = "Linus";
+        email = "17277861+lnus@users.noreply.github.com";
+      };
+      ui.default-command = "log";
+      ui.diff-formatter = [
+        "${lib.getExe pkgs.difftastic}"
+        "--color=always"
+        "$left"
+        "$right"
+      ];
+    };
+  };
+  programs.ripgrep.enable = true;
+  programs.fd.enable = true;
+  programs.carapace.enable = true;
+  programs.yazi = {
+    enable = true;
+    shellWrapperName = "yy";
+  };
+  programs.zoxide.enable = true;
+  # maybe add back
+  # programs.skim.enable = true;
+}
+
+// home/features/cli/helix/default.nix
+{
+  pkgs,
+  lib,
+  config,
+  stylixLib,
+  ...
+}: let
+  cfg = config.features.cli.helix;
+
+  c = stylixLib.mkBase16 config;
+  isStylix = stylixLib.isStylix config;
+  hash = builtins.hashString "md5" (builtins.toJSON c.hex);
+in {
+  options.features.cli.helix.enable = lib.mkEnableOption "enable helix configuration";
+
+  config = lib.mkIf cfg.enable {
+    # TODO
+    # - move this out of the actual editor config so it can be used generally
+    home.packages = with pkgs; [
+      nixd # nix lsp
+      alejandra # nix formatter
+      prettier # markdown + general purpose formatter
+    ];
+
+    home.sessionVariables.EDITOR = "hx";
+    stylix.targets.helix.enable = false; # Custom theme override used instead
+
+    programs.helix = {
+      enable = true;
+
+      themes = lib.mkIf isStylix {
+        "stylix-${hash}" = import ./theme.nix {inherit c;};
+      };
+
+      settings = lib.mkMerge [
+        (lib.mkIf isStylix {
+          theme = "stylix-${hash}";
+        })
+
+        (lib.mkIf (!isStylix) {
+          theme = "gruvbox";
+        })
+
+        {
+          editor = {
+            line-number = "relative";
+            bufferline = "multiple";
+            soft-wrap.enable = true;
+
+            cursor-shape = {
+              normal = "block";
+              insert = "bar";
+              select = "underline";
+            };
+
+            file-picker = {
+              hidden = false;
+            };
+
+            indent-guides = {
+              render = true;
+            };
+          };
+
+          keys = {
+            normal = {
+              esc = [
+                "collapse_selection"
+                "keep_primary_selection"
+              ];
+
+              # NOTE verbose, but leaving so i remember the config for later
+              "space" = {
+                t = {
+                  i = ":toggle lsp.display-inlay-hints";
+                };
+              };
+            };
+
+            insert = {
+              C-c = "toggle_comments";
+            };
+          };
+        }
+      ];
+
+      languages = {
+        language = [
+          {
+            name = "typst";
+            language-servers = ["codebook" "tinymist"];
+            formatter.command = "typstyle";
+            auto-format = true;
+          }
+          {
+            name = "nix";
+            language-servers = ["nixd"];
+            formatter.command = "alejandra";
+            auto-format = true;
+          }
+          {
+            name = "rust";
+            auto-format = true;
+          }
+          {
+            name = "markdown";
+            auto-format = true;
+            formatter = {
+              command = "prettier";
+              args = [
+                "--parser"
+                "markdown"
+              ];
+            };
+          }
+        ];
+
+        language-server = {
+          codebook = {
+            command = "codebook-lsp";
+            args = ["serve"];
+          };
+        };
+      };
+    };
+  };
+}
+
+// home/features/cli/helix/theme.nix
+# Inspiration from:
+# https://github.com/Misterio77/nix-config/blob/main/home/gabriel/features/helix/default.nix
+# This is very messy and slightly vibecoded
+{c}: let
+  b = c.hex;
+
+  # Map reference theme (amberwood) palette names -> Base16 slots.
+  bg = b.base00;
+  gray01 = b.base01;
+  gray02 = b.base02;
+  gray03 = b.base03;
+  gray04 = b.base04;
+  gray06 = b.base04; # no perfect match
+  fg = b.base05;
+  white = b.base06;
+  bright_white = b.base07;
+
+  red = b.base08;
+  green = b.base0B;
+  bright_green = b.base0B;
+
+  yellow = b.base0A;
+  blue = b.base0D;
+  bright_blue = b.base0D;
+
+  magenta = b.base0E;
+  cyan = b.base0C;
+  bright_cyan = b.base0C;
+
+  comment = b.base03;
+
+  # “semantic” names from reference theme (just aliases)
+  function = yellow;
+  support_function = b.base04;
+  constant = b.base09;
+  string = green;
+  tag = b.base04;
+  keyword = magenta;
+  namespace = magenta;
+  numeric = b.base09;
+  status_line_fg = yellow;
+  operator = fg;
+  softwrap = b.base03;
+  conditional = b.base04;
+
+  cursor = b.base07; # strong cursor
+in {
+  # --- Syntax
+  "attribute" = {
+    fg = blue;
+    modifiers = ["italic"];
+  };
+  "ui.virtual.wrap" = softwrap;
+
+  "keyword" = keyword;
+  "keyword.control.conditional" = {
+    fg = conditional;
+    modifiers = ["italic"];
+  };
+  "keyword.directive" = magenta;
+
+  "namespace" = {
+    fg = namespace;
+    modifiers = ["italic"];
+  };
+
+  "punctuation" = gray06;
+  "punctuation.delimiter" = gray06;
+
+  "operator" = operator;
+  "special" = yellow;
+
+  "variable" = {fg = fg;};
+  "variable.builtin" = bright_blue;
+  "variable.parameter" = {
+    fg = white;
+    modifiers = ["italic"];
+  };
+  "variable.other.member" = white;
+
+  "type" = bright_blue;
+  "type.builtin" = magenta;
+  "type.enum.variant" = magenta;
+
+  "constructor" = yellow;
+
+  "function" = {
+    fg = function;
+    modifiers = ["italic"];
+  };
+  "function.macro" = bright_cyan;
+  "function.builtin" = support_function;
+
+  "tag" = tag;
+  "comment" = {
+    fg = comment;
+    modifiers = ["italic"];
+  };
+
+  "string" = string;
+  "string.regexp" = green;
+  "string.special" = yellow;
+
+  "constant" = constant;
+  "constant.builtin" = yellow;
+  "constant.numeric" = numeric;
+  "constant.character.escape" = cyan;
+
+  "label" = yellow;
+
+  # --- Markup
+  "markup.heading.marker" = {fg = gray06;};
+  "markup.heading" = {
+    fg = bright_blue;
+    modifiers = ["bold"];
+  };
+  "markup.list" = gray06;
+  "markup.bold" = {modifiers = ["bold"];};
+  "markup.italic" = {modifiers = ["italic"];};
+  "markup.link.url" = {
+    fg = green;
+    modifiers = ["underlined"];
+  };
+  "markup.link.text" = {
+    fg = blue;
+    modifiers = ["italic"];
+  };
+  "markup.raw" = yellow;
+
+  # --- Diff
+  "diff.plus" = bright_green;
+  "diff.minus" = red;
+  "diff.delta" = bright_blue;
+
+  # --- UI
+  "ui.background" = {bg = bg;};
+  "ui.background.separator" = {fg = fg;};
+
+  "ui.linenr" = {fg = gray04;};
+  "ui.linenr.selected" = {fg = fg;};
+
+  "ui.statusline" = {
+    fg = status_line_fg;
+    bg = gray01;
+  };
+  "ui.statusline.inactive" = {
+    fg = fg;
+    bg = gray01;
+    modifiers = ["dim"];
+  };
+  "ui.statusline.normal" = {
+    fg = bg;
+    bg = cyan;
+    modifiers = ["bold"];
+  };
+  "ui.statusline.insert" = {
+    fg = bg;
+    bg = blue;
+    modifiers = ["bold"];
+  };
+  "ui.statusline.select" = {
+    fg = bg;
+    bg = magenta;
+    modifiers = ["bold"];
+  };
+
+  "ui.popup" = {bg = gray01;};
+  "ui.window" = {fg = gray02;};
+  "ui.help" = {
+    bg = gray01;
+    fg = white;
+  };
+
+  "ui.text" = {fg = fg;};
+  "ui.text.focus" = {fg = fg;};
+
+  "ui.virtual" = {fg = gray02;};
+  "ui.virtual.ruler" = {bg = gray02;};
+  "ui.virtual.indent-guide" = {fg = gray02;};
+  "ui.virtual.inlay-hint" = {fg = gray03;};
+
+  "ui.selection" = {
+    bg = gray02;
+    fg = bright_white;
+  };
+  "ui.selection.primary" = {
+    bg = gray02;
+    fg = bright_white;
+  };
+
+  # Cursor (explicit fg+bg so it never vanishes)
+  "ui.cursor" = {
+    fg = bg;
+    bg = cursor;
+  };
+  "ui.cursor.primary" = {
+    fg = bg;
+    bg = cursor;
+  };
+  "ui.cursor.match" = {
+    fg = yellow;
+    modifiers = ["bold" "underlined"];
+  };
+  "ui.cursorline.primary" = {bg = gray01;};
+
+  "ui.highlight" = {bg = gray02;};
+
+  "ui.menu" = {
+    fg = white;
+    bg = gray01;
+  };
+  "ui.menu.selected" = {
+    fg = bright_white;
+    bg = gray03;
+  };
+  "ui.menu.scroll" = {
+    fg = gray04;
+    bg = gray01;
+  };
+
+  # --- Diagnostics / severities
+  diagnostic = {modifiers = ["underlined"];};
+  "diagnostic.unnecessary" = {modifiers = ["dim"];};
+  "diagnostic.deprecated" = {modifiers = ["crossed_out"];};
+
+  warning = yellow;
+  error = red;
+  info = bright_blue;
+  hint = bright_cyan;
+}
+
+// home/features/cli/nushell/config.nu
+$env.PROMPT_COMMAND = {|| conch}
+$env.PROMPT_COMMAND_RIGHT = {||}
+
+# Probably don't set these here but whatever
+$env.ZELLIJ_AUTO_ATTACH = false;
+$env.ZELLIJ_AUTO_EXIT = true;
+$env.YAZI_AUTO_START = false;
+
+def start_zellij [] {
+  if 'ZELLIJ' not-in ($env | columns) and 'ZELLIJ_DISABLE' not-in ($env | columns) {
+    if 'ZELLIJ_AUTO_ATTACH' in ($env | columns) and $env.ZELLIJ_AUTO_ATTACH {
+      zellij attach -c
+    } else {
+      zellij
+    }
+
+    if 'ZELLIJ_AUTO_EXIT' in ($env | columns) and $env.ZELLIJ_AUTO_EXIT {
+      exit
+    }
+  }
+}
+
+$env.config.keybindings = [
+    {
+        "event": {
+            "cmd": "yy"
+            "send": "executehostcommand"
+        }
+        "keycode": "char_e"
+        "mode": [
+            "vi_insert"
+            "vi_normal"
+        ]
+        "modifier": "Control"
+        "name": "launch_yazi"
+    }
+    {
+        "event": {
+            "cmd": "start_zellij"
+            "send": "executehostcommand"
+        }
+        "keycode": "char_z"
+        "mode": [
+            "vi_insert"
+            "vi_normal"
+        ]
+        "modifier": "Alt"
+        "name": "launch_zellij"
+    }
+]
+
+if ($nu.is-interactive
+    and ($env.YAZI_AUTO_START? | default false)
+    and ($env.YAZI_ID? | default "" | is-empty)
+    and 'ZELLIJ' not-in ($env | columns)) {
+  yy
+}
+
+// home/features/cli/nushell/default.nix
+{
+  pkgs,
+  config,
+  inputs,
+  lib,
+  ...
+}: let
+  cfg = config.features.cli.nushell;
+in {
+  options.features.cli.nushell.enable = lib.mkEnableOption "enable nushell configuration";
+
+  config = lib.mkIf cfg.enable {
+    home.shell.enableNushellIntegration = true;
+
+    home.packages = [
+      inputs.conch.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
+
+    programs.nushell = {
+      enable = true;
+
+      configFile.source = ./config.nu;
+
+      settings = {
+        buffer_editor = "hx";
+        edit_mode = "vi";
+        show_banner = false;
+        cursor_shape = {
+          vi_insert = "line";
+          vi_normal = "block";
+        };
+      };
+
+      shellAliases =
+        config.home.shellAliases
+        // {
+          fg = "job unfreeze";
+        };
+    };
+  };
+}
+
+// home/features/desktop/bolt.nix
+{
+  config,
+  osConfig,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.features.desktop.bolt;
+in {
+  options.features.desktop.bolt = {
+    enable = lib.mkEnableOption "enable bolt launcher";
+  };
+
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      bolt-launcher
+    ];
+
+    # Semi-jank patch to make wrapper behave in Niri
+    # Noctalia calls Quickshell.execDetached(["niri", "msg", "action", "spawn", "--"].concat(command));
+    # TODO Properly fix; issue with compositor spawning
+    xdg.desktopEntries."Bolt" = let
+      bolt-wrap = let
+        timezone = ":${osConfig.time.timeZone}";
+        xre_path = "/home/${config.home.username}/.mozilla/firefox/${config.home.username}"; # firefox profile
+      in
+        pkgs.writeShellScriptBin "bolt-wrap" ''
+          export TZ="${timezone}"
+          export XRE_PROFILE_PATH="${xre_path}"
+          sh -c bolt-launcher "$@"
+        '';
+    in {
+      categories = ["Game"];
+      comment = "An alternative launcher for RuneScape";
+      exec = "${lib.getExe bolt-wrap}";
+      genericName = "bolt-launcher";
+      icon = "bolt-launcher";
+      name = "Bolt Launcher";
+      terminal = false;
+      type = "Application";
+    };
+  };
+}
+
+// home/features/desktop/browsers/default.nix
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}: let
+  cfg = config.features.desktop.browsers;
+  desktopFileFor = name: cfg.desktopFiles.${name};
+in {
+  imports = [
+    ./firefox.nix
+    ./qutebrowser.nix
+    ./helium.nix
+  ];
+
+  options.features.desktop.browsers = {
+    default = lib.mkOption {
+      type = lib.types.nullOr (lib.types.enum ["firefox" "qutebrowser" "helium"]);
+      default = null;
+      description = "Default browser to use for XDG MIME handlers.";
+    };
+
+    desktopFiles = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = {
+        firefox = "firefox.desktop";
+        qutebrowser = "org.qutebrowser.qutebrowser.desktop";
+        helium = "helium.desktop";
+      };
+      description = "Desktop file names used for XDG MIME handlers.";
+    };
+  };
+
+  config = lib.mkIf (cfg.default != null) {
+    assertions = [
+      {
+        assertion = cfg.${cfg.default}.enable or false;
+        message = "features.desktop.browsers.default is set to ${cfg.default}, but that browser is not enabled.";
+      }
+    ];
+
+    home.sessionVariables.BROWSER = cfg.default;
+
+    home.packages = [
+      (pkgs.writeShellScriptBin "browser-new-window" ''
+        set -euo pipefail
+
+        case "${cfg.default}" in
+          firefox)
+            exec firefox --new-window about:blank
+            ;;
+          qutebrowser)
+            exec qutebrowser --target window about:blank
+            ;;
+          helium)
+            exec helium --new-window helium://newtab
+            ;;
+          *)
+            exec xdg-open about:blank
+            ;;
+        esac
+      '')
+    ];
+
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = let
+        desktopFile = desktopFileFor cfg.default;
+      in {
+        "x-scheme-handler/http" = desktopFile;
+        "x-scheme-handler/https" = desktopFile;
+        "text/html" = desktopFile;
+        "application/xhtml+xml" = desktopFile;
+      };
+    };
+  };
+}
+
+// home/features/desktop/browsers/firefox.nix
+# TODO: make more generic.
+# this is probably the messiest file of them all.
+# profiles, home dir, tridactyl, etc.
+{
+  inputs,
+  lib,
+  pkgs,
+  config,
+  stylixLib,
+  ...
+}: let
+  cfg = config.features.desktop.browsers.firefox;
+  c = stylixLib.mkBase16 config;
+  isStylix = stylixLib.isStylix config;
+  font_mono = stylixLib.getFont config;
+in {
+  options.features.desktop.browsers.firefox.enable = lib.mkEnableOption "enable firefox";
+
+  config = lib.mkMerge [
+    # Currently, firefox theming is disabled in stylix. But...
+    # I could change that in the future. Leaving this here.
+    (lib.mkIf (cfg.enable && isStylix) {
+      stylix.targets.firefox.profileNames = ["linus"];
+    })
+
+    (lib.mkIf cfg.enable {
+      xdg.configFile."tridactyl/blank.html".text = ''
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>New Tab</title>
+          <style>
+          body {
+            background-color: ${c.hex.base00};
+            margin: 0;
+            height: 100vh;
+          }
+          </style>
+        </head>
+        <body></body>
+        </html>
+      '';
+
+      xdg.configFile."tridactyl/themes/stylix.css".text =
+        builtins.readFile "${
+          builtins.fetchGit {
+            url = "https://github.com/tridactyl/tridactyl";
+            ref = "master";
+            rev = "030ef4d2ab8e20d36a5db19074c7e904a1963344";
+          }
+        }/src/static/themes/quake/quake.css"
+        + ''
+          :root {
+            --tridactyl-bg: ${c.hex.base00};
+            --tridactyl-fg: ${c.hex.base05};
+            --tridactyl-scrollbar-color: var(--tridactyl-fg);
+
+            --tridactyl-hintspan-fg: var(--tridactyl-bg);
+            --tridactyl-hintspan-bg: var(--tridactyl-fg);
+
+            --tridactyl-hint-active-fg: var(--tridactyl-fg);
+            --tridactyl-hint-active-bg: rgba(0,0,0,0.3);
+            --tridactyl-hint-active-outline: none;
+            --tridactyl-hint-bg: rgba(0,0,0,0.3);
+            --tridactyl-hint-outline: none;
+          }
+        '';
+
+      xdg.configFile."tridactyl/tridactylrc".text = ''
+        unbind G
+        bind ge scrollto 100
+
+        set newtab about:blank
+        set editorcmd ghostty -e hx
+        set theme stylix
+      '';
+
+      programs.firefox = {
+        enable = true;
+        package = pkgs.firefox.override {
+          nativeMessagingHosts = [
+            pkgs.tridactyl-native
+          ];
+        };
+
+        profiles.linus = {
+          isDefault = true;
+
+          userChrome = ''
+            @import "${
+              builtins.fetchGit {
+                url = "https://github.com/Dook97/firefox-qutebrowser-userchrome";
+                ref = "master";
+                rev = "12598c1371a70fa230844f681b9a904eb9eb3546";
+              }
+            }/userChrome.css";
+
+            :root {
+              --tab-active-bg-color: ${c.hex.base02};
+              --tab-inactive-bg-color: ${c.hex.base01};
+              --tab-active-fg-fallback-color: ${c.hex.base05};
+              --tab-inactive-fg-fallback-color: ${c.hex.base04};
+              --urlbar-focused-bg-color: ${c.hex.base02};
+              --urlbar-not-focused-bg-color: ${c.hex.base00};
+              --toolbar-bgcolor: ${c.hex.base01} !important;
+              --tab-font: '${font_mono.name}';
+              --urlbar-font: '${font_mono.name}';
+            }
+          '';
+
+          search = {
+            default = "ddg";
+            force = true;
+          };
+
+          # FIXME fugly
+          extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
+            ublock-origin
+            sponsorblock
+            reddit-enhancement-suite
+            tridactyl
+          ];
+
+          settings = {
+            # Adapted from: https://github.com/arkenfox/user.js/
+            # === TELEMETRY ===
+            "toolkit.telemetry.unified" = false;
+            "toolkit.telemetry.enabled" = false;
+            "toolkit.telemetry.server" = "data:,";
+            "toolkit.telemetry.archive.enabled" = false;
+            "toolkit.telemetry.newProfilePing.enabled" = false;
+            "toolkit.telemetry.shutdownPingSender.enabled" = false;
+            "toolkit.telemetry.updatePing.enabled" = false;
+            "toolkit.telemetry.bhrPing.enabled" = false;
+            "toolkit.telemetry.firstShutdownPing.enabled" = false;
+            "datareporting.healthreport.uploadEnabled" = false;
+            "datareporting.policy.dataSubmissionEnabled" = false;
+            "app.shield.optoutstudies.enabled" = false;
+            "app.normandy.enabled" = false;
+            "app.normandy.api_url" = "";
+
+            # === POCKET ===
+            "extensions.pocket.enabled" = false;
+
+            # === AI/ML FEATURES ===
+            "browser.ml.enable" = false;
+            "browser.ml.chat.enabled" = false;
+            "browser.ml.chat.sidebar" = false;
+
+            # === NEW TAB CLEANUP ===
+            "browser.newtabpage.activity-stream.feeds.telemetry" = false;
+            "browser.newtabpage.activity-stream.telemetry" = false;
+            "browser.newtabpage.activity-stream.feeds.section.topstories" = false;
+            "browser.newtabpage.activity-stream.showSponsored" = false;
+            "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+
+            # === PRIVACY ===
+            "privacy.trackingprotection.enabled" = true;
+            "dom.security.https_only_mode" = true;
+            "browser.contentblocking.category" = "strict";
+
+            # === ANNOYANCES ===
+            "browser.shell.checkDefaultBrowser" = false;
+            "browser.discovery.enabled" = false;
+            "browser.search.suggest.enabled" = false; # stops sending keystrokes to search engine
+
+            # === MISC ===
+            "browser.startup.homepage" = "file://${config.home.homeDirectory}/.config/tridactyl/blank.html";
+            "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+            "browser.compactmode.show" = true;
+            "browser.uidensity" = 1;
+            "browser.urlbar.trimURLs" = false;
+            "signon.rememberSignons" = false;
+          };
+        };
+      };
+    })
+  ];
+}
+
+// home/features/desktop/browsers/helium.nix
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.features.desktop.browsers.helium;
+in {
+  options.features.desktop.browsers.helium.enable = lib.mkEnableOption "enable helium browser";
+
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      helium
+    ];
+  };
+}
+
+// home/features/desktop/browsers/qutebrowser.nix
+{
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.features.desktop.browsers.qutebrowser; # TODO: move options into browser.nix
+in {
+  options.features.desktop.browsers.qutebrowser.enable = lib.mkEnableOption "enable qutebrowser";
+
+  config = lib.mkMerge [
+    (lib.mkIf cfg.enable {
+      programs.qutebrowser = {
+        enable = true;
+        settings = {
+          url.default_page = "https://start.duckduckgo.com";
+          content = {
+            headers.do_not_track = true;
+          };
+          editor = {
+            command = [
+              "footclient"
+              "-e"
+              "hx"
+              "{}"
+            ];
+          };
+        };
+      };
+    })
+  ];
+}
+
+// home/features/desktop/default.nix
+{
+  imports = [
+    ./noctalia.nix
+    ./idle.nix
+    ./ui.nix
+    ./zed.nix
+    ./bolt.nix
+    ./discord.nix
+    ./niri
+    ./browsers
+  ];
+}
+
+// home/features/desktop/discord.nix
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}: let
+  cfg = config.features.desktop.discord;
+in {
+  options.features.desktop.discord = {
+    enable = lib.mkEnableOption "enable discord";
+    vesktop = lib.mkEnableOption "use vesktop over modified discord";
+  };
+
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    (lib.mkIf (!cfg.vesktop) {
+      programs.discord = {
+        enable = true;
+
+        package = pkgs.discord.override {
+          withOpenASAR = true;
+          withVencord = true;
+        };
+      };
+    })
+
+    (lib.mkIf (cfg.vesktop) {
+      programs.vesktop.enable = true;
+
+      # Prefer Vesktop for discord:// URLs.
+      xdg.mimeApps.defaultApplications."x-scheme-handler/discord" = "vesktop.desktop";
+    })
+  ]);
+}
+
+// home/features/desktop/idle.nix
+{
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.idle;
+in {
+  options.features.desktop.idle = {
+    enable = lib.mkEnableOption "enable idle daemon (hypridle)";
+
+    timeout = lib.mkOption {
+      type = lib.types.int;
+      default = 600;
+      description = "Seconds before triggering idle actions";
+    };
+
+    lock_cmd = lib.mkOption {
+      type = lib.types.str;
+      description = "Command to lock the screen";
+      example = "hyprlock";
+    };
+
+    monitor_off_cmd = lib.mkOption {
+      type = lib.types.str;
+      description = "Command to turn off monitors";
+      example = "hyprctl dispatch dpms off";
+    };
+  };
+
+  config = {
+    services.hypridle = {
+      enable = cfg.enable;
+      settings = {
+        general = {
+          lock_cmd = cfg.lock_cmd;
+          before_sleep_cmd = cfg.lock_cmd;
+        };
+
+        listener = [
+          {
+            timeout = cfg.timeout;
+            on-timeout = cfg.lock_cmd;
+          }
+          {
+            timeout = cfg.timeout + 1;
+            on-timeout = cfg.monitor_off_cmd;
+          }
+        ];
+      };
+    };
+  };
+}
+
+// home/features/desktop/niri/default.nix
+# TODO: use niri flake
+# https://github.com/sodiboo/niri-flake
+{
+  config,
+  pkgs,
+  osConfig ? {},
+  lib,
+  stylixLib,
+  ...
+}: {
+  config = lib.mkIf (osConfig.features.desktop.niri.enable or false) {
+    home.file.".config/niri/config.kdl".text = let
+      colors = stylixLib.mkBase16 config;
+    in
+      builtins.readFile (
+        pkgs.substitute {
+          src = ./niri.kdl;
+          substitutions = [
+            "--subst-var-by"
+            "backdrop_color"
+            colors.hex.base00
+
+            "--subst-var-by"
+            "shadow_color"
+            "${colors.hex.base00}50"
+
+            "--subst-var-by"
+            "active_color"
+            colors.hex.base04
+
+            "--subst-var-by"
+            "inactive_color"
+            colors.hex.base00
+
+            "--subst-var-by"
+            "urgent_color"
+            colors.hex.base0F
+          ];
+        }
+      );
+
+    # FIX wl-clip, pavucontrol, and nm-applet should not be here
+    home.packages = with pkgs; [
+      wl-clipboard
+      networkmanagerapplet
+      pavucontrol
+    ];
+  };
+}
+
+// home/features/desktop/noctalia.nix
+{
+  inputs,
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.noctalia;
+in {
+  imports = [
+    inputs.noctalia.homeModules.default
+  ];
+
+  options.features.desktop.noctalia = {
+    enable = lib.mkEnableOption "enable noctalia shell";
+    wallpaper = lib.mkEnableOption "let noctalia manage wallpapers";
+  };
+
+  config = lib.mkIf cfg.enable {
+    programs.noctalia-shell = {
+      enable = true;
+
+      settings = let
+        pictures = "${config.home.homeDirectory}/Pictures";
+      in {
+        sessionMenu.countdownDuration = 1200;
+
+        bar = {
+          density = "compact";
+          showCapsule = false;
+          enableExclusionZoneInset = false;
+
+          widgets = {
+            left = [
+              {
+                id = "ControlCenter";
+                useDistroLogo = true;
+              }
+              {id = "Workspace";}
+              {id = "ActiveWindow";}
+              {id = "SystemMonitor";}
+            ];
+
+            center = [
+              {id = "Clock";}
+            ];
+          };
+        };
+
+        dock = {
+          enabled = false;
+        };
+
+        general = {
+          radiusRatio = 0.2;
+          lockScreenBlur = 0.4;
+          lockScreenTint = 0.7;
+          animationDisabled = true;
+          enableShadows = false;
+          avatarImage = "${pictures}/pfp.jpg";
+        };
+
+        controlCenter.cards = [
+          {
+            enabled = true;
+            id = "profile-card";
+          }
+          {
+            enabled = true;
+            id = "shortcuts-card";
+          }
+          {
+            enabled = true;
+            id = "audio-card";
+          }
+          {
+            enabled = false;
+            id = "brightness-card";
+          }
+          {
+            enabled = false;
+            id = "weather-card";
+          }
+          {
+            enabled = false;
+            id = "media-sysmon-card";
+          }
+        ];
+
+        notifications = {
+          density = "compact";
+        };
+
+        wallpaper = {
+          enabled = cfg.wallpaper;
+          overviewEnabled = true;
+
+          directory = "${pictures}/Wallpapers";
+          setWallpaperOnAllMonitors = false;
+        };
+
+        location = {
+          name = "Falun";
+          showWeekNumberInCalendar = true;
+          weatherShowEffects = false;
+          firstDayOfWeek = 1;
+        };
+
+        nightLight = {
+          enabled = true;
+          nightTemp = "2500";
+        };
+      };
+    };
+  };
+}
+
+// home/features/desktop/ui.nix
+# TODO: unclear name
+{
+  lib,
+  pkgs,
+  config,
+  stylixLib,
+  ...
+}: let
+  cfg = config.features.desktop.ui;
+  isStylix = stylixLib.isStylix config;
+in {
+  options.features.desktop.ui = {
+    enable = lib.mkEnableOption "enable cursor + icon pack";
+
+    cursorSize = lib.mkOption {
+      type = lib.types.int;
+      default = 24;
+      description = "Cursor size";
+    };
+  };
+
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.enable && isStylix) {
+      # gtk4 no longer inherits gtk.theme by default in 26.05+
+      gtk.gtk4.theme = config.gtk.theme;
+
+      stylix.icons = {
+        enable = true;
+        package = pkgs.tela-circle-icon-theme;
+        dark = "Tela-circle";
+      };
+
+      stylix.cursor = {
+        package = pkgs.bibata-cursors;
+        name = "Bibata-Original-Classic";
+        size = cfg.cursorSize;
+      };
+    })
+
+    # TODO add non-stylix alternative
+  ];
+}
+
+// home/features/desktop/zed.nix
+{
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.zed;
+in {
+  options.features.desktop.zed = {
+    enable = lib.mkEnableOption "enable zed editor";
+
+    nvidia = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Apply Nvidia Wayland workaround in the desktop entry";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    programs.zed-editor.enable = true;
+
+    # It is possible to work around this by just resizing the window,
+    # but unsetting WAYLAND_DISPLAY is more comfortable.
+    #
+    # Keep track of these issues and remove fix if resolved:
+    # https://github.com/zed-industries/zed/pull/46758
+    # https://github.com/zed-industries/zed/issues/39097
+    # https://github.com/YaLTeR/niri/issues/2335
+    xdg.desktopEntries = lib.mkIf cfg.nvidia {
+      "dev.zed.Zed" = {
+        name = "Zed";
+        genericName = "Text Editor";
+        comment = "A high-performance, multiplayer code editor.";
+        type = "Application";
+        startupNotify = true;
+        exec = "env -u WAYLAND_DISPLAY zeditor %U";
+        icon = "zed";
+        terminal = false;
+        categories = ["Utility" "TextEditor" "Development" "IDE"];
+        mimeType = [
+          "text/plain"
+          "application/x-zerosize"
+          "x-scheme-handler/zed"
+        ];
+        actions = {
+          NewWorkspace = {
+            name = "Open a new workspace";
+            exec = "zeditor --new %U";
+          };
+        };
+      };
+    };
+  };
+}
+
+// home/linus/home.nix
+{
+  config,
+  lib,
+  ...
+}: {
+  home.username = lib.mkDefault "linus";
+  home.homeDirectory = lib.mkDefault "/home/${config.home.username}";
+
+  home.stateVersion = "25.05";
+
+  programs.home-manager.enable = true;
+}
+
+// home/linus/mantis/default.nix
+{
+  lib,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ../home.nix
+    ../../features/cli
+    ../../features/desktop
+  ];
+
+  features = {
+    cli = {
+      nushell.enable = true;
+      helix.enable = true;
+    };
+
+    desktop = {
+      noctalia.enable = true;
+      ui.enable = true; # icons + cursor
+
+      bolt.enable = true;
+
+      discord = {
+        enable = true;
+        vesktop = false;
+      };
+
+      browsers = {
+        helium.enable = true;
+        firefox.enable = true;
+        qutebrowser.enable = false;
+        default = "firefox";
+      };
+
+      idle = {
+        enable = true;
+        timeout = 600;
+        lock_cmd = "noctalia-shell ipc call lockScreen lock";
+        monitor_off_cmd = "niri msg action power-off-monitors";
+      };
+    };
+  };
+
+  home.packages = with pkgs; [
+    # misc
+    thunar
+
+    # password manager
+    _1password-gui
+    _1password-cli
+
+    # unlimited bacon (games)
+    itch
+    lutris
+
+    # media
+    chatterino2
+    spotify
+    mpv
+    qbittorrent
+    stable.stremio-linux-shell
+
+    # ai st00f
+    claude-code
+    codex
+  ];
+
+  services = {
+    udiskie = {
+      enable = true;
+      settings = {
+        program_options = {
+          file_manager = "${lib.getExe pkgs.thunar}";
+        };
+      };
+    };
+
+    hyprpaper = {
+      enable = true;
+
+      settings = let
+        wall = pkgs.liLib.wallhaven.fetch {
+          id = "vpy573";
+          ext = "jpg";
+          hash = "sha256-aKeMXlmAW2uo73NXkU5QY4Ym6ZQ9dZj+YyznMCNsisI=";
+        };
+      in {
+        preload = ["${wall}"];
+        wallpaper = [
+          {
+            monitor = "eDP-1";
+            path = "${wall}";
+          }
+        ];
+      };
+    };
+  };
+
+  programs = {
+    mpv.enable = true;
+
+    retroarch = {
+      enable = true;
+
+      cores = {
+        desmume.enable = true;
+      };
+    };
+
+    foot = {
+      enable = true;
+      server.enable = true;
+    };
+
+    vicinae = {
+      enable = true;
+      systemd.enable = true;
+    };
+  };
+
+  programs.noctalia-shell.settings = {
+    appLauncher.terminalCommand = "footclient -e";
+
+    bar.widgets.right = [
+      {id = "Tray";}
+      {id = "NotificationHistory";}
+      {id = "Volume";}
+      {id = "Network";}
+      {id = "Battery";}
+      {id = "Brightness";}
+    ];
+  };
+}
+
+// home/linus/miku/default.nix
+{
+  pkgs,
+  lib,
+  ...
+}: {
+  imports = [
+    ../home.nix
+    ../../features/cli
+    ../../features/desktop
+  ];
+
+  features = {
+    cli = {
+      nushell.enable = true;
+      helix.enable = true;
+    };
+
+    desktop = {
+      noctalia.enable = true;
+      ui.enable = true; # icons + cursor
+
+      bolt.enable = true;
+
+      discord = {
+        enable = true;
+        vesktop = false;
+      };
+
+      zed = {
+        enable = true;
+        nvidia = true;
+      };
+
+      browsers = {
+        helium.enable = true;
+        firefox.enable = true;
+        qutebrowser.enable = false;
+        default = "firefox";
+      };
+
+      idle = {
+        enable = true;
+        timeout = 600;
+        lock_cmd = "noctalia-shell ipc call lockScreen lock";
+        monitor_off_cmd = "niri msg action power-off-monitors";
+      };
+    };
+  };
+
+  home.packages = with pkgs; [
+    # misc
+    thunar
+    kdePackages.okular
+
+    # password manager
+    _1password-gui
+    _1password-cli
+
+    # unlimited bacon (games)
+    protonup-ng
+    lutris
+    prismlauncher
+    dolphin-emu
+    # add back eventually...
+    # shipwright
+
+    # media
+    chatterino2
+    qbittorrent
+    spotify
+    nicotine-plus
+    fooyin
+    stable.stremio-linux-shell
+
+    # ai st00f
+    claude-code
+    codex
+  ];
+
+  xdg.configFile."wireplumber/wireplumber.conf.d".source = ./wireplumber.conf.d;
+
+  home.sessionVariables = {
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
+  };
+
+  services = {
+    udiskie = {
+      enable = true;
+      settings = {
+        program_options = {
+          file_manager = "${lib.getExe pkgs.thunar}";
+        };
+      };
+    };
+
+    easyeffects = {
+      enable = true;
+      preset = "";
+    };
+
+    hyprpaper = {
+      enable = true;
+
+      settings = let
+        wall = pkgs.liLib.wallhaven.fetch {
+          id = "3qwx1v";
+          ext = "jpg";
+          hash = "sha256-OTHyHblVbtbehA+7jvMnOi4hic80eB9Wo+hzFvShGTY=";
+        };
+      in {
+        preload = ["${wall}"];
+        wallpaper = [
+          {
+            monitor = "DP-3";
+            path = "${wall}";
+          }
+          {
+            monitor = "DP-4";
+            path = "${wall}";
+          }
+        ];
+      };
+    };
+  };
+
+  programs = {
+    mpv.enable = true;
+
+    retroarch = {
+      enable = true;
+
+      cores = {
+        melonds.enable = true;
+        dolphin.enable = true; # This is... okay, not great though
+      };
+    };
+
+    foot = {
+      enable = true;
+      server.enable = true;
+    };
+
+    vicinae = {
+      enable = true;
+      systemd.enable = true;
+    };
+  };
+
+  programs.noctalia-shell.settings = {
+    appLauncher.terminalCommand = "footclient -e";
+    network.wifiEnabled = false;
+
+    bar.widgets.right = [
+      {id = "Tray";}
+      {id = "NotificationHistory";}
+      {id = "Volume";}
+    ];
+  };
+}
+
+// home/linus/miku/wireplumber.conf.d/alsa-disable.conf
+monitor.alsa.rules = [
+	{matches = [{
+        node.name = "alsa_output.pci-0000_01_00.1.hdmi-stereo"
+	}]
+    actions = { update-props = {
+		node.disabled = true
+	}}},
+
+	{matches = [{
+        node.name = "alsa_output.usb-BurrBrown_from_Texas_Instruments_USB_AUDIO_CODEC-00.analog-stereo"
+	}]
+    actions = { update-props = {
+		node.disabled = true
+	}}},
+
+	{matches = [{
+        node.name = "alsa_input.pci-0000_00_1f.3.analog-stereo"
+	}]
+    actions = { update-props = {
+		node.disabled = true
+	}}},
+]
+
+// home/linus/miku/wireplumber.conf.d/device-rename.conf
+monitor.alsa.rules = [
+	{matches = [{
+		node.name = "alsa_output.usb-Apple__Inc._USB-C_to_3.5mm_Headphone_Jack_Adapter_DWH428500U9L1MQA8-00.analog-stereo"
+	}]
+	actions = { update-props = {
+		node.description = "IEM"
+	}}},
+
+	{matches = [{
+		node.name = "alsa_output.pci-0000_00_1f.3.analog-stereo"
+	}]
+	actions = { update-props = {
+		node.description = "Speakers"
+	}}},
+
+	{matches = [{
+		node.name = "alsa_input.usb-BurrBrown_from_Texas_Instruments_USB_AUDIO_CODEC-00.analog-stereo"
+	}]
+	actions = { update-props = {
+		node.description = "M-Audio M-Track Solo"
+	}}},
+]
+
+// hosts/common/default.nix
+{
+  pkgs,
+  inputs,
+  config,
+  outputs,
+  ...
+}: let
+  stylixLib = import ../features/stylix/lib.nix {inherit pkgs;};
+in {
+  imports = [
+    ./users
+    inputs.home-manager.nixosModules.home-manager
+  ];
+
+  home-manager = {
+    useUserPackages = true;
+    useGlobalPkgs = true;
+    extraSpecialArgs = {
+      inherit
+        inputs
+        outputs
+        stylixLib
+        ;
+      osConfig = config;
+    };
+  };
+
+  nixpkgs = {
+    overlays = [
+      # See `../../overlays/default.nix` for reference
+      outputs.overlays.additions
+      outputs.overlays.modifications
+      outputs.overlays.stable
+      outputs.overlays.liLib # TODO: Wire this properly!!!
+    ];
+
+    config = {
+      allowUnfree = true;
+    };
+  };
+
+  nix = {
+    settings = {
+      experimental-features = ["nix-command" "flakes"];
+    };
+
+    optimise.automatic = true;
+  };
+
+  services.speechd.enable = false;
+
+  environment.systemPackages = with pkgs; [
+    git
+    helix
+  ];
+
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 4d --keep 3";
+  };
+
+  users.defaultUserShell = pkgs.nushell;
+}
+
+// hosts/common/users/default.nix
+{
+  imports = [./linus.nix];
+}
+
+// hosts/common/users/linus.nix
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}: {
+  users.users.linus = {
+    initialPassword = "password";
+    isNormalUser = true;
+    description = "linus";
+    extraGroups = ["wheel" "networkmanager" "video" "render"];
+
+    packages = [inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.default];
+  };
+
+  home-manager.users.linus = import ../../../home/linus/${config.networking.hostName};
+}
+
+// hosts/features/desktop/default.nix
+{
+  imports = [
+    ./niri.nix
+    ./greeter.nix
+    ./gaming.nix
+    ./ime.nix
+    ./fonts.nix
+    ./media.nix
+  ];
+}
+
+// hosts/features/desktop/fonts.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.fonts;
+in {
+  options.features.desktop.fonts = {
+    # NOTE: Enabling by default, consider if it's better not doing that
+    cjk = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable CJK fonts (default = true)";
+    };
+  };
+
+  config = lib.mkMerge [
+    (lib.mkIf (cfg.cjk) {
+      # NOTE: Defaults to Japanese CJK glyphs without explicit fontconfig rules.
+      # I have put them there anyways, because I prefer JP being the default as explicit.
+      fonts = {
+        packages = with pkgs; [
+          noto-fonts-cjk-sans
+          noto-fonts-cjk-serif
+        ];
+
+        # NOTE: This overwrites default font *if* you don't use Stylix.
+        # Consider lib.mkMerge in that case. (Or setting per-app)
+        #
+        # This can be verified with: `fc-match -s`
+        # ... "GoMono Nerd Font" "Regular" // Stylix font
+        # ... "Noto Sans CJK JP" "Regular" // JP glyph preference
+        fontconfig.defaultFonts = {
+          sansSerif = ["Noto Sans CJK JP"];
+          serif = ["Noto Serif CJK JP"];
+          monospace = ["Noto Sans Mono CJK JP"];
+        };
+      };
+    })
+  ];
+}
+
+// hosts/features/desktop/gaming.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.gaming;
+in {
+  options.features.desktop.gaming = {
+    enable = lib.mkEnableOption "gaming support";
+  };
+
+  config = lib.mkIf cfg.enable {
+    programs.steam = {
+      enable = true;
+
+      remotePlay.openFirewall = true;
+      dedicatedServer.openFirewall = true;
+    };
+
+    programs.gamemode.enable = true;
+    programs.steam.gamescopeSession.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      mangohud
+    ];
+  };
+}
+
+// hosts/features/desktop/greeter.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.greeter;
+in {
+  options.features.desktop.greeter = {
+    enable = lib.mkEnableOption "enable greeter";
+
+    type = lib.mkOption {
+      type = lib.types.enum ["none" "gdm" "regreet" "tuigreet"];
+      default = "gdm";
+      description = "Which greeter to use";
+    };
+
+    session = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Session for greeter to use with tuigreet (ex. niri-session)";
+    };
+
+    user = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "User to autologin with for type = none";
+    };
+  };
+
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    (lib.mkIf (cfg.type == "none") {
+      assertions = [
+        {
+          assertion = cfg.session != null;
+          message = "features.desktop.greeter.type = \"none\" requires features.desktop.greeter.session to be set.";
+        }
+        {
+          assertion = cfg.user != null;
+          message = "features.desktop.greeter.type = \"none\" requires features.desktop.greeter.user to be set.";
+        }
+      ];
+
+      services.greetd = {
+        enable = true;
+        settings = {
+          default_session = {
+            command = cfg.session;
+            user = cfg.user;
+          };
+        };
+      };
+    })
+
+    (lib.mkIf (cfg.type == "gdm") {
+      services.displayManager.gdm = {
+        enable = true;
+        wayland = true;
+      };
+    })
+
+    (lib.mkIf (cfg.type == "regreet") {
+      programs.regreet.enable = true;
+    })
+
+    (lib.mkIf (cfg.type == "tuigreet") {
+      assertions = [
+        {
+          assertion = cfg.session != null;
+          message = "features.desktop.greeter.type = \"tuigreet\" requires features.desktop.greeter.session to be set.";
+        }
+      ];
+
+      services.greetd = {
+        enable = true;
+        settings.default_session = {
+          command = "${lib.getExe pkgs.tuigreet} --time --cmd ${cfg.session}";
+          user = "greeter";
+        };
+      };
+    })
+  ]);
+}
+
+// hosts/features/desktop/ime.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.ime;
+in {
+  options.features.desktop.ime = {
+    enable = lib.mkEnableOption "enable ime";
+    wayland = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Wayland session";
+    };
+  };
+
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    {
+      i18n.inputMethod = {
+        enable = true;
+        type = "fcitx5";
+        fcitx5 = {
+          addons = with pkgs; [
+            fcitx5-mozc-ut
+            fcitx5-gtk
+          ];
+
+          waylandFrontend = cfg.wayland;
+
+          settings.inputMethod = {
+            GroupOrder."0" = "Default";
+
+            "Groups/0" = {
+              Name = "Default";
+              "Default Layout" = "us";
+              DefaultIM = "mozc";
+            };
+
+            "Groups/0/Items/0".Name = "keyboard-us";
+            "Groups/0/Items/1".Name = "mozc";
+          };
+        };
+      };
+    }
+    (lib.mkIf (cfg.wayland) {
+      environment.variables = {
+        GTK_IM_MODULE = lib.mkForce "";
+      };
+    })
+  ]);
+}
+
+// hosts/features/desktop/media.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.media;
+in {
+  options.features.desktop.media = {
+    enable = lib.mkEnableOption "media and content creation tools";
+
+    obs.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable OBS Studio";
+    };
+
+    graphics.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable graphics and illustration tools (Krita, etc.)";
+    };
+
+    video.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable video editing tools";
+    };
+  };
+
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    (lib.mkIf cfg.obs.enable {
+      programs.obs-studio = {
+        enable = true;
+        package = pkgs.obs-studio.override {cudaSupport = true;};
+      };
+    })
+
+    (lib.mkIf cfg.graphics.enable {
+      environment.systemPackages = with pkgs; [
+        krita
+      ];
+    })
+
+    (lib.mkIf cfg.video.enable {
+      environment.systemPackages = with pkgs; [
+        kdePackages.kdenlive
+        losslesscut-bin
+      ];
+    })
+  ]);
+}
+
+// hosts/features/desktop/niri.nix
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.features.desktop.niri;
+in {
+  options.features.desktop.niri.enable = lib.mkEnableOption "enable niri compositor";
+
+  config = lib.mkIf cfg.enable {
+    programs.niri.enable = true;
+
+    # This is pre-set in nixpkgs
+    # https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/programs/wayland/niri.nix
+    # But I like being able to change
+    xdg.portal = {
+      enable = true;
+      extraPortals = [
+        pkgs.xdg-desktop-portal-gtk
+        pkgs.xdg-desktop-portal-gnome
+      ];
+
+      config.common.default = "gnome";
+    };
+
+    # TODO:
+    # - xwayland-satellite as systemd
+    # - file managers should be handled elsewhere
+    environment.systemPackages = with pkgs; [
+      xwayland-satellite
+      nautilus
+    ];
+  };
+}
+
+// hosts/features/stylix/charcoal-tweak.yaml
+system: "base16"
+name: "Charcoal Dark - Tweak"
+author: "Linus (https://github.com/lnus)"
+variant: "dark"
+palette:
+  base00: "#0f0b05"
+  base01: "#231b0e"
+  base02: "#2a2012"
+  base03: "#57462c"
+  base04: "#a88c62"
+  base05: "#c3a983"
+  base06: "#dec8a7"
+  base07: "#231b0e"
+  base08: "#b07878"
+  base09: "#c4956a"
+  base0A: "#c9b87a"
+  base0B: "#a4a878"
+  base0C: "#98a090"
+  base0D: "#a0988f"
+  base0E: "#a89080"
+  base0F: "#876e48"
+
+// hosts/features/stylix/compline.yaml
+system: "base16"
+name: "Compline"
+author: "jblais493 (https://github.com/jblais493/compline)"
+variant: "dark"
+palette:
+  base00: "1a1d21"
+  base01: "22262b"
+  base02: "282c34"
+  base03: "3d424a"
+  base04: "c0bdb8"
+  base05: "e0dcd4"
+  base06: "e8e4dc"
+  base07: "f5f2eb"
+  base08: "c8beb8"
+  base09: "c8c0b0"
+  base0A: "ccc4b0"
+  base0B: "b4beb4"
+  base0C: "b0bcc8"
+  base0D: "b4bec8"
+  base0E: "c4beb8"
+  base0F: "c0b8bc"
+
+// hosts/features/stylix/default.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  cfg = config.features.stylix;
+in {
+  options.features.stylix.enable = lib.mkEnableOption "enable stylix";
+
+  config = lib.mkIf cfg.enable {
+    stylix = {
+      enable = true;
+      base16Scheme = ./miasma.yaml;
+      polarity = "dark";
+
+      fonts = let
+        gfonts = pkgs.google-fonts.override {
+          fonts = ["Lora" "Inter"];
+        };
+      in {
+        serif = {
+          package = gfonts;
+          name = "Lora";
+        };
+        sansSerif = {
+          package = gfonts;
+          name = "Inter";
+        };
+        monospace = {
+          package = pkgs.nerd-fonts.monaspace;
+          name = "MonaspiceKr Nerd Font";
+        };
+      };
+    };
+  };
+}
+
+// hosts/features/stylix/lib.nix
+# TODO: extract into lib properly. messy!
+# slop but werks (if it breaks it's not my fault i promise)
+{pkgs}: let
+  fallbackColors = {
+    base00 = "#0f0b05";
+    base01 = "#231b0e";
+    base02 = "#2a2012";
+    base03 = "#57462c";
+    base04 = "#a88c62";
+    base05 = "#c3a983";
+    base06 = "#dec8a7";
+    base07 = "#231b0e";
+    base08 = "#b07878";
+    base09 = "#c4956a";
+    base0A = "#c9b87a";
+    base0B = "#a4a878";
+    base0C = "#98a090";
+    base0D = "#a0988f";
+    base0E = "#a89080";
+    base0F = "#876e48";
+  };
+
+  stripHash = color:
+    if builtins.hasPrefix "#" color
+    then builtins.substring 1 (builtins.stringLength color - 1) color
+    else color;
+
+  mkBase16 = cfg: let
+    isStylix = cfg ? stylix && cfg.stylix.enable;
+
+    # "RRGGBB" (no #)
+    raw =
+      if isStylix
+      then cfg.lib.stylix.colors
+      else builtins.mapAttrs (_: c: stripHash c) fallbackColors;
+
+    # "#RRGGBB"
+    hex =
+      builtins.mapAttrs (_: c: "#${raw.${_}}") raw;
+  in {
+    inherit raw hex;
+
+    # convenience: c.base08 → "RRGGBB"
+    __functor = _: raw;
+  };
+
+  fallbackFont = {
+    monospace = {
+      package = pkgs.nerd-fonts.go-mono;
+      name = "GoMono Nerd Font";
+    };
+  };
+in {
+  mkBase16 = mkBase16;
+
+  isStylix = cfg:
+    cfg ? stylix && cfg.stylix.enable;
+
+  getFont = cfg:
+    if cfg ? stylix && cfg.stylix.enable
+    then cfg.stylix.fonts.monospace
+    else fallbackFont.monospace;
+}
+
+// hosts/features/stylix/miasma.yaml
+system: "base16"
+name: "Miasma"
+author: "xero (https://github.com/xero/miasma.nvim)"
+variant: "dark"
+palette:
+  base00: "#222222" # bg
+  base01: "#2f2f2d" # bg -> fg (8%)
+  base02: "#3c3c39" # bg -> fg (16%)
+  base03: "#666666" # bright black
+  base04: "#868680" # base03 -> fg (35%)
+  base05: "#c2c2b0" # fg
+  base06: "#cec397" # fg -> white (55%)
+  base07: "#d7c483" # "white" from miasma
+  base08: "#685742" # red
+  base09: "#b36d43" # yellow slot in miasma, but reads as orange/brown
+  base0A: "#c9a554" # cyan slot in miasma, but reads as gold/yellow
+  base0B: "#5f875f" # green
+  base0C: "#c9a554" # cyan (same; miasma doesn’t have a distinct teal)
+  base0D: "#78824b" # blue (olive)
+  base0E: "#bb7744" # magenta (amber)
+  base0F: "#865232" # derived darker brown from base09
+
+// hosts/mantis/default.nix
+{pkgs, ...}: {
+  imports = [
+    ./hardware-configuration.nix
+
+    ../common
+    ../features/desktop
+    ../features/stylix
+  ];
+
+  features = {
+    stylix.enable = true;
+
+    desktop = {
+      niri.enable = true;
+      gaming.enable = true;
+      ime.enable = true;
+
+      media = {
+        enable = true;
+        obs.enable = false;
+      };
+
+      greeter = {
+        enable = true;
+        type = "tuigreet";
+        user = "linus";
+        session = "niri-session";
+      };
+    };
+  };
+
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 4096;
+      cores = 4;
+      qemu.options = [
+        "-vga none"
+        "-device virtio-vga-gl"
+        "-display gtk,gl=on"
+      ];
+    };
+  };
+
+  hardware.graphics.enable = true;
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  # This driver conflicts and borks my trackpad
+  boot.blacklistedKernelModules = ["elan_i2c"];
+
+  networking.hostName = "mantis";
+  networking.networkmanager.enable = true;
+
+  services.tailscale = {
+    enable = true;
+  };
+
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
+  };
+
+  hardware.bluetooth.enable = true;
+  services.tuned.enable = true;
+  services.upower.enable = true;
+
+  time.timeZone = "Europe/Stockholm";
+  i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = "us";
+
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
+
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  services.udisks2.enable = true;
+
+  system.stateVersion = "25.05";
+}
+
+// hosts/mantis/hardware-configuration.nix
+# Do not modify this file!  It was generated by ‘nixos-generate-config’
+# and may be overwritten by future invocations.  Please make changes
+# to /etc/nixos/configuration.nix instead.
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}: {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
+  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod"];
+  boot.initrd.kernelModules = [];
+  boot.kernelModules = ["kvm-amd"];
+  boot.extraModulePackages = [];
+
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/982b8a00-5c03-46d2-9627-19a006501ee4";
+    fsType = "ext4";
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/0836-2BBF";
+    fsType = "vfat";
+    options = ["fmask=0077" "dmask=0077"];
+  };
+
+  swapDevices = [
+    {device = "/dev/disk/by-uuid/932f5adf-f9f1-4cd8-a0bc-ceb37902986b";}
+  ];
+
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+}
+
+// hosts/miku/default.nix
+{
+  pkgs,
+  lib,
+  ...
+}: {
+  imports = [
+    ./hardware-configuration.nix
+
+    ../common
+    ../features/desktop
+    ../features/stylix
+  ];
+
+  features = {
+    stylix.enable = true;
+
+    desktop = {
+      niri.enable = true;
+      gaming.enable = true;
+      ime.enable = true;
+      media.enable = true;
+      greeter = {
+        enable = true;
+        type = "tuigreet";
+        user = "linus";
+        session = "niri-session";
+      };
+    };
+  };
+
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 8192;
+      cores = 8;
+      qemu.options = [
+        "-vga none"
+        "-device virtio-vga-gl"
+        "-display gtk,gl=on"
+      ];
+    };
+
+    services.xserver.videoDrivers = lib.mkForce [];
+    hardware.nvidia.package = lib.mkForce null;
+  };
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = false;
+  };
+
+  services.xserver.videoDrivers = ["nvidia"];
+  powerManagement.cpuFreqGovernor = "performance";
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.hostName = "miku";
+  networking.networkmanager.enable = true;
+
+  services.tailscale = {
+    enable = true;
+  };
+
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
+  };
+
+  time.timeZone = "Europe/Stockholm";
+  i18n.defaultLocale = "en_US.UTF-8";
+  console.keyMap = "us";
+
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
+
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  services.udisks2.enable = true;
+
+  # Media + Jellyfin
+  systemd.tmpfiles.rules = [
+    "d /srv/media 0775 linus media - -"
+  ];
+
+  users.groups.media = {
+    members = ["linus" "jellyfin"];
+  };
+
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  system.stateVersion = "25.05";
+}
+
+// hosts/miku/hardware-configuration.nix
+# Do not modify this file!  It was generated by ‘nixos-generate-config’
+# and may be overwritten by future invocations.  Please make changes
+# to /etc/nixos/configuration.nix instead.
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}: {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
+  boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "nvme" "usbhid"];
+  boot.initrd.kernelModules = [];
+  boot.kernelModules = ["kvm-intel"];
+  boot.extraModulePackages = [];
+
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/3110b379-9fd9-4242-82c4-c17ed7397a87";
+    fsType = "ext4";
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/93EB-4BA8";
+    fsType = "vfat";
+    options = ["fmask=0077" "dmask=0077"];
+  };
+
+  swapDevices = [
+    {device = "/dev/disk/by-uuid/c6298470-f753-479a-800c-116b81dc4f6f";}
+  ];
+
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+}
+
+// lib/default.nix
+{pkgs, ...}: {
+  wallhaven = import ./wallhaven.nix {inherit pkgs;};
+}
+
+// lib/wallhaven.nix
+{pkgs, ...}: {
+  fetch = {
+    id,
+    ext,
+    hash,
+  }:
+    pkgs.fetchurl {
+      url = "https://w.wallhaven.cc/full/${builtins.substring 0 2 id}/wallhaven-${id}.${ext}";
+      inherit hash;
+    };
+}
+
+// overlays/default.nix
+# See https://code.m3ta.dev/m3tam3re/nixcfg/src/branch/video18/overlays/default.nix for reference
+{inputs, ...}: {
+  additions = final: _prev: import ../pkgs {pkgs = final;};
+
+  stable = final: _prev: {
+    stable = import inputs.nixpkgs-stable {
+      system = final.stdenv.hostPlatform.system;
+      config.allowUnfree = true;
+    };
+  };
+
+  # TODO: Wire this properly!!!!!
+  liLib = final: _prev: {
+    liLib = import ../lib {pkgs = final;};
+  };
+
+  modifications = final: prev: {
+    # https://github.com/NixOS/nixpkgs/issues/513245#issuecomment-4320293674
+    openldap = prev.openldap.overrideAttrs {
+      doCheck = !prev.stdenv.hostPlatform.isi686;
+    };
+  };
+}
+
+// pkgs/default.nix
+{pkgs, ...}: {
+  helium = pkgs.callPackage ./helium {};
+}
+
+// pkgs/helium/default.nix
+# Thanks,
+# https://github.com/fpletz/flake
+# https://github.com/AlvaroParker/helium-nix
+{
+  stdenv,
+  lib,
+  appimageTools,
+  fetchurl,
+}: let
+  pname = "helium";
+  version = "0.10.8.1";
+
+  architectures = {
+    "x86_64-linux" = {
+      arch = "x86_64";
+      hash = "sha256-pN/Iw1ANggDOxxFb2CN436qbcrs8/bDcEqjZC80grQs=";
+    };
+  };
+
+  src = let
+    inherit (architectures.${stdenv.hostPlatform.system}) arch hash;
+  in
+    fetchurl {
+      url = "https://github.com/imputnet/helium-linux/releases/download/${version}/${pname}-${version}-${arch}.AppImage";
+      inherit hash;
+    };
+in
+  appimageTools.wrapType2 {
+    inherit pname version src;
+
+    extraInstallCommands = let
+      contents = appimageTools.extractType2 {
+        inherit pname version src;
+      };
+    in ''
+      # Install upstream desktop file
+      install -Dm444 ${contents}/${pname}.desktop \
+        $out/share/applications/${pname}.desktop
+
+      # Fix Exec to use the wrapped binary instead of AppRun
+      substituteInPlace $out/share/applications/${pname}.desktop \
+        --replace 'Exec=AppRun' 'Exec=${pname}'
+
+      # Copy icons shipped inside the AppImage
+      if [ -d "${contents}/usr/share/icons" ]; then
+        cp -r ${contents}/usr/share/icons $out/share/
+      fi
+    '';
+
+    meta = {
+      platforms = lib.attrNames architectures;
+    };
+  }
+
