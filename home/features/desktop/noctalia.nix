@@ -18,7 +18,6 @@ in {
   config = lib.mkIf cfg.enable {
     programs.noctalia-shell = {
       enable = true;
-      systemd.enable = true;
 
       settings = let
         pictures = "${config.home.homeDirectory}/Pictures";

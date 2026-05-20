@@ -126,6 +126,7 @@ layout {
 // --- Spawn processes ---
 // https://github.com/YaLTeR/niri/wiki/Example-systemd-Setup
 spawn-at-startup "xwayland-satellite"
+spawn-at-startup "noctalia-shell"
 
 environment {
     DISPLAY ":0"
