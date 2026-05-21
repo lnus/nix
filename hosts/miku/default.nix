@@ -92,19 +92,5 @@
 
   services.udisks2.enable = true;
 
-  # Media + Jellyfin
-  systemd.tmpfiles.rules = [
-    "d /srv/media 0775 linus media - -"
-  ];
-
-  users.groups.media = {
-    members = ["linus" "jellyfin"];
-  };
-
-  services.jellyfin = {
-    enable = true;
-    openFirewall = true;
-  };
-
   system.stateVersion = "26.05";
 }
