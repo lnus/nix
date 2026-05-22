@@ -20,6 +20,10 @@ in {
           withOpenASAR = true;
           withVencord = true;
         };
+
+        settings = {
+          SKIP_HOST_UPDATE = true;
+        };
       };
     })
 
