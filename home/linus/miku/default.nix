@@ -23,7 +23,7 @@
 
       discord = {
         enable = true;
-        vesktop = true;
+        vesktop = false;
       };
 
       zed = {
