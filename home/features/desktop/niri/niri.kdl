@@ -204,13 +204,9 @@ window-rule {
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; } // Mod-?
     Mod+B hotkey-overlay-title="Browser" { spawn "browser-new-window"; }
-    Mod+Return hotkey-overlay-title="Open a Terminal: foot (client)" { spawn "footclient"; }
-    Mod+Shift+Return hotkey-overlay-title="Open a Terminal: foot (fallback)" { spawn "foot"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: foot" { spawn "foot"; }
 
     // https://docs.noctalia.dev/getting-started/keybinds
-    // Mod+D hotkey-overlay-title="Run Application: noctalia-shell" { spawn "noctalia-shell" \
-    //                                                                 "ipc" "call" \
-    //                                                                 "launcher" "toggle"; }
     Mod+D hotkey-overlay-title="Run Application: visinae" { spawn "vicinae" "open"; }
 
     // https://github.com/noctalia-dev/noctalia-shell/issues/977
@@ -413,3 +409,6 @@ binds {
                                                                             "sessionMenu" "toggle"; }
     Ctrl+Alt+Delete { quit; }
 }
+
+// Include noctalia colors
+include "noctalia.kdl"

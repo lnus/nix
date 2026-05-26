@@ -21,6 +21,11 @@
 
       bolt.enable = true;
 
+      foot = {
+        enable = true;
+        server = false;
+      };
+
       discord = {
         enable = true;
         vesktop = false;
@@ -75,26 +80,6 @@
         };
       };
     };
-
-    hyprpaper = {
-      enable = true;
-
-      settings = let
-        wall = pkgs.liLib.wallhaven.fetch {
-          id = "vpy573";
-          ext = "jpg";
-          hash = "sha256-aKeMXlmAW2uo73NXkU5QY4Ym6ZQ9dZj+YyznMCNsisI=";
-        };
-      in {
-        preload = ["${wall}"];
-        wallpaper = [
-          {
-            monitor = "eDP-1";
-            path = "${wall}";
-          }
-        ];
-      };
-    };
   };
 
   programs = {
@@ -108,11 +93,6 @@
       };
     };
 
-    foot = {
-      enable = true;
-      server.enable = true;
-    };
-
     vicinae = {
       enable = true;
       systemd.enable = true;
@@ -120,7 +100,16 @@
   };
 
   programs.noctalia-shell.settings = {
-    appLauncher.terminalCommand = "footclient -e";
+    controlCenter.shortcuts = {
+      left = [
+        {id = "Network";}
+        {id = "Bluetooth";}
+      ];
+
+      right = [
+        {id = "PowerProfile";}
+      ];
+    };
 
     bar.widgets.right = [
       {id = "Tray";}

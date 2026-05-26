@@ -2,6 +2,7 @@
   inputs,
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.features.desktop.noctalia;
@@ -12,17 +13,21 @@ in {
 
   options.features.desktop.noctalia = {
     enable = lib.mkEnableOption "enable noctalia shell";
-    wallpaper = lib.mkEnableOption "let noctalia manage wallpapers";
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      adw-gtk3
+      nwg-look
+    ];
+
     programs.noctalia-shell = {
       enable = true;
 
       settings = let
         pictures = "${config.home.homeDirectory}/Pictures";
       in {
-        sessionMenu.countdownDuration = 1200;
+        sessionMenu.countdownDuration = 2000;
 
         bar = {
           density = "compact";
@@ -58,6 +63,19 @@ in {
           enableShadows = false;
           avatarImage = "${pictures}/pfp.jpg";
         };
+        controlCenter.shortcuts = {
+          left = [
+            {id = "WallpaperSelector";}
+            {id = "NoctaliaPerformance";}
+            {id = "DarkMode";}
+          ];
+
+          right = [
+            {id = "Notifications";}
+            {id = "KeepAwake";}
+            {id = "NightLight";}
+          ];
+        };
 
         controlCenter.cards = [
           {
@@ -91,12 +109,51 @@ in {
         };
 
         wallpaper = {
-          enabled = cfg.wallpaper;
-          overviewEnabled = true;
-
+          enabled = true;
           directory = "${pictures}/Wallpapers";
-          setWallpaperOnAllMonitors = false;
+
+          overviewEnabled = true;
+          setWallpaperOnAllMonitors = true;
+
+          skipStartupTransition = true;
         };
+
+        colorSchemes.useWallpaperColors = true;
+
+        templates.activeTemplates = [
+          {
+            id = "discord";
+            enabled = true;
+          }
+          {
+            id = "foot";
+            enabled = true;
+          }
+          {
+            id = "gtk";
+            enabled = true;
+          }
+          {
+            id = "niri";
+            enabled = true;
+          }
+          {
+            id = "qt";
+            enabled = true;
+          }
+          {
+            id = "vicinae";
+            enabled = true;
+          }
+          {
+            id = "yazi";
+            enabled = true;
+          }
+          {
+            id = "helix";
+            enabled = true;
+          }
+        ];
 
         location = {
           name = "Falun";

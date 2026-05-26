@@ -18,13 +18,21 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # gtk4 no longer inherits gtk.theme by default in 26.05+
-    gtk.gtk4.theme = config.gtk.theme;
+    gtk = {
+      enable = true;
 
-    # TODO: fix
-    gtk.iconTheme = {
-      package = pkgs.tela-circle-icon-theme;
-      name = "Tela-circle-dark";
+      iconTheme = {
+        package = pkgs.tela-circle-icon-theme;
+        name = "Tela-circle-dark";
+      };
+    };
+
+    qt = {
+      enable = true;
+      platformTheme.name = "gtk";
+      style = {
+        name = "adwaita-dark";
+      };
     };
 
     home.pointerCursor = {

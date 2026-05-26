@@ -21,6 +21,11 @@
 
       bolt.enable = true;
 
+      foot = {
+        enable = true;
+        server = false;
+      };
+
       discord = {
         enable = true;
         vesktop = false;
@@ -97,30 +102,6 @@
       enable = true;
       preset = "";
     };
-
-    hyprpaper = {
-      enable = true;
-
-      settings = let
-        wall = pkgs.liLib.wallhaven.fetch {
-          id = "oglrv9";
-          ext = "jpg";
-          hash = "sha256-GXyBfPHxJWn/e3kVKkgRHXigRd4m3yCBV06COv61l9Q=";
-        };
-      in {
-        preload = ["${wall}"];
-        wallpaper = [
-          {
-            monitor = "DP-3";
-            path = "${wall}";
-          }
-          {
-            monitor = "DP-4";
-            path = "${wall}";
-          }
-        ];
-      };
-    };
   };
 
   programs = {
@@ -135,11 +116,6 @@
       };
     };
 
-    foot = {
-      enable = true;
-      server.enable = true;
-    };
-
     vicinae = {
       enable = true;
       systemd.enable = true;
@@ -147,7 +123,6 @@
   };
 
   programs.noctalia-shell.settings = {
-    appLauncher.terminalCommand = "footclient -e";
     network.wifiEnabled = false;
 
     bar.widgets.right = [
