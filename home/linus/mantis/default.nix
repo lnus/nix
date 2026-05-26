@@ -28,7 +28,7 @@
 
       discord = {
         enable = true;
-        vesktop = false;
+        vesktop = true;
       };
 
       browsers = {
