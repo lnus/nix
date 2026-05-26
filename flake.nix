@@ -10,11 +10,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    stylix = {
-      url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     conch = {
       url = "github:lnus/conch";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -57,7 +52,6 @@
       miku = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
-          inputs.stylix.nixosModules.stylix
           ./hosts/miku
         ];
       };
@@ -65,7 +59,6 @@
       mantis = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
-          inputs.stylix.nixosModules.stylix
           ./hosts/mantis
         ];
       };

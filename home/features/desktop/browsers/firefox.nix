@@ -6,23 +6,13 @@
   lib,
   pkgs,
   config,
-  stylixLib,
   ...
 }: let
   cfg = config.features.desktop.browsers.firefox;
-  c = stylixLib.mkBase16 config;
-  isStylix = stylixLib.isStylix config;
-  font_mono = stylixLib.getFont config;
 in {
   options.features.desktop.browsers.firefox.enable = lib.mkEnableOption "enable firefox";
 
   config = lib.mkMerge [
-    # Currently, firefox theming is disabled in stylix. But...
-    # I could change that in the future. Leaving this here.
-    (lib.mkIf (cfg.enable && isStylix) {
-      stylix.targets.firefox.profileNames = ["linus"];
-    })
-
     (lib.mkIf cfg.enable {
       programs.firefox = {
         enable = true;
@@ -30,28 +20,6 @@ in {
 
         profiles.linus = {
           isDefault = true;
-
-          userChrome = ''
-            @import "${
-              fetchGit {
-                url = "https://github.com/Dook97/firefox-qutebrowser-userchrome";
-                ref = "master";
-                rev = "12598c1371a70fa230844f681b9a904eb9eb3546";
-              }
-            }/userChrome.css";
-
-            :root {
-              --tab-active-bg-color: ${c.hex.base02};
-              --tab-inactive-bg-color: ${c.hex.base01};
-              --tab-active-fg-fallback-color: ${c.hex.base05};
-              --tab-inactive-fg-fallback-color: ${c.hex.base04};
-              --urlbar-focused-bg-color: ${c.hex.base02};
-              --urlbar-not-focused-bg-color: ${c.hex.base00};
-              --toolbar-bgcolor: ${c.hex.base01} !important;
-              --tab-font: '${font_mono.name}';
-              --urlbar-font: '${font_mono.name}';
-            }
-          '';
 
           search = {
             default = "ddg";

@@ -4,12 +4,9 @@
 
     ../common
     ../features/desktop
-    ../features/stylix
   ];
 
   features = {
-    stylix.enable = true;
-
     desktop = {
       niri.enable = true;
       gaming.enable = true;

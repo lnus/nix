@@ -2,14 +2,9 @@
   pkgs,
   lib,
   config,
-  stylixLib,
   ...
 }: let
   cfg = config.features.cli.helix;
-
-  c = stylixLib.mkBase16 config;
-  isStylix = stylixLib.isStylix config;
-  hash = builtins.hashString "md5" (builtins.toJSON c.hex);
 in {
   options.features.cli.helix.enable = lib.mkEnableOption "enable helix configuration";
 
@@ -23,25 +18,13 @@ in {
     ];
 
     home.sessionVariables.EDITOR = "hx";
-    stylix.targets.helix.enable = false; # Custom theme override used instead
 
     programs.helix = {
       enable = true;
 
-      themes = lib.mkIf isStylix {
-        "stylix-${hash}" = import ./theme.nix {inherit c;};
-      };
-
       settings = lib.mkMerge [
-        (lib.mkIf isStylix {
-          theme = "stylix-${hash}";
-        })
-
-        (lib.mkIf (!isStylix) {
-          theme = "gruvbox";
-        })
-
         {
+          theme = "gruvbox";
           editor = {
             line-number = "relative";
             bufferline = "multiple";

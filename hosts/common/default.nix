@@ -5,7 +5,6 @@
   outputs,
   ...
 }: let
-  stylixLib = import ../features/stylix/lib.nix {inherit pkgs;};
 in {
   imports = [
     ./users
@@ -19,7 +18,6 @@ in {
       inherit
         inputs
         outputs
-        stylixLib
         ;
       osConfig = config;
     };

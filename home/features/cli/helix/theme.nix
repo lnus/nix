@@ -1,3 +1,4 @@
+# TODO: rewrite completely somehow in a nice way whatever
 # Inspiration from:
 # https://github.com/Misterio77/nix-config/blob/main/home/gabriel/features/helix/default.nix
 # This is very messy and slightly vibecoded

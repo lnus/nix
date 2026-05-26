@@ -3,11 +3,9 @@
   lib,
   pkgs,
   config,
-  stylixLib,
   ...
 }: let
   cfg = config.features.desktop.ui;
-  isStylix = stylixLib.isStylix config;
 in {
   options.features.desktop.ui = {
     enable = lib.mkEnableOption "enable cursor + icon pack";
@@ -19,24 +17,22 @@ in {
     };
   };
 
-  config = lib.mkMerge [
-    (lib.mkIf (cfg.enable && isStylix) {
-      # gtk4 no longer inherits gtk.theme by default in 26.05+
-      gtk.gtk4.theme = config.gtk.theme;
+  config = lib.mkIf cfg.enable {
+    # gtk4 no longer inherits gtk.theme by default in 26.05+
+    gtk.gtk4.theme = config.gtk.theme;
 
-      stylix.icons = {
-        enable = true;
-        package = pkgs.tela-circle-icon-theme;
-        dark = "Tela-circle";
-      };
+    # TODO: fix
+    gtk.iconTheme = {
+      package = pkgs.tela-circle-icon-theme;
+      name = "Tela-circle-dark";
+    };
 
-      stylix.cursor = {
-        package = pkgs.bibata-cursors;
-        name = "Bibata-Original-Classic";
-        size = cfg.cursorSize;
-      };
-    })
-
-    # TODO add non-stylix alternative
-  ];
+    home.pointerCursor = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Original-Classic";
+      size = cfg.cursorSize;
+      gtk.enable = true;
+      x11.enable = true;
+    };
+  };
 }

@@ -8,13 +8,10 @@
 // --- Misc ---
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Miscellaneous
 overview {
-    backdrop-color "@backdrop_color@"
-
     workspace-shadow {
         softness 40
         spread 10
         offset x=0 y=10
-        color "@shadow_color@"
     }
 }
 
@@ -110,16 +107,11 @@ layout {
     focus-ring {
         off
         width 1
-        active-color "@active_color@"
-        inactive-color "@inactive_color@"
     }
 
     border {
         // off
         width 1
-        active-color "@active_color@"
-        inactive-color "@inactive_color@"
-        urgent-color "@urgent_color@"
     }
 }
 
