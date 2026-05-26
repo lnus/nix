@@ -36,10 +36,6 @@ in {
 
           widgets = {
             left = [
-              {
-                id = "ControlCenter";
-                useDistroLogo = true;
-              }
               {id = "Workspace";}
               {id = "ActiveWindow";}
               {id = "SystemMonitor";}
