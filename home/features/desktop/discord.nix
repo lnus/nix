@@ -31,7 +31,7 @@ in {
       programs.vesktop.enable = true;
 
       # Prefer Vesktop for discord:// URLs.
-      xdg.mimeApps.defaultApplications."x-scheme-handler/discord" = "vesktop.desktop";
+      # xdg.mimeApps.defaultApplications."x-scheme-handler/discord" = "vesktop.desktop";
     })
   ]);
 }

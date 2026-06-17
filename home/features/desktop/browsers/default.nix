@@ -61,17 +61,5 @@ in {
         esac
       '')
     ];
-
-    xdg.mimeApps = {
-      enable = true;
-      defaultApplications = let
-        desktopFile = desktopFileFor cfg.default;
-      in {
-        "x-scheme-handler/http" = desktopFile;
-        "x-scheme-handler/https" = desktopFile;
-        "text/html" = desktopFile;
-        "application/xhtml+xml" = desktopFile;
-      };
-    };
   };
 }

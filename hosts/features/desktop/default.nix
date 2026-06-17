@@ -6,5 +6,6 @@
     ./ime.nix
     ./fonts.nix
     ./media.nix
+    ./plasma.nix
   ];
 }

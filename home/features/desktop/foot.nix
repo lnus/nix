@@ -18,7 +18,6 @@ in {
       settings = {
         main = {
           font = "monospace:size=11";
-          include = "~/.config/foot/themes/noctalia";
         };
 
         mouse = {

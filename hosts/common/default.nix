@@ -45,7 +45,9 @@ in {
     optimise.automatic = true;
   };
 
-  services.speechd.enable = false;
+  # FIXME: Conflicts with plasma.
+  # Also not sure why I disable this other than file size but it is... kinda useful?
+  # services.speechd.enable = false;
 
   environment.systemPackages = with pkgs; [
     git

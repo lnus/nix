@@ -10,7 +10,7 @@ in {
     enable = lib.mkEnableOption "enable greeter";
 
     type = lib.mkOption {
-      type = lib.types.enum ["none" "gdm" "regreet" "tuigreet"];
+      type = lib.types.enum ["none" "gdm" "regreet" "tuigreet" "plasma"];
       default = "gdm";
       description = "Which greeter to use";
     };
@@ -49,6 +49,15 @@ in {
             user = cfg.user;
           };
         };
+      };
+    })
+
+    # NOTE: This might be redundant?
+    # Greeter should likely be set to false when doing plasma as a DE.
+    # Though I guess this allows for plasma without using KDE
+    (lib.mkIf (cfg.type == "plasma") {
+      services.displayManager.plasma-login-manager = {
+        enable = true;
       };
     })
 

@@ -12,16 +12,10 @@
 
   features = {
     desktop = {
-      niri.enable = true;
+      plasma.enable = true;
       gaming.enable = true;
       ime.enable = true;
       media.enable = true;
-      greeter = {
-        enable = true;
-        type = "tuigreet";
-        user = "linus";
-        session = "niri-session";
-      };
     };
   };
 

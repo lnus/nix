@@ -24,7 +24,7 @@ in {
 
       settings = lib.mkMerge [
         {
-          theme = "noctalia";
+          theme = "gruvbox";
           editor = {
             line-number = "relative";
             bufferline = "multiple";

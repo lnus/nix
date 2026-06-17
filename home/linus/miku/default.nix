@@ -17,7 +17,6 @@
 
     desktop = {
       noctalia.enable = true;
-      ui.enable = true; # icons + cursor
 
       bolt.enable = true;
 
