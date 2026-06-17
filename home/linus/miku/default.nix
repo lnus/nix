@@ -17,6 +17,7 @@
 
     desktop = {
       noctalia.enable = true;
+      plasma.enable = true;
 
       bolt.enable = true;
 

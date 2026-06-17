@@ -1,6 +1,7 @@
 {
   imports = [
     ./noctalia.nix
+    ./plasma.nix
     ./idle.nix
     ./foot.nix
     ./zed.nix
