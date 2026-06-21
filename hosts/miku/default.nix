@@ -57,6 +57,13 @@
     enable = true;
   };
 
+  services.sunshine = {
+    enable = true;
+    openFirewall = true;
+    capSysAdmin = true;
+    autoStart = false;
+  };
+
   services.mullvad-vpn = {
     enable = true;
     package = pkgs.mullvad-vpn;
