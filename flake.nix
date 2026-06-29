@@ -1,72 +1,15 @@
 {
-  description = "System flake, so cute!!!!";
-
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
 
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
 
-    conch = {
-      url = "github:lnus/conch";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    firefox-addons = {
-      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
-
-    systems = [
-      "aarch64-linux"
-      "i686-linux"
-      "x86_64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
-    ];
-
-    forAllSystems = nixpkgs.lib.genAttrs systems;
-  in {
-    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-    overlays = import ./overlays {inherit inputs;};
-
-    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
-
-    nixosConfigurations = {
-      miku = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        modules = [
-          ./hosts/miku
-        ];
-      };
-
-      mantis = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        modules = [
-          ./hosts/mantis
-        ];
-      };
-    };
-  };
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake
+    {inherit inputs;}
+    (inputs.import-tree ./modules);
 }
