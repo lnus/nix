@@ -10,6 +10,8 @@
   }: {
     imports = [
       self.nixosModules.mikuHardware
+
+      self.nixosModules.niri
     ];
 
     environment.systemPackages = with pkgs; [
