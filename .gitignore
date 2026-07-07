@@ -1,4 +1,5 @@
 # VM stuff
+old/
 result
 *.qcow2
 todo.log

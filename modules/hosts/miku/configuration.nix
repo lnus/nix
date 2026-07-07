@@ -12,10 +12,11 @@
       self.nixosModules.mikuHardware
 
       self.nixosModules.niri
+      self.nixosModules.helix
+      self.nixosModules.nushell
     ];
 
     environment.systemPackages = with pkgs; [
-      helix
       git
     ];
 
