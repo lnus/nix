@@ -113,10 +113,7 @@
     };
   };
 
-  flake.nixosModules.noctalia = {
-    pkgs,
-    ...
-  }: {
+  flake.nixosModules.noctalia = {pkgs, ...}: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia
     ];

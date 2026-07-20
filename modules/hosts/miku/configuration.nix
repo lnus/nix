@@ -1,8 +1,4 @@
-{
-  self,
-  inputs,
-  ...
-}: {
+{self, ...}: {
   flake.nixosModules.mikuConfiguration = {
     pkgs,
     lib,
@@ -18,15 +14,20 @@
         network
         audio
         driversNvidia
-      ])
-      ++ (with self.nixosModules; [
+
         helix
         niri
         noctalia
         firefox
+
+        steam
+        vesktop
+        boltLauncher
       ]);
 
     networking.hostName = "miku";
+
+    environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
 
     environment.systemPackages = with pkgs; [
       git

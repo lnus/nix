@@ -8,6 +8,10 @@
       enable = true;
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
     };
+
+    environment.systemPackages = with pkgs; [
+      xwayland-satellite
+    ];
   };
 
   perSystem = {
