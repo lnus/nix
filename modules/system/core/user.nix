@@ -14,5 +14,7 @@
 
     environment.variables.EDITOR = "hx";
     environment.variables.VISUAL = "hx";
+
+    environment.sessionVariables.GTK_THEME = "Adwaita:dark";
   };
 }

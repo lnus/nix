@@ -7,10 +7,11 @@
     packages.noctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
       inherit pkgs;
       settings = let
-        # pictures = "${config.home.homeDirectory}/Pictures";
         pictures = "/home/linus/Pictures"; # FIXME TEMP
       in {
         sessionMenu.countdownDuration = 2000;
+
+        colorSchemes.darkMode = true;
 
         bar = {
           density = "compact";
@@ -109,6 +110,28 @@
           enabled = true;
           nightTemp = "2500";
         };
+      };
+
+      colors = with self.theme; {
+        mPrimary = base0B;
+        mOnPrimary = base01;
+        mSecondary = base09;
+        mOnSecondary = base01;
+        mTertiary = base0C;
+        mOnTertiary = base01;
+        mError = base08;
+        mOnError = base01;
+        mSurface = base01;
+        mOnSurface = base06;
+        mSurfaceVariant = base01;
+        mOnSurfaceVariant = base06;
+        mSurfaceDim = base00;
+        mOnSurfaceDim = base04;
+        mOutline = base02;
+        mOutlineVariant = base01;
+        mShadow = base00;
+        mHover = base0D;
+        mOnHover = base01;
       };
     };
   };
