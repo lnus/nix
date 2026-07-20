@@ -84,6 +84,19 @@
         prefer-no-csd = _: {};
         animations.off = _: {};
 
+        layout = {
+          gaps = 0;
+          focus-ring = {
+            off = _: {};
+            width = 1;
+          };
+          border = {
+            width = 1;
+            active-color = self.theme.base0D;
+            inactive-color = self.theme.base03;
+          };
+        };
+
         binds = {
           "Mod+Shift+Slash".show-hotkey-overlay = _: {};
           "Mod+B" = _: {
