@@ -17,6 +17,8 @@
 
         helix
         niri
+        sddm
+        sddm-autologin
         noctalia
         firefox
 
