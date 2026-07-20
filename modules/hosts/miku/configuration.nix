@@ -23,6 +23,7 @@
         helix
         niri
         noctalia
+        firefox
       ]);
 
     networking.hostName = "miku";
