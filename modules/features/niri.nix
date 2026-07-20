@@ -108,8 +108,8 @@
             content.spawn = noctalia "launcher toggle";
           };
           "Mod+Return" = _: {
-            props.hotkey-overlay-title = "Open a Terminal: foot";
-            content.spawn-sh = lib.getExe pkgs.foot;
+            props.hotkey-overlay-title = "Open a Terminal: kitty";
+            content.spawn = [(lib.getExe self'.packages.kitty)];
           };
 
           "Mod+T" = _: {

@@ -21,6 +21,8 @@
         sddm-autologin
         noctalia
         firefox
+        kitty
+        fonts
 
         # these lean modules are mostly flat package lists —
         # worth revisiting as attrs/ or roles/ later
