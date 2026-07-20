@@ -10,7 +10,7 @@
   }: {
     environment.systemPackages =
       [
-        self.packages.${pkgs.stdenv.hostPlatform.system}.myHelix
+        self.packages.${pkgs.stdenv.hostPlatform.system}.helix
       ]
       ++ (with pkgs; [
         nixd # nix lsp
@@ -20,10 +20,6 @@
         tinymist # typst lsp
         typstyle # typst formatter
       ]);
-
-    # TODO move this out of the helix module so it can be used generally
-    environment.variables.EDITOR = "hx";
-    environment.variables.VISUAL = "hx";
   };
 
   perSystem = {
@@ -31,7 +27,7 @@
     lib,
     ...
   }: {
-    packages.myHelix = inputs.wrapper-modules.wrappers.helix.wrap {
+    packages.helix = inputs.wrapper-modules.wrappers.helix.wrap {
       inherit pkgs;
 
       settings = {

@@ -4,7 +4,7 @@
   ...
 }: {
   perSystem = {pkgs, ...}: {
-    packages.myNoctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
+    packages.noctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
       inherit pkgs;
       settings = let
         # pictures = "${config.home.homeDirectory}/Pictures";
@@ -111,5 +111,14 @@
         };
       };
     };
+  };
+
+  flake.nixosModules.noctalia = {
+    pkgs,
+    ...
+  }: {
+    environment.systemPackages = [
+      self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia
+    ];
   };
 }
