@@ -28,17 +28,17 @@ in {
 
         font = {
           name = "MonaspiceKr Nerd Font";
-          size = 11;
+          size = 10;
         };
 
         settings = {
-          font_size = 11;
+          font_size = 10;
           scrollbar = "never";
           window_padding_width = 9;
           enable_audio_bell = false;
           cursor_trail = 1;
           cursor_trail_start_threshold = 1;
-          cursor_trail_color = theme.base0E;
+          cursor_trail_color = theme.base05;
           cursor_shape = "beam";
           allow_remote_control = true;
           enabled_layouts = "splits";
