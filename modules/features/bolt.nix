@@ -7,7 +7,8 @@
       postBuild = ''
         wrapProgram $out/bin/bolt-launcher \
           --set TZ ":Europe/Stockholm" \
-          --set XRE_PROFILE_PATH "/home/linus/.config/mozilla/firefox/linus"
+          --set XRE_PROFILE_PATH "/home/linus/.config/mozilla/firefox/linus" \
+          --set _JAVA_AWT_WM_NONREPARENTING 1
       '';
     };
   };
