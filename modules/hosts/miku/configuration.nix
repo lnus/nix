@@ -44,6 +44,9 @@
     powerManagement.cpuFreqGovernor = "performance";
     services.udisks2.enable = true;
 
+    programs._1password-gui.enable = true;
+    programs._1password.enable = true;
+
     virtualisation.vmVariant = {
       virtualisation = {
         memorySize = 8192;
