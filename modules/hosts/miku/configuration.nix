@@ -28,6 +28,7 @@
         # worth revisiting as attrs/ or roles/ later
         ai
 
+        video
         steam
         vesktop
         boltLauncher
