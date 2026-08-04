@@ -81,15 +81,32 @@
           }
         ];
 
+        window-rules = [
+          {
+            matches = [{app-id = "BoltLauncher";}];
+            open-floating = true;
+          }
+          {
+            # RuneLite pop-up windows
+            matches = [{app-id = "net-runelite-client-RuneLite";}];
+            excludes = [{title = "RuneLite";}];
+            open-floating = true;
+          }
+        ];
+
         prefer-no-csd = _: {};
         animations.off = _: {};
 
         layout = {
           gaps = 0;
+          center-focused-column = "never";
+          always-center-single-column = _: {};
+
           focus-ring = {
             off = _: {};
             width = 1;
           };
+
           border = {
             width = 1;
             active-color = self.theme.base0D;
