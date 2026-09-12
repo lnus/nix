@@ -92,6 +92,13 @@
             excludes = [{title = "RuneLite";}];
             open-floating = true;
           }
+          {
+            # RuneLite opacity toggle
+            matches = [{app-id = "net-runelite-client-RuneLite";}];
+            excludes = [{title = "RuneLite .+";}];
+            opacity = 0.4;
+            draw-border-with-background = false;
+          }
         ];
 
         prefer-no-csd = _: {};
