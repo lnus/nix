@@ -14,6 +14,7 @@
         network
         audio
         driversNvidia
+        theming
 
         helix
         niri
