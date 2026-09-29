@@ -4,6 +4,7 @@
       pi-coding-agent
       opencode
       opencode-desktop
+      claude-code
     ];
   };
 }
