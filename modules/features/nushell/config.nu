@@ -26,6 +26,7 @@ alias rm = rm --verbose
 alias cp = cp --verbose --recursive --progress
 alias yy = yazi
 alias fg = job unfreeze
+alias lg = lazygit
 
 $env.config.keybindings = [
     {

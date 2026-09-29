@@ -12,6 +12,7 @@
       fd
       gh
       jujutsu
+      lazygit
       ripgrep
       starship
       tree
