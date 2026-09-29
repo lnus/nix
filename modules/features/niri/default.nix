@@ -22,7 +22,7 @@
     ...
   }: let
     noctalia = cmd:
-      ["noctalia-shell" "ipc" "call"]
+      [(lib.getExe self'.packages.noctalia) "msg"]
       ++ (lib.splitString " " cmd);
   in {
     packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
@@ -82,7 +82,7 @@
 
         layer-rules = [
           {
-            matches = [{namespace = "^noctalia-overview*";}];
+            matches = [{namespace = "^noctalia-backdrop";}];
             place-within-backdrop = true;
           }
         ];
@@ -135,7 +135,7 @@
           };
           "Mod+D" = _: {
             props.hotkey-overlay-title = "Run Application: noctalia";
-            content.spawn = noctalia "launcher toggle";
+            content.spawn = noctalia "panel-toggle launcher";
           };
           "Mod+Return" = _: {
             props.hotkey-overlay-title = "Open a Terminal: kitty";
@@ -287,8 +287,8 @@
           };
 
           "Mod+Shift+E" = _: {
-            props.hotkey-overlay-title = "Run Application: noctalia-shell";
-            content.spawn = noctalia "sessionMenu toggle";
+            props.hotkey-overlay-title = "Session Menu: noctalia";
+            content.spawn = noctalia "panel-toggle session";
           };
 
           "Ctrl+Alt+Delete".quit = _: {};
@@ -296,28 +296,28 @@
           "Super+Alt+L" = _: {
             props.allow-when-locked = true;
             props.hotkey-overlay-title = "Lock the Screen: noctalia";
-            content.spawn = noctalia "lockScreen lock";
+            content.spawn = noctalia "session lock";
           };
 
           "XF86AudioRaiseVolume" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "volume increase";
+            content.spawn = noctalia "volume-up";
           };
           "XF86AudioLowerVolume" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "volume decrease";
+            content.spawn = noctalia "volume-down";
           };
           "XF86AudioMute" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "volume muteOutput";
+            content.spawn = noctalia "volume-mute";
           };
           "XF86AudioMicMute" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "volume muteInput";
+            content.spawn = noctalia "mic-mute";
           };
           "XF86AudioPlay" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "media playPause";
+            content.spawn = noctalia "media toggle";
           };
           "XF86AudioNext" = _: {
             props.allow-when-locked = true;
@@ -329,11 +329,11 @@
           };
           "XF86MonBrightnessUp" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "brightness increase";
+            content.spawn = noctalia "brightness-up";
           };
           "XF86MonBrightnessDown" = _: {
             props.allow-when-locked = true;
-            content.spawn = noctalia "brightness decrease";
+            content.spawn = noctalia "brightness-down";
           };
         };
       };

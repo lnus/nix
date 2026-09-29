@@ -4,134 +4,90 @@
   ...
 }: {
   perSystem = {pkgs, ...}: {
-    packages.noctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
+    # TODO: switch to `inputs.wrapper-modules.wrappers.noctalia.wrap` once
+    # nix-community/nix-wrapper-modules#598 merges, and delete ./_module.nix
+    packages.noctalia = (inputs.wrapper-modules.lib.wrapModule ./_module.nix).wrap {
       inherit pkgs;
       settings = let
         pictures = "/home/linus/Pictures"; # FIXME TEMP
       in {
-        sessionMenu.countdownDuration = 2000;
-
-        colorSchemes.darkMode = true;
-
-        bar = {
-          density = "compact";
-          showCapsule = false;
-          enableExclusionZoneInset = false;
-
-          widgets = {
-            left = [
-              {id = "Workspace";}
-              {id = "ActiveWindow";}
-              {id = "SystemMonitor";}
-            ];
-
-            center = [
-              {id = "Clock";}
-            ];
-          };
+        theme = {
+          mode = "dark";
+          source = "builtin";
+          builtin = "Gruvbox";
         };
 
-        dock = {
-          enabled = false;
+        bar.default = {
+          thickness = 28;
+          capsule = true;
+          margin_ends = 0;
+          radius = 0;
+          shadow = false;
+          start = ["workspaces" "active_window" "cpu" "ram"];
+          center = ["clock"];
         };
 
-        general = {
-          radiusRatio = 0.2;
-          lockScreenBlur = 0.4;
-          lockScreenTint = 0.7;
-          animationDisabled = true;
-          enableShadows = false;
-          avatarImage = "${pictures}/pfp.jpg";
+        dock.enabled = false;
+        desktop_widgets.enabled = false;
+
+        # blurred wallpaper copy placed in niri's overview backdrop (see niri's layer-rules)
+        backdrop.enabled = true;
+
+        shell = {
+          corner_radius_scale = 0.0;
+          avatar_path = "${pictures}/pfp.jpg";
+          popup_shadows = false;
+          animation.speed = 2.0;
+          launcher.compact = true;
+          niri_overview_type_to_launch_enabled = true;
+          panel.shadow = false;
+
+          session.actions =
+            pkgs.lib.imap1 (i: action: {
+              inherit action;
+              shortcut = toString i;
+              countdown_seconds = 2.0;
+              variant =
+                if action == "shutdown"
+                then "destructive"
+                else "default";
+            })
+            ["lock" "logout" "lock_and_suspend" "reboot" "shutdown"];
         };
 
-        controlCenter.shortcuts = {
-          left = [
-            {id = "WallpaperSelector";}
-            {id = "NoctaliaPerformance";}
-            {id = "DarkMode";}
+        lockscreen = {
+          blur_intensity = 0.4;
+          tint_intensity = 0.7;
+          transition = ["zoom"];
+          transition_duration = 500;
+        };
+
+        control_center = {
+          calendar.show_week_numbers = true;
+          shortcuts = map (type: {inherit type;}) [
+            "wallpaper"
+            "power_profile"
+            "dark_mode"
+            "notification"
+            "caffeine"
+            "nightlight"
           ];
-
-          right = [
-            {id = "Notifications";}
-            {id = "KeepAwake";}
-            {id = "NightLight";}
-          ];
-        };
-
-        controlCenter.cards = [
-          {
-            enabled = true;
-            id = "profile-card";
-          }
-          {
-            enabled = true;
-            id = "shortcuts-card";
-          }
-          {
-            enabled = true;
-            id = "audio-card";
-          }
-          {
-            enabled = false;
-            id = "brightness-card";
-          }
-          {
-            enabled = false;
-            id = "weather-card";
-          }
-          {
-            enabled = false;
-            id = "media-sysmon-card";
-          }
-        ];
-
-        notifications = {
-          density = "compact";
         };
 
         wallpaper = {
           enabled = true;
           directory = "${pictures}/Wallpapers";
-
-          overviewEnabled = true;
-          setWallpaperOnAllMonitors = true;
-
-          skipStartupTransition = true;
+          transition = ["zoom"];
+          transition_on_startup = true;
         };
 
-        location = {
-          name = "Falun";
-          showWeekNumberInCalendar = true;
-          weatherShowEffects = false;
-          firstDayOfWeek = 1;
-        };
+        location.address = "Falun";
+        weather.effects = false;
 
-        nightLight = {
+        nightlight = {
           enabled = true;
-          nightTemp = "2500";
+          temperature_night = 2500;
         };
-      };
-
-      colors = with self.theme; {
-        mPrimary = base0B;
-        mOnPrimary = base01;
-        mSecondary = base09;
-        mOnSecondary = base01;
-        mTertiary = base0C;
-        mOnTertiary = base01;
-        mError = base08;
-        mOnError = base01;
-        mSurface = base01;
-        mOnSurface = base06;
-        mSurfaceVariant = base01;
-        mOnSurfaceVariant = base06;
-        mSurfaceDim = base00;
-        mOnSurfaceDim = base04;
-        mOutline = base02;
-        mOutlineVariant = base01;
-        mShadow = base00;
-        mHover = base0D;
-        mOnHover = base01;
       };
     };
   };
