@@ -13,6 +13,9 @@
       shell = self.packages.${pkgs.stdenv.hostPlatform.system}.nushell;
     };
 
+    # pkexec (e.g. greeter sync) rejects a $SHELL that isn't listed here
+    environment.shells = [self.packages.${pkgs.stdenv.hostPlatform.system}.nushell];
+
     security.sudo.enable = true;
 
     environment.variables.EDITOR = "hx";

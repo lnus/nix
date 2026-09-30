@@ -18,8 +18,7 @@
 
         helix
         niri
-        sddm
-        sddm-autologin
+        noctalia-greeter
         noctalia
         firefox
         kitty

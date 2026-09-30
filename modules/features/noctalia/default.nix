@@ -41,6 +41,8 @@
           launcher.compact = true;
           niri_overview_type_to_launch_enabled = true;
           panel.shadow = false;
+          # answers polkit auth requests (greeter sync, 1Password system auth, ...)
+          polkit_agent = true;
 
           session.actions =
             pkgs.lib.imap1 (i: action: {

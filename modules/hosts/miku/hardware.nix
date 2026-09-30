@@ -41,6 +41,10 @@
     networking.useDHCP = lib.mkDefault true;
     # networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
 
+    # only show the greeter on the main monitor; otherwise it mirrors to all
+    # outputs and keyboard focus lands on the rotated DP-3
+    services.displayManager.noctalia-greeter.settings.output.name = "DP-4";
+
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   };
