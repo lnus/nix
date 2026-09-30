@@ -11,7 +11,7 @@
 
     environment.systemPackages = with pkgs; [
       xwayland-satellite
-      adwaita-icon-theme
+      (self.theme.cursor.package pkgs)
     ];
   };
 
@@ -35,8 +35,8 @@
         hotkey-overlay.skip-at-startup = _: {};
 
         cursor = {
-          xcursor-theme = "Adwaita";
-          xcursor-size = 24;
+          xcursor-theme = self.theme.cursor.name;
+          xcursor-size = self.theme.cursor.size;
         };
 
         input = {
@@ -122,8 +122,8 @@
 
           border = {
             width = 1;
-            active-color = self.theme.base0D;
-            inactive-color = self.theme.base03;
+            active-color = self.theme.colors.base0D;
+            inactive-color = self.theme.colors.base03;
           };
         };
 

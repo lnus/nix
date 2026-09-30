@@ -3,7 +3,7 @@
   inputs,
   ...
 }: let
-  theme = self.theme;
+  theme = self.theme.colors;
 in {
   flake.nixosModules.kitty = {pkgs, ...}: {
     environment.systemPackages = [

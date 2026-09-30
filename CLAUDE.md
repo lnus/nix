@@ -45,7 +45,7 @@ Non-negotiable rules that shape every module in this repo:
 ```
 modules/
   parts.nix              # systems list + wrapper-modules flakeModule wiring; thin, no config
-  theme.nix              # flake.theme = { base00..base0F = ...; } (Gruvbox), read as self.theme
+  theme.nix              # flake.theme = { colors (Gruvbox base00..base0F); cursor; }, read as self.theme.<part>
   features/              # one wrapped user program per file/dir: niri.nix, helix/, nushell/, kitty/, ...
   attrs/                 # compositions of features/system modules, no new binaries (e.g. attrs/video)
   system/                # host-agnostic system config (boot, locale, user, audio, network, drivers) — no perSystem
@@ -62,7 +62,7 @@ A **feature** module exports two things named identically after the feature:
   perSystem = {pkgs, ...}: {
     packages.kitty = inputs.wrapper-modules.wrappers.kitty.wrap {
       inherit pkgs;
-      settings = { background = self.theme.base00; ... };
+      settings = { background = self.theme.colors.base00; ... };
     };
   };
   flake.nixosModules.kitty = {pkgs, ...}: {
@@ -101,9 +101,12 @@ only place host composition is decided), and `hardware.nix`.
 
 ### Theme
 
-`modules/theme.nix` exposes a Gruvbox palette as `self.theme.base00`..`base0F`.
+`modules/theme.nix` exposes the shared look under `self.theme`: the Gruvbox palette
+as `self.theme.colors.base00`..`base0F`, and the cursor as `self.theme.cursor`
+(`name`, `size`, `package` — a `pkgs -> drv` function, since the flake attr has no
+`pkgs`). Add further parts (icons, fonts, ...) as siblings there.
 Wrapped programs reference it directly for inline settings (e.g. niri's
-`layout.border.active-color = self.theme.base0D`); use a program's own
+`layout.border.active-color = self.theme.colors.base0D`); use a program's own
 `themeFile`/built-in theme instead when one already matches.
 
 ## Working with home-manager-shaped config (porting from `old/`)

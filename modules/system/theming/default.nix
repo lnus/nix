@@ -11,7 +11,7 @@
 
     # libadwaita ignores gtk-theme-name and only reads named color overrides from
     # ~/.config/gtk-4.0/gtk.css, so generate that from the shared palette instead
-    libadwaitaCss = with self.theme;
+    libadwaitaCss = with self.theme.colors;
       pkgs.writeText "gtk4-theme.css" ''
         @define-color accent_color ${base0D};
         @define-color accent_bg_color ${base0D};
