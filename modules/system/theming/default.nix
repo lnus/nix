@@ -79,7 +79,12 @@
     systemd.user.tmpfiles.rules = ["L+ %h/.config/gtk-4.0/gtk.css - - - - ${libadwaitaCss}"];
 
     # Qt's built-in gtk3 platform theme reads the GTK settings above,
-    # so Qt apps (including noctalia/quickshell) follow the same theme and icons
+    # so Qt apps (e.g. obs) follow the same theme and icons
     environment.sessionVariables.QT_QPA_PLATFORMTHEME = "gtk3";
+
+    # unwrapped GIO apps (e.g. noctalia) can't read the dconf values above without the schema
+    environment.sessionVariables.XDG_DATA_DIRS = [
+      (pkgs.glib.getSchemaDataDirPath pkgs.gsettings-desktop-schemas)
+    ];
   };
 }
