@@ -147,6 +147,10 @@ Lowercase `<scope>: <subject>` style, matching `git log` (e.g. `nushell: add laz
 alias`, `niri: add runelite opacity settings`). A `!` after the scope marks a
 breaking change (e.g. `infra!: start converting to dendritic pattern`). Keep the
 body, if any, to one or two sentences of intent — don't recount the diff file by file.
+It's a personal repo, so the tone is casual: lowercase is fine, write it like a
+quick note to future me that I can take in at a glance, not a formal changelog entry.
+Don't force it either — no jokes or flourishes for their own sake, and if the
+subject already says it all, skip the body entirely.
 
 ### Commits and pushes
 
