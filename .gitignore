@@ -1,7 +1,4 @@
-# VM stuff
-old/
-notes/
 result
+
+# VM stuff
 *.qcow2
-todo.log
-structure.txt
