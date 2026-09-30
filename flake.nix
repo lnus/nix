@@ -6,6 +6,11 @@
     import-tree.url = "github:denful/import-tree";
 
     wrapper-modules.url = "github:nix-community/nix-wrapper-modules";
+
+    tree-sitter-mapfile = {
+      url = "github:lnus/tree-sitter-mapfile/v0.1.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:

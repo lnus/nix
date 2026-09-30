@@ -85,7 +85,29 @@
         "flake-parts": "flake-parts",
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs",
+        "tree-sitter-mapfile": "tree-sitter-mapfile",
         "wrapper-modules": "wrapper-modules"
+      }
+    },
+    "tree-sitter-mapfile": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790810647,
+        "narHash": "sha256-1Tb+VPT04oW/mPN/t7Hfc5OO8OkdJMQyOLs/Px49I3k=",
+        "owner": "lnus",
+        "repo": "tree-sitter-mapfile",
+        "rev": "0fb0416164a5e4ee72b61db3c2ac0f3b8d131948",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lnus",
+        "ref": "v0.1.1",
+        "repo": "tree-sitter-mapfile",
+        "type": "github"
       }
     },
     "wrapper-modules": {

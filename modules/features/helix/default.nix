@@ -25,10 +25,26 @@
   perSystem = {
     pkgs,
     lib,
+    inputs',
     ...
-  }: {
-    packages.helix = inputs.wrapper-modules.wrappers.helix.wrap {
+  }: let
+    mapfileRuntime = inputs'.tree-sitter-mapfile.packages.helix-runtime;
+  in {
+    packages.helix = inputs.wrapper-modules.wrappers.helix.wrap ({config, ...}: {
       inherit pkgs;
+
+      # `hx --grammar build` can't write to the store, so ship the prebuilt mapfile
+      # grammar + queries in the wrapper's config dir; helix checks
+      # <config dir>/runtime before its default runtime.
+      buildCommand.mapfileGrammar = {
+        after = ["constructFiles"];
+        data = ''
+          rt=${config.generatedConfig.placeholder}/helix/runtime
+          mkdir -p "$rt/grammars" "$rt/queries"
+          ln -s ${mapfileRuntime}/grammars/mapfile.so "$rt/grammars/mapfile.so"
+          ln -s ${mapfileRuntime}/queries/mapfile "$rt/queries/mapfile"
+        '';
+      };
 
       settings = {
         theme = "gruvbox";
@@ -88,6 +104,7 @@
             name = "rust";
             auto-format = true;
           }
+          inputs.tree-sitter-mapfile.lib.helixLanguage
           {
             name = "markdown";
             language-servers = ["zk"];
@@ -114,6 +131,6 @@
           };
         };
       };
-    };
+    });
   };
 }
