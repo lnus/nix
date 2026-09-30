@@ -35,6 +35,7 @@
 
         shell = {
           corner_radius_scale = 0.0;
+          font_family = self.theme.fonts.sans;
           avatar_path = "${pictures}/pfp.jpg";
           popup_shadows = false;
           animation.speed = 2.0;

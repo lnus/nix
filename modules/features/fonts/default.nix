@@ -18,12 +18,13 @@
         self.packages.${pkgs.stdenv.hostPlatform.system}.fonts
       ];
 
-      # CJK prepended so it's preferred for CJK glyphs but falls back.
-      # Verify with: `fc-match -s`
+      # Theme fonts first; they have no CJK glyphs, so those fall through to
+      # the JP variant (listed as the first CJK font, so Han gets Japanese forms).
+      # Verify with: `fc-match -s sans-serif`
       fontconfig.defaultFonts = with self.theme.fonts; {
-        sansSerif = ["Noto Sans CJK JP" sans];
-        serif = ["Noto Serif CJK JP" serif];
-        monospace = ["Noto Sans Mono CJK JP" mono];
+        sansSerif = [sans "Noto Sans CJK JP"];
+        serif = [serif "Noto Serif CJK JP"];
+        monospace = [mono "Noto Sans Mono CJK JP"];
       };
     };
   };
