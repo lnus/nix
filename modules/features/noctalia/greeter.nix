@@ -28,7 +28,7 @@
           scheme = "Gruvbox";
           theme_mode = "dark";
           corner_radius_scale = 0.0;
-          font_family = "Inter";
+          font_family = self.theme.fonts.sans;
           hide_logo = true;
         };
 

@@ -20,10 +20,10 @@
 
       # CJK prepended so it's preferred for CJK glyphs but falls back.
       # Verify with: `fc-match -s`
-      fontconfig.defaultFonts = {
-        sansSerif = ["Noto Sans CJK JP" "Inter"];
-        serif = ["Noto Serif CJK JP" "Lora"];
-        monospace = ["Noto Sans Mono CJK JP" "MonaspiceKr Nerd Font"];
+      fontconfig.defaultFonts = with self.theme.fonts; {
+        sansSerif = ["Noto Sans CJK JP" sans];
+        serif = ["Noto Serif CJK JP" serif];
+        monospace = ["Noto Sans Mono CJK JP" mono];
       };
     };
   };

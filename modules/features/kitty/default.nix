@@ -27,7 +27,7 @@ in {
         };
 
         font = {
-          name = "MonaspiceKr Nerd Font";
+          name = self.theme.fonts.mono;
           size = 10;
         };
 

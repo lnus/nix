@@ -21,6 +21,13 @@
       base0F = "#d65d0e";
     };
 
+    # family names only; packages live in features/fonts
+    fonts = {
+      sans = "Inter";
+      serif = "Lora";
+      mono = "MonaspiceKr Nerd Font";
+    };
+
     cursor = {
       name = "Adwaita";
       size = 24;
