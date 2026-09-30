@@ -90,6 +90,7 @@
           }
           {
             name = "markdown";
+            language-servers = ["zk"];
             auto-format = true;
             formatter = {
               command = "prettier";
@@ -105,6 +106,11 @@
           codebook = {
             command = "codebook-lsp";
             args = ["serve"];
+          };
+          # only does anything inside a zk notebook (a dir with .zk/)
+          zk = {
+            command = "zk";
+            args = ["lsp"];
           };
         };
       };
