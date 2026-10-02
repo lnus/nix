@@ -16,7 +16,7 @@
       ]
       ++ (with pkgs; [
         nixd # nix lsp
-        alejandra # nix formatter
+        nixfmt # nix formatter
         prettier # markdown + general purpose formatter
         codebook # provides the `codebook-lsp` spellchecker binary
         tinymist # typst lsp
@@ -106,7 +106,7 @@
               {
                 name = "nix";
                 language-servers = [ "nixd" ];
-                formatter.command = "alejandra";
+                formatter.command = "nixfmt";
                 auto-format = true;
               }
               {
