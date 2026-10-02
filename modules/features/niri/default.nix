@@ -9,11 +9,6 @@
       enable = true;
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
     };
-
-    environment.systemPackages = with pkgs; [
-      xwayland-satellite
-      (self.theme.cursor.package pkgs)
-    ];
   };
 
   perSystem =
@@ -35,6 +30,7 @@
     {
       packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
         inherit pkgs;
+        runtimePkgs = [ pkgs.xwayland-satellite ];
         settings = {
           spawn-at-startup = [
             (lib.getExe self'.packages.noctalia)
