@@ -2,8 +2,9 @@
   self,
   inputs,
   ...
-}: {
-  flake.nixosModules.sddm = {pkgs, ...}: {
+}:
+{
+  flake.nixosModules.sddm = { pkgs, ... }: {
     services.displayManager.sddm = {
       enable = true;
       package = pkgs.kdePackages.sddm;

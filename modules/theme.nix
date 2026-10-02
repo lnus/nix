@@ -1,4 +1,4 @@
-{...}: {
+{ ... }: {
   # Shared look, read as `self.theme.<part>`.
   flake.theme = {
     # Gruvbox dark palette

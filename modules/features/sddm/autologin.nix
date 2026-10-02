@@ -1,8 +1,9 @@
 {
   self,
   ...
-}: {
-  flake.nixosModules.sddm-autologin = {...}: {
+}:
+{
+  flake.nixosModules.sddm-autologin = { ... }: {
     services.displayManager = {
       autoLogin.enable = true;
       autoLogin.user = "linus";

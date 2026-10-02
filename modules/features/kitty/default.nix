@@ -2,23 +2,26 @@
   self,
   inputs,
   ...
-}: let
+}:
+let
   theme = self.theme.colors;
-in {
-  flake.nixosModules.kitty = {pkgs, ...}: {
+in
+{
+  flake.nixosModules.kitty = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.kitty
     ];
   };
 
-  perSystem = {pkgs, ...}: {
-    packages.kitty = let
-      # Pulls the font closure into `.#kitty`'s own build.
-      fontsPkg = self.packages.${pkgs.stdenv.hostPlatform.system}.fonts;
-      fontsConf = pkgs.makeFontsConf {
-        fontDirectories = [fontsPkg];
-      };
-    in
+  perSystem = { pkgs, ... }: {
+    packages.kitty =
+      let
+        # Pulls the font closure into `.#kitty`'s own build.
+        fontsPkg = self.packages.${pkgs.stdenv.hostPlatform.system}.fonts;
+        fontsConf = pkgs.makeFontsConf {
+          fontDirectories = [ fontsPkg ];
+        };
+      in
       inputs.wrapper-modules.wrappers.kitty.wrap {
         inherit pkgs;
 

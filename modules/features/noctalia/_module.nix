@@ -7,10 +7,12 @@
   lib,
   pkgs,
   ...
-}: let
-  tomlFmt = pkgs.formats.toml {};
-in {
-  imports = [wlib.modules.default];
+}:
+let
+  tomlFmt = pkgs.formats.toml { };
+in
+{
+  imports = [ wlib.modules.default ];
   options = {
     generatedConfigDirname = lib.mkOption {
       type = lib.types.str;
@@ -36,16 +38,16 @@ in {
       '';
     };
     settings = lib.mkOption {
-      type = wlib.types.structuredValueWith {typeName = "TOML";};
-      default = {};
+      type = wlib.types.structuredValueWith { typeName = "TOML"; };
+      default = { };
       description = ''
         Noctalia configuration settings as an attribute set,
         to be written to `$NOCTALIA_CONFIG_HOME/noctalia/settings.toml`.
       '';
     };
     colors = lib.mkOption {
-      type = wlib.types.structuredValueWith {typeName = "JSON";};
-      default = {};
+      type = wlib.types.structuredValueWith { typeName = "JSON"; };
+      default = { };
       description = ''
         Noctalia color configuration as an attribute set
       '';

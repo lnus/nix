@@ -1,5 +1,5 @@
-{...}: {
-  flake.nixosModules.zk = {pkgs, ...}: {
+{ ... }: {
+  flake.nixosModules.zk = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
       zk
       fzf # zk's --interactive pickers

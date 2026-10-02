@@ -1,6 +1,9 @@
-{...}: {
-  flake.nixosModules.coreNixSettings = {...}: {
-    nix.settings.experimental-features = ["nix-command" "flakes"];
+{ ... }: {
+  flake.nixosModules.coreNixSettings = { ... }: {
+    nix.settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
     nixpkgs.config.allowUnfree = true;
 

@@ -1,5 +1,5 @@
-{lib, ...}: {
-  flake.nixosModules.steam = {pkgs, ...}: {
+{ lib, ... }: {
+  flake.nixosModules.steam = { pkgs, ... }: {
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;

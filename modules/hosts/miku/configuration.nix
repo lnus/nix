@@ -1,11 +1,14 @@
-{self, ...}: {
-  flake.nixosModules.mikuConfiguration = {
-    pkgs,
-    lib,
-    ...
-  }: {
-    imports =
-      [self.nixosModules.mikuHardware]
+{ self, ... }: {
+  flake.nixosModules.mikuConfiguration =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    {
+      imports = [
+        self.nixosModules.mikuHardware
+      ]
       ++ (with self.nixosModules; [
         coreBoot
         coreLocale
@@ -35,36 +38,36 @@
         boltLauncher
       ]);
 
-    networking.hostName = "miku";
+      networking.hostName = "miku";
 
-    environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
+      environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
 
-    environment.systemPackages = with pkgs; [
-      git
-    ];
+      environment.systemPackages = with pkgs; [
+        git
+      ];
 
-    powerManagement.cpuFreqGovernor = "performance";
-    services.udisks2.enable = true;
+      powerManagement.cpuFreqGovernor = "performance";
+      services.udisks2.enable = true;
 
-    programs._1password-gui.enable = true;
-    programs._1password.enable = true;
-    programs.localsend.enable = true;
+      programs._1password-gui.enable = true;
+      programs._1password.enable = true;
+      programs.localsend.enable = true;
 
-    virtualisation.vmVariant = {
-      virtualisation = {
-        memorySize = 8192;
-        cores = 8;
-        qemu.options = [
-          "-vga none"
-          "-device virtio-vga-gl"
-          "-display gtk,gl=on"
-        ];
+      virtualisation.vmVariant = {
+        virtualisation = {
+          memorySize = 8192;
+          cores = 8;
+          qemu.options = [
+            "-vga none"
+            "-device virtio-vga-gl"
+            "-display gtk,gl=on"
+          ];
+        };
+
+        services.xserver.videoDrivers = lib.mkForce [ ];
+        hardware.nvidia.package = lib.mkForce null;
       };
 
-      services.xserver.videoDrivers = lib.mkForce [];
-      hardware.nvidia.package = lib.mkForce null;
+      system.stateVersion = "26.05";
     };
-
-    system.stateVersion = "26.05";
-  };
 }
