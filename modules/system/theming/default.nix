@@ -63,6 +63,7 @@
         # propagated inputs never reach the system profile anyway, so install the fallback directly
         (gruvbox-plus-icons.overrideAttrs { propagatedBuildInputs = [ ]; })
         kdePackages.breeze-icons # Inherits=breeze-dark
+        (self.theme.cursor.package pkgs)
       ];
 
       environment.etc = {
