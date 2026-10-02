@@ -5,11 +5,7 @@
 }:
 {
   flake.nixosModules.helix =
-    {
-      pkgs,
-      lib,
-      ...
-    }:
+    { pkgs, ... }:
     {
       environment.systemPackages = [
         self.packages.${pkgs.stdenv.hostPlatform.system}.helix
@@ -27,7 +23,6 @@
   perSystem =
     {
       pkgs,
-      lib,
       inputs',
       ...
     }:
