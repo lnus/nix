@@ -15,9 +15,10 @@ nix build .#<name>                              # build a perSystem package, e.g
 nix build .#nixosConfigurations.miku --no-link  # build the miku host (NixOS system)
 nix build .#nixosConfigurations.miku.config.system.build.vm  # build the VM variant (miku defines virtualisation.vmVariant)
 nix flake check --no-build                      # eval-check all outputs
+nix fmt                                         # format everything with nixfmt (nixpkgs style)
 ```
 
-There is no `formatter` output wired up yet, so `nix fmt` does not work in this repo.
+The formatter is set in `flake.nix` itself, not under `modules/`.
 
 ## Architecture: the Dendritic Pattern
 
