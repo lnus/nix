@@ -40,8 +40,6 @@
 
       networking.hostName = "miku";
 
-      environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/linus/.steam/root/compatibilitytools.d";
-
       environment.systemPackages = with pkgs; [
         git
       ];
