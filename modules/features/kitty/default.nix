@@ -35,7 +35,6 @@ in
         };
 
         settings = {
-          font_size = 10;
           scrollbar = "never";
           window_padding_width = 9;
           enable_audio_bell = false;
