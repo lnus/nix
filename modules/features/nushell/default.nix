@@ -8,6 +8,7 @@
     environment.systemPackages = with pkgs; [
       self.packages.${pkgs.stdenv.hostPlatform.system}.nushell
       carapace
+      deadnix
       difftastic
       direnv
       fd
