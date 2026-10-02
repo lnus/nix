@@ -12,11 +12,19 @@ user-facing programs are configured as wrapped derivations via
 
 ```sh
 nix build .#<name>                              # build a perSystem package, e.g. .#niri, .#kitty, .#nushell
-nix build .#nixosConfigurations.miku --no-link  # build the miku host (NixOS system)
+nh os build .                                   # build the miku host and diff it against the running system
+nix build .#nixosConfigurations.miku.config.system.build.toplevel --no-link  # same build without nh
 nix build .#nixosConfigurations.miku.config.system.build.vm  # build the VM variant (miku defines virtualisation.vmVariant)
 nix flake check --no-build                      # eval-check all outputs
 nix fmt                                         # format everything with nixfmt (nixpkgs style)
+nh search <query>                               # find a nixpkgs package (name, version, mainProgram)
+nh search options <query>                       # find a NixOS option
 ```
+
+Never switch the system (`nh os switch`, `nixos-rebuild switch`/`boot`/`test`);
+that's mine to do. Building and diffing with `nh os build` is fine. `nh search`
+queries search.nixos.org's unstable channel, so versions can differ slightly
+from the flake's locked nixpkgs.
 
 The formatter is set in `flake.nix` itself, not under `modules/`.
 
