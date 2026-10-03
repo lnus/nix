@@ -1,6 +1,14 @@
-{ ... }: {
+{ self, ... }: {
+  flake.keyboard = {
+    layout = "us";
+    variant = "altgr-intl";
+    options = "ctrl:nocaps";
+  };
+
+  flake.timezone = "Europe/Stockholm";
+
   flake.nixosModules.coreLocale = { ... }: {
-    time.timeZone = "Europe/Stockholm";
+    time.timeZone = self.timezone;
     i18n = {
       defaultLocale = "en_US.UTF-8";
       extraLocaleSettings = {
@@ -15,10 +23,7 @@
         LC_TIME = "en_US.UTF-8";
       };
     };
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
-    };
-    console.keyMap = "us";
+    services.xserver.xkb = self.keyboard;
+    console.useXkbConfig = true;
   };
 }

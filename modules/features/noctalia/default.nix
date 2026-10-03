@@ -11,7 +11,7 @@
       inherit pkgs;
       settings =
         let
-          pictures = "/home/linus/Pictures"; # FIXME TEMP
+          pictures = "$HOME/Pictures"; # noctalia expands $VARS in path fields
         in
         {
           theme = {

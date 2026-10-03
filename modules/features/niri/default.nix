@@ -45,11 +45,7 @@
 
           input = {
             keyboard = {
-              xkb = {
-                layout = "us";
-                options = "ctrl:nocaps";
-                variant = "altgr-intl";
-              };
+              xkb = self.keyboard;
               numlock = _: { };
             };
             mouse.accel-profile = "flat";

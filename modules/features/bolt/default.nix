@@ -6,8 +6,8 @@
       buildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
         wrapProgram $out/bin/bolt-launcher \
-          --set TZ ":Europe/Stockholm" \
-          --set XRE_PROFILE_PATH "/home/linus/.config/mozilla/firefox/linus" \
+          --set TZ ":${self.timezone}" \
+          --run 'export XRE_PROFILE_PATH="$HOME/.config/mozilla/firefox/$USER"' \
           --set _JAVA_AWT_WM_NONREPARENTING 1
       '';
     };
