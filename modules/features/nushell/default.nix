@@ -28,7 +28,7 @@
       inherit pkgs;
 
       "config.nu" = {
-        path = ./config.nu;
+        path = "${./.}/config.nu"; # whole dir, so config.nu can `use` ./scripts
       };
       "env.nu" = {
         path = ./env.nu;

@@ -55,3 +55,5 @@ if ($nu.is-interactive
 }
 
 source "~/.zoxide.nu"
+
+use scripts/flake-bump.nu
