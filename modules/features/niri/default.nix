@@ -56,13 +56,13 @@
               mode = "1920x1080";
               scale = 1.0;
             };
-            "DP-4" = {
+            "HP Inc. HP X27q 6CM2050MSP" = {
               mode = "2560x1440@164.834";
               focus-at-startup = _: { };
               variable-refresh-rate = _: { };
               scale = 1.0;
             };
-            "DP-3" = {
+            "Acer Technologies Acer XB270H T1BEE0084200" = {
               mode = "1920x1080@144.001";
               transform = "90";
               scale = 1.0;
