@@ -48,10 +48,6 @@
       networking.useDHCP = lib.mkDefault true;
       # networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
 
-      # only show the greeter on the main monitor; otherwise it mirrors to all
-      # outputs and keyboard focus lands on the rotated Acer
-      services.displayManager.noctalia-greeter.settings.output.name = "HP Inc. HP X27q 6CM2050MSP";
-
       nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
       hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     };

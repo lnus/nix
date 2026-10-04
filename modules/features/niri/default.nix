@@ -4,12 +4,25 @@
   ...
 }:
 {
-  flake.nixosModules.niri = { pkgs, ... }: {
-    programs.niri = {
-      enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri;
+  flake.nixosModules.niri =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      options.programs.niri.wrapper = lib.mkOption {
+        type = lib.types.deferredModule;
+        default = { };
+        description = "wrapper-modules config layered onto `packages.niri`, e.g. a host's outputs.";
+      };
+
+      config.programs.niri = {
+        enable = true;
+        package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri.wrap config.programs.niri.wrapper;
+      };
     };
-  };
 
   perSystem =
     {
@@ -49,25 +62,6 @@
               numlock = _: { };
             };
             mouse.accel-profile = "flat";
-          };
-
-          outputs = {
-            "eDP-1" = {
-              mode = "1920x1080";
-              scale = 1.0;
-            };
-            "HP Inc. HP X27q 6CM2050MSP" = {
-              mode = "2560x1440@164.834";
-              focus-at-startup = _: { };
-              variable-refresh-rate = _: { };
-              scale = 1.0;
-            };
-            "Acer Technologies Acer XB270H T1BEE0084200" = {
-              mode = "1920x1080@144.001";
-              transform = "90";
-              scale = 1.0;
-              layout.default-column-width.proportion = 1.0;
-            };
           };
 
           overview.workspace-shadow = {

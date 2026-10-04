@@ -5,6 +5,10 @@
       lib,
       ...
     }:
+    let
+      main = "HP Inc. HP X27q 6CM2050MSP";
+      side = "Acer Technologies Acer XB270H T1BEE0084200";
+    in
     {
       imports = [
         self.nixosModules.mikuHardware
@@ -40,6 +44,24 @@
       ]);
 
       networking.hostName = "miku";
+
+      programs.niri.wrapper.settings.outputs = {
+        ${main} = {
+          mode = "2560x1440@164.834";
+          focus-at-startup = _: { };
+          variable-refresh-rate = _: { };
+          scale = 1.0;
+        };
+        ${side} = {
+          mode = "1920x1080@144.001";
+          transform = "90";
+          scale = 1.0;
+          layout.default-column-width.proportion = 1.0;
+        };
+      };
+
+      # otherwise the greeter mirrors to all outputs and focus lands on the rotated side monitor
+      services.displayManager.noctalia-greeter.settings.output.name = main;
 
       environment.systemPackages = with pkgs; [
         git
