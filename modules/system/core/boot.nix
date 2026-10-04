@@ -8,7 +8,6 @@
         };
         efi.canTouchEfiVariables = true;
       };
-      # plymouth.enable = true;
     };
   };
 }

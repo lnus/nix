@@ -18,6 +18,7 @@
         audio
         driversNvidia
         theming
+        quiet-boot
 
         helix
         niri
