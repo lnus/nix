@@ -97,6 +97,35 @@ A **host** (`modules/hosts/<name>/`) has three files: `default.nix` (calls
 `configuration.nix` (the actual `imports = with self.nixosModules; [...]` list — the
 only place host composition is decided), and `hardware.nix`.
 
+### Injecting config into another feature
+
+A wrapped package is sealed, so a feature that other features (or the host) add to
+exposes a `wrapper` option on its NixOS module, typed `deferredModule`, and
+`.wrap`s it onto its package. niri does this as `programs.niri.wrapper`.
+Contributions merge like any module: lists append, attrsets merge.
+
+- **The host** sets host-only bits there, e.g. miku's niri outputs.
+- **Another feature** contributes only when the target is imported, guarded on
+  the option's existence, so it still builds on systems without it:
+
+  ```nix
+  flake.nixosModules.boltLauncher = { options, lib, pkgs, ... }: {
+    config = lib.mkMerge [
+      { environment.systemPackages = [ ... ]; }
+      (lib.optionalAttrs (options.programs.niri ? wrapper) {
+        programs.niri.wrapper.settings.window-rules = [ ... ];
+      })
+    ];
+  };
+  ```
+
+  Guard with `optionalAttrs` on `options`, not `mkIf` on `config`: defining an
+  option that doesn't exist fails even under `mkIf false`. Check for `wrapper`, not
+  `programs.niri`, since nixpkgs always declares the latter. Another target (e.g.
+  hyprland) is one more guarded block in the contributing feature.
+
+The target never names its contributors, so features mix and match per host.
+
 ### Naming
 
 | Thing                | Convention                  | Example                    |

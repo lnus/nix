@@ -82,26 +82,6 @@
             }
           ];
 
-          window-rules = [
-            {
-              matches = [ { app-id = "BoltLauncher"; } ];
-              open-floating = true;
-            }
-            {
-              # RuneLite pop-up windows
-              matches = [ { app-id = "net-runelite-client-RuneLite"; } ];
-              excludes = [ { title = "RuneLite"; } ];
-              open-floating = true;
-            }
-            {
-              # RuneLite opacity toggle
-              matches = [ { app-id = "net-runelite-client-RuneLite"; } ];
-              excludes = [ { title = "RuneLite .+"; } ];
-              opacity = 0.4;
-              draw-border-with-background = false;
-            }
-          ];
-
           prefer-no-csd = _: { };
           animations.off = _: { };
 

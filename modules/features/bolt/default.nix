@@ -13,9 +13,42 @@
     };
   };
 
-  flake.nixosModules.boltLauncher = { pkgs, ... }: {
-    environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.boltLauncher
-    ];
-  };
+  flake.nixosModules.boltLauncher =
+    {
+      options,
+      lib,
+      pkgs,
+      ...
+    }:
+    {
+      config = lib.mkMerge [
+        {
+          environment.systemPackages = [
+            self.packages.${pkgs.stdenv.hostPlatform.system}.boltLauncher
+          ];
+        }
+
+        (lib.optionalAttrs (options.programs.niri ? wrapper) {
+          programs.niri.wrapper.settings.window-rules = [
+            {
+              matches = [ { app-id = "BoltLauncher"; } ];
+              open-floating = true;
+            }
+            {
+              # RuneLite pop-up windows
+              matches = [ { app-id = "net-runelite-client-RuneLite"; } ];
+              excludes = [ { title = "RuneLite"; } ];
+              open-floating = true;
+            }
+            {
+              # RuneLite opacity toggle
+              matches = [ { app-id = "net-runelite-client-RuneLite"; } ];
+              excludes = [ { title = "RuneLite .+"; } ];
+              opacity = 0.4;
+              draw-border-with-background = false;
+            }
+          ];
+        })
+      ];
+    };
 }
