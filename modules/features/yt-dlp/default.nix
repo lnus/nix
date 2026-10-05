@@ -38,7 +38,7 @@
           embed-thumbnail = true;
           embed-chapters = true;
           embed-subs = true;
-          sub-langs = q "en.*,de.*";
+          sub-langs = q "en.*";
           sponsorblock-mark = "all";
 
           # Alias options go through str.format, so templates must not contain braces.
