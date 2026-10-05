@@ -10,6 +10,7 @@
       modules = with self.nixosModules; [
         obs-studio
         mpv
+        yt-dlp
       ];
     in
     {
