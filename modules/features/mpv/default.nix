@@ -43,7 +43,7 @@ in
 
         screenshot-format=png
         screenshot-dir=~/Pictures/Screenshots/mpv
-        screenshot-template=%F %wH.%wM.%wS
+        screenshot-template="%F %wH.%wM.%wS"
       '';
 
       script = {
