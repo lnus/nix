@@ -25,6 +25,7 @@
         quiet-boot
 
         helix
+        zed
         niri
         noctalia-greeter
         noctalia
