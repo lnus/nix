@@ -39,7 +39,8 @@ The rules this repo aims for. A few modules still break 1 and 4; fix those rathe
 than copying them.
 
 1. **One feature per file or directory.** The path _is_ the feature name; renaming
-   the file renames the feature.
+   the file renames the feature. Files under a feature's `with/` are parts of it
+   (`noctalia/with/niri.nix` adds to `noctalia`).
 2. **No `enable` options.** Importing a module enables the feature — don't import
    what you don't want.
 3. **No `specialArgs`.** Shared values (e.g. the color theme) flow through the
@@ -124,6 +125,13 @@ Contributions merge like any module: lists append, attrsets merge.
   `programs.niri`, since nixpkgs always declares the latter. Another target (e.g.
   hyprland) is one more guarded block in the contributing feature.
 
+  Small contributions stay inline like above. A big one goes in
+  `<feature>/with/<target>.nix` (e.g. `noctalia/with/niri.nix`), which defines
+  the same `flake.nixosModules.<feature>`; flake-parts types it `deferredModule`,
+  so the files merge and the host still imports one name. Put the guard inside
+  `config =`, not around the whole module: the module system reads a module's
+  top-level keys before `options` exists, so that recurses.
+
 The target never names its contributors, so features mix and match per host.
 
 niri keybinds go in `binds` (e.g. `programs.niri.wrapper.binds."Mod+E"`), not
@@ -132,13 +140,14 @@ merging. Override deliberately with `lib.mkForce`.
 
 ### Naming
 
-| Thing                | Convention                  | Example                    |
-| -------------------- | --------------------------- | -------------------------- |
-| Wrapped package      | `<featureName>` (no prefix) | `perSystem.packages.kitty` |
-| NixOS module         | `<featureName>`             | `flake.nixosModules.kitty` |
-| Hardware module      | `<hostname>Hardware`        | `mikuHardware`             |
-| Configuration module | `<hostname>Configuration`   | `mikuConfiguration`        |
-| Disabled file/dir    | `_`-prefix                  | `_experimental.nix`        |
+| Thing                | Convention                    | Example                    |
+| -------------------- | ----------------------------- | -------------------------- |
+| Wrapped package      | `<featureName>` (no prefix)   | `perSystem.packages.kitty` |
+| NixOS module         | `<featureName>`               | `flake.nixosModules.kitty` |
+| Hardware module      | `<hostname>Hardware`          | `mikuHardware`             |
+| Configuration module | `<hostname>Configuration`     | `mikuConfiguration`        |
+| Disabled file/dir    | `_`-prefix                    | `_experimental.nix`        |
+| Contribution file    | `<feature>/with/<target>.nix` | `noctalia/with/niri.nix`   |
 
 ### Theme
 

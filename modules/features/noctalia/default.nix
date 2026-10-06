@@ -38,7 +38,6 @@
           dock.enabled = false;
           desktop_widgets.enabled = false;
 
-          # blurred wallpaper copy placed in niri's overview backdrop (see niri's layer-rules)
           backdrop.enabled = true;
 
           shell = {

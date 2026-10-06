@@ -28,18 +28,9 @@
     {
       pkgs,
       lib,
-      self',
       ...
     }:
     let
-      noctalia =
-        cmd:
-        [
-          (lib.getExe self'.packages.noctalia)
-          "msg"
-        ]
-        ++ (lib.splitString " " cmd);
-
       # `settings.binds` silently merges two definitions of one key; this fails eval instead
       uniqueBinds =
         { config, lib, ... }:
@@ -59,10 +50,6 @@
         runtimePkgs = [ pkgs.xwayland-satellite ];
         binds = {
           "Mod+Shift+Slash".show-hotkey-overlay = _: { };
-          "Mod+D" = _: {
-            props.hotkey-overlay-title = "Launcher";
-            content.spawn = noctalia "panel-toggle launcher";
-          };
           "Mod+Return" = _: {
             props.hotkey-overlay-title = "Terminal";
             content.spawn = [ (lib.getExe pkgs.xdg-terminal-exec) ];
@@ -212,62 +199,10 @@
             content.toggle-keyboard-shortcuts-inhibit = _: { };
           };
 
-          "Mod+Shift+E" = _: {
-            props.hotkey-overlay-title = "Session Menu: noctalia";
-            content.spawn = noctalia "panel-toggle session";
-          };
-
           "Ctrl+Alt+Delete".quit = _: { };
-
-          "Super+Alt+L" = _: {
-            props.allow-when-locked = true;
-            props.hotkey-overlay-title = "Lock the Screen: noctalia";
-            content.spawn = noctalia "session lock";
-          };
-
-          "XF86AudioRaiseVolume" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "volume-up";
-          };
-          "XF86AudioLowerVolume" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "volume-down";
-          };
-          "XF86AudioMute" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "volume-mute";
-          };
-          "XF86AudioMicMute" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "mic-mute";
-          };
-          "XF86AudioPlay" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "media toggle";
-          };
-          "XF86AudioNext" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "media next";
-          };
-          "XF86AudioPrev" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "media previous";
-          };
-          "XF86MonBrightnessUp" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "brightness-up";
-          };
-          "XF86MonBrightnessDown" = _: {
-            props.allow-when-locked = true;
-            content.spawn = noctalia "brightness-down";
-          };
         };
 
         settings = {
-          spawn-at-startup = [
-            (lib.getExe self'.packages.noctalia)
-          ];
-
           hotkey-overlay.skip-at-startup = _: { };
 
           cursor = {
@@ -293,13 +228,6 @@
               };
             };
           };
-
-          layer-rules = [
-            {
-              matches = [ { namespace = "^noctalia-backdrop"; } ];
-              place-within-backdrop = true;
-            }
-          ];
 
           prefer-no-csd = _: { };
           animations.off = _: { };
