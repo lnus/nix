@@ -59,17 +59,13 @@
         runtimePkgs = [ pkgs.xwayland-satellite ];
         binds = {
           "Mod+Shift+Slash".show-hotkey-overlay = _: { };
-          "Mod+B" = _: {
-            props.hotkey-overlay-title = "Browser";
-            content.spawn = [ (lib.getExe self'.packages.firefox) ];
-          };
           "Mod+D" = _: {
-            props.hotkey-overlay-title = "Run Application: noctalia";
+            props.hotkey-overlay-title = "Launcher";
             content.spawn = noctalia "panel-toggle launcher";
           };
           "Mod+Return" = _: {
-            props.hotkey-overlay-title = "Open a Terminal: kitty";
-            content.spawn = [ (lib.getExe self'.packages.kitty) ];
+            props.hotkey-overlay-title = "Terminal";
+            content.spawn = [ (lib.getExe pkgs.xdg-terminal-exec) ];
           };
 
           "Mod+T" = _: {
