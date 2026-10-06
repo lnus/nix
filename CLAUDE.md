@@ -126,6 +126,10 @@ Contributions merge like any module: lists append, attrsets merge.
 
 The target never names its contributors, so features mix and match per host.
 
+niri keybinds go in `binds` (e.g. `programs.niri.wrapper.binds."Mod+E"`), not
+`settings.binds`: each key may be defined once, so a clash fails eval instead of
+merging. Override deliberately with `lib.mkForce`.
+
 ### Naming
 
 | Thing                | Convention                  | Example                    |
