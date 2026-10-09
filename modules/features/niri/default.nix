@@ -18,9 +18,14 @@
         description = "wrapper-modules config layered onto `packages.niri`, e.g. a host's outputs.";
       };
 
-      config.programs.niri = {
-        enable = true;
-        package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri.wrap config.programs.niri.wrapper;
+      config = {
+        programs.niri = {
+          enable = true;
+          package = self.packages.${pkgs.stdenv.hostPlatform.system}.niri.wrap config.programs.niri.wrapper;
+        };
+
+        # nixpkgs' electron wrappers read this to run apps on native wayland, with --enable-wayland-ime
+        environment.sessionVariables.NIXOS_OZONE_WL = "1";
       };
     };
 
