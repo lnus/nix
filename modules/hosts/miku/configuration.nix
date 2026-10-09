@@ -32,6 +32,7 @@
         firefox
         kitty
         fonts
+        fcitx5
         zk
 
         # these lean modules are mostly flat package lists —
