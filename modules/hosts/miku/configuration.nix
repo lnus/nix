@@ -1,10 +1,6 @@
 { self, ... }: {
   flake.nixosModules.mikuConfiguration =
-    {
-      pkgs,
-      lib,
-      ...
-    }:
+    { lib, ... }:
     let
       main = "HP Inc. HP X27q 6CM2050MSP";
       side = "Acer Technologies Acer XB270H T1BEE0084200";
@@ -37,6 +33,7 @@
         udiskie
         easyeffects
         jujutsu
+        git
 
         # these lean modules are mostly flat package lists —
         # worth revisiting as attrs/ or roles/ later
@@ -94,10 +91,6 @@
                 "M-Audio M-Track Solo";
             };
       };
-
-      environment.systemPackages = with pkgs; [
-        git
-      ];
 
       powerManagement.cpuFreqGovernor = "performance";
 
