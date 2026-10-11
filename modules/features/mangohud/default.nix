@@ -36,6 +36,6 @@
     {
       environment.systemPackages = [ pkgs.mangohud ];
       environment.sessionVariables.MANGOHUD_CONFIGFILE = "${config}";
-      systemd.user.tmpfiles.rules = [ "d %h/.local/share/mangohud/logs - - - -" ];
+      systemd.user.tmpfiles.rules = [ "d %h/.local/share/mangohud/logs - - - 30d" ];
     };
 }
