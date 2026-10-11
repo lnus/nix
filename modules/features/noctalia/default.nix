@@ -69,7 +69,23 @@
                 ];
           };
 
+          idle = {
+            behavior_order = [
+              "lock"
+              "screen-off"
+            ];
+            behavior.lock = {
+              action = "lock";
+              timeout = 600;
+            };
+            behavior.screen-off = {
+              action = "screen_off";
+              timeout = 601;
+            };
+          };
+
           lockscreen = {
+            lock_before_suspend = true;
             blur_intensity = 0.4;
             tint_intensity = 0.7;
             transition = [ "zoom" ];

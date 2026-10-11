@@ -15,7 +15,10 @@
     in
     {
       config = lib.mkMerge [
-        { environment.systemPackages = [ firefox ]; }
+        {
+          environment.systemPackages = [ firefox ];
+          environment.variables.BROWSER = "firefox";
+        }
 
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
           programs.niri.wrapper.binds."Mod+B" = _: {

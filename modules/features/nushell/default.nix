@@ -13,7 +13,6 @@
       direnv
       fd
       gh
-      jujutsu
       lazygit
       ripgrep
       starship

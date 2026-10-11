@@ -34,6 +34,9 @@
         fonts
         fcitx5
         zk
+        udiskie
+        easyeffects
+        jujutsu
 
         # these lean modules are mostly flat package lists —
         # worth revisiting as attrs/ or roles/ later
@@ -64,12 +67,39 @@
       # otherwise the greeter mirrors to all outputs and focus lands on the rotated side monitor
       services.displayManager.noctalia-greeter.settings.output.name = main;
 
+      services.pipewire.wireplumber.extraConfig = {
+        alsa-disable."monitor.alsa.rules" =
+          map
+            (name: {
+              matches = [ { "node.name" = name; } ];
+              actions.update-props."node.disabled" = true;
+            })
+            [
+              "alsa_output.pci-0000_01_00.1.hdmi-stereo"
+              "alsa_output.usb-BurrBrown_from_Texas_Instruments_USB_AUDIO_CODEC-00.analog-stereo"
+              "alsa_input.pci-0000_00_1f.3.analog-stereo"
+            ];
+
+        device-rename."monitor.alsa.rules" =
+          lib.mapAttrsToList
+            (name: description: {
+              matches = [ { "node.name" = name; } ];
+              actions.update-props."node.description" = description;
+            })
+            {
+              "alsa_output.usb-Apple__Inc._USB-C_to_3.5mm_Headphone_Jack_Adapter_DWH428500U9L1MQA8-00.analog-stereo" =
+                "IEM";
+              "alsa_output.pci-0000_00_1f.3.analog-stereo" = "Speakers";
+              "alsa_input.usb-BurrBrown_from_Texas_Instruments_USB_AUDIO_CODEC-00.analog-stereo" =
+                "M-Audio M-Track Solo";
+            };
+      };
+
       environment.systemPackages = with pkgs; [
         git
       ];
 
       powerManagement.cpuFreqGovernor = "performance";
-      services.udisks2.enable = true;
 
       programs._1password-gui.enable = true;
       programs._1password.enable = true;
