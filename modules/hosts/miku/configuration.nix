@@ -51,7 +51,6 @@
         ${main} = {
           mode = "2560x1440@164.834";
           focus-at-startup = _: { };
-          variable-refresh-rate = _: { };
           scale = 1.0;
         };
         ${side} = {
