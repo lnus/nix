@@ -35,6 +35,7 @@
         jujutsu
         git
         mangohud
+        gpu-log
 
         # these lean modules are mostly flat package lists —
         # worth revisiting as attrs/ or roles/ later
