@@ -8,7 +8,8 @@
         wrapProgram $out/bin/bolt-launcher \
           --set TZ ":${self.timezone}" \
           --run 'export XRE_PROFILE_PATH="$HOME/.config/mozilla/firefox/$USER"' \
-          --set _JAVA_AWT_WM_NONREPARENTING 1
+          --set _JAVA_AWT_WM_NONREPARENTING 1 \
+          --set _JAVA_OPTIONS -Xmx2g
       '';
     };
   };
