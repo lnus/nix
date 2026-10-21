@@ -96,6 +96,7 @@
             calendar.show_week_numbers = true;
             shortcuts = map (type: { inherit type; }) [
               "wallpaper"
+              "bluetooth"
               "power_profile"
               "dark_mode"
               "notification"

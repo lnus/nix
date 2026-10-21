@@ -15,6 +15,7 @@
         coreUser
         coreNixSettings
         network
+        bluetooth
         audio
         driversNvidia
         theming
@@ -36,6 +37,7 @@
         git
         mangohud
         gpu-log
+        librepods
 
         # these lean modules are mostly flat package lists —
         # worth revisiting as attrs/ or roles/ later
