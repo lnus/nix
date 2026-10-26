@@ -40,12 +40,12 @@
 
         stdbuf -oL nvidia-smi --query-gpu="$query" --format=csv -l "$interval" >"$file" &
         logger=$!
-        # exec keeps this PID, so the watcher sees COMMAND exit and stops the logger
-        (
-          while kill -0 $$ 2>/dev/null; do sleep 1; done
-          kill "$logger" 2>/dev/null
-        ) &
-        exec "$@"
+        trap 'kill "$logger" 2>/dev/null || true' EXIT
+        # no exec: under Steam, COMMAND starts with its reaper, which waits for all
+        # children of its PID, so the logger and reaper would wait on each other
+        status=0
+        "$@" || status=$?
+        exit "$status"
       '';
     };
   };
