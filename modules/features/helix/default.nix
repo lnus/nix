@@ -14,7 +14,6 @@
         nixd # nix lsp
         nixfmt # nix formatter
         prettier # markdown + general purpose formatter
-        codebook # provides the `codebook-lsp` spellchecker binary
         tinymist # typst lsp
         typstyle # typst formatter
       ]);
@@ -92,7 +91,6 @@
               {
                 name = "typst";
                 language-servers = [
-                  "codebook"
                   "tinymist"
                 ];
                 formatter.command = "typstyle";
@@ -124,10 +122,6 @@
             ];
 
             language-server = {
-              codebook = {
-                command = "codebook-lsp";
-                args = [ "serve" ];
-              };
               # only does anything inside a zk notebook (a dir with .zk/)
               zk = {
                 command = "zk";

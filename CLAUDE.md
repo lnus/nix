@@ -183,7 +183,7 @@ not raw `symlinkJoin` + `wrapProgram` (bolt still does this and shouldn't).
 - **Flakes only see git-tracked files.** A new file under `modules/` won't appear in
   `self.nixosModules`/`self.packages` until it's `git add`ed (check `git status`).
 - Binaries in a wrapped config's settings are sometimes named differently from the
-  nixpkgs package (e.g. helix references `codebook-lsp`, the package is `codebook`).
+  nixpkgs package.
   Check the package's `mainProgram` when a wrapped binary can't be found.
 - **Wrapped packages ignore the host's `nixpkgs.config`.** They're built from the
   flake's own nixpkgs, so settings like `allowUnfree` or `cudaSupport` on the host
