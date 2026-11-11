@@ -54,7 +54,7 @@ than copying them.
 ```
 modules/
   parts.nix              # systems list only
-  theme.nix              # flake.theme = { colors (Gruvbox base00..base0F); fonts; cursor; }, read as self.theme.<part>
+  theme.nix              # flake.theme = { ui; terminal; radius; fonts; cursor; }, read as self.theme.<part>
   features/              # one wrapped user program per file/dir: niri/, helix/, nushell/, ghostty/, ...
   attrs/                 # compositions of features/system modules, no new binaries (e.g. attrs/video)
   system/                # host-agnostic system config (boot, locale, user, audio, network, drivers) — no perSystem
@@ -71,7 +71,7 @@ A **feature** module exports two things named identically after the feature:
   perSystem = {pkgs, ...}: {
     packages.ghostty = inputs.wrapper-modules.wrappers.ghostty.wrap {
       inherit pkgs;
-      settings = { background = self.theme.colors.base00; ... };
+      settings = { font-family = self.theme.fonts.mono; ... };
     };
   };
   flake.nixosModules.ghostty = {pkgs, ...}: {
@@ -151,13 +151,24 @@ merging. Override deliberately with `lib.mkForce`.
 
 ### Theme
 
-`modules/theme.nix` exposes the shared look under `self.theme`: the Gruvbox palette
-as `self.theme.colors.base00`..`base0F`, font family names as `self.theme.fonts`
-(`sans`/`serif`/`mono`; the packages stay in `features/fonts`), and the cursor as `self.theme.cursor`
-(`name`, `size`, `package` — a `pkgs -> drv` function, since the flake attr has no
-`pkgs`). Add further parts (e.g. icons) as siblings there once more than one module needs them.
-Wrapped programs reference it directly for inline settings (e.g. niri's
-`layout.border.active-color = self.theme.colors.base0D`); use a program's own
+`modules/theme.nix` exposes the shared look under `self.theme`. Desktop and terminal
+colours are separate:
+
+- `self.theme.ui.{dark,light}`: desktop colours as named roles (`background`, `surface`,
+  `raised`, `border`, `text`, `muted`, `accent`, `on-accent`, `error`, `warning`, `success`).
+- `self.theme.terminal.{dark,light}`: Rosé Pine (main / dawn), only for terminals and TUIs.
+- `self.theme.radius`: window corner radius in px.
+- `self.theme.fonts`: font family names (`sans`/`serif`/`mono`; the packages stay in `features/fonts`).
+- `self.theme.cursor`: `name`, `size`, `package` (a `pkgs -> drv` function, since the flake attr has no `pkgs`).
+
+Add further parts (e.g. icons) as siblings there once more than one module needs them.
+
+Light/dark follows the system colour scheme at runtime, so prefer config that holds
+both variants and lets the program pick (Ghostty's `light:…,dark:…` theme, a CSS
+`@media (prefers-color-scheme: dark)` block, Noctalia's two-variant palette). Where a
+program bakes in one colour (niri, mangohud, mpv's OSC), pick one that works in both
+or use the dark variant. Wrapped programs reference the theme directly for inline
+settings (e.g. niri's `layout.focus-ring.active-color`); use a program's own
 `themeFile`/built-in theme instead when one already matches.
 
 ## Where home-manager things go
