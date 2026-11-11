@@ -28,9 +28,9 @@
           user.default = "linus";
 
           appearance = {
-            scheme = "Gruvbox";
+            scheme = "Rosé Pine"; # the greeter only knows built-in palettes
             theme_mode = "dark";
-            corner_radius_scale = 0.0;
+            corner_radius_scale = 0.6;
             font_family = self.theme.fonts.sans;
             hide_logo = true;
           };

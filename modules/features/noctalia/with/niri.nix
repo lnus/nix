@@ -27,6 +27,14 @@
                 matches = [ { namespace = "^noctalia-backdrop"; } ];
                 place-within-backdrop = true;
               }
+              {
+                # without xray, blur shows the windows behind, not just the wallpaper
+                matches = [
+                  { namespace = "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"; }
+                  { namespace = "^noctalia-window-switcher"; }
+                ];
+                background-effect.xray = false;
+              }
             ];
           };
 

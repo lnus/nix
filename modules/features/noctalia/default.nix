@@ -9,23 +9,50 @@
     # nix-community/nix-wrapper-modules#598 merges, and delete ./_module.nix
     packages.noctalia = (inputs.wrapper-modules.lib.wrapModule ./_module.nix).wrap {
       inherit pkgs;
+
+      colors = {
+        version = 2;
+      }
+      // builtins.mapAttrs (_: c: {
+        primary = c.accent;
+        on_primary = c.on-accent;
+        secondary = c.accent;
+        on_secondary = c.on-accent;
+        tertiary = c.accent;
+        on_tertiary = c.on-accent;
+        error = c.error;
+        on_error = c.on-accent;
+        surface = c.surface;
+        on_surface = c.text;
+        surface_container = c.raised;
+        on_surface_variant = c.muted;
+        outline_variant = c.border;
+        shadow = "#000000";
+        hover = c.raised;
+        on_hover = c.text;
+      }) self.theme.ui;
+
       settings =
         let
           pictures = "$HOME/Pictures"; # noctalia expands $VARS in path fields
+          glassOpacity = 0.55;
         in
         {
           theme = {
             mode = "dark";
-            source = "builtin";
-            builtin = "Gruvbox";
+            source = "custom";
+            custom_palette = "custom";
           };
 
           bar.default = {
             thickness = 28;
-            capsule = true;
-            margin_ends = 0;
-            radius = 0;
-            shadow = false;
+            capsule = false;
+            margin_edge = 6;
+            margin_ends = 6;
+            radius = self.theme.radius - 2;
+            background_opacity = glassOpacity;
+            compositor_blur = true;
+            shadow = true;
             start = [
               "workspaces"
               "active_window"
@@ -35,20 +62,26 @@
             center = [ "clock" ];
           };
 
+          notification.background_opacity = glassOpacity;
+          osd.background_opacity = glassOpacity;
+
           dock.enabled = false;
           desktop_widgets.enabled = false;
 
           backdrop.enabled = true;
 
           shell = {
-            corner_radius_scale = 0.0;
+            corner_radius_scale = 0.6;
             font_family = self.theme.fonts.sans;
             avatar_path = "${pictures}/pfp.jpg";
-            popup_shadows = false;
+            popup_shadows = true;
             animation.speed = 2.0;
             launcher.compact = true;
             niri_overview_type_to_launch_enabled = true;
-            panel.shadow = false;
+            panel = {
+              shadow = true;
+              transparency_mode = "glass";
+            };
             # answers polkit auth requests (greeter sync, 1Password system auth, ...)
             polkit_agent = true;
 
@@ -93,7 +126,10 @@
           };
 
           control_center = {
-            calendar.show_week_numbers = true;
+            calendar = {
+              show_week_numbers = true;
+              show_events_card = false;
+            };
             shortcuts = map (type: { inherit type; }) [
               "wallpaper"
               "bluetooth"
