@@ -235,24 +235,61 @@
           };
 
           prefer-no-csd = _: { };
-          animations.off = _: { };
+
+          animations =
+            let
+              spring = stiffness: _: {
+                props = {
+                  damping-ratio = 0.85;
+                  inherit stiffness;
+                  epsilon = 0.0001;
+                };
+              };
+            in
+            {
+              workspace-switch.spring = spring 1300;
+              horizontal-view-movement.spring = spring 1050;
+              window-movement.spring = spring 1050;
+              window-resize.spring = spring 1050;
+              window-open.spring = spring 1300;
+            };
 
           layout = {
-            gaps = 0;
+            gaps = 8;
             center-focused-column = "never";
             always-center-single-column = _: { };
 
+            # baked in at build time, so it has to read in both colour schemes
             focus-ring = {
-              off = _: { };
               width = 1;
+              active-color = "${self.theme.ui.light.accent}8c";
+              inactive-color = "#00000000";
+              urgent-color = self.theme.ui.dark.error;
             };
 
-            border = {
-              width = 1;
-              active-color = self.theme.colors.base0D;
-              inactive-color = self.theme.colors.base03;
+            border.off = _: { };
+
+            shadow = {
+              on = _: { };
+              softness = 30;
+              spread = 0;
+              offset = _: {
+                props = {
+                  x = 0;
+                  y = 8;
+                };
+              };
+              color = "#00000080";
+              inactive-color = "#00000033";
             };
           };
+
+          window-rules = [
+            {
+              geometry-corner-radius = self.theme.radius;
+              clip-to-geometry = true;
+            }
+          ];
         };
       };
     };
