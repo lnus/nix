@@ -26,6 +26,8 @@
 
         # nixpkgs' electron wrappers read this to run apps on native wayland, with --enable-wayland-ime
         environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+        environment.systemPackages = [ pkgs.wl-clipboard ];
       };
     };
 
