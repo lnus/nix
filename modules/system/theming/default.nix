@@ -3,7 +3,7 @@
     { pkgs, ... }:
     let
       gtkTheme = "Gruvbox-Dark";
-      iconTheme = "Gruvbox-Plus-Dark";
+      iconTheme = "Colloid-Purple";
       gtkSettings = ''
         [Settings]
         gtk-theme-name=${gtkTheme}
@@ -70,10 +70,8 @@
     {
       environment.systemPackages = with pkgs; [
         gruvbox-gtk-theme
-        # upstream propagates breeze-icons' -dev output (dragging in qtbase-dev & co.), and
-        # propagated inputs never reach the system profile anyway, so install the fallback directly
-        (gruvbox-plus-icons.overrideAttrs { propagatedBuildInputs = [ ]; })
-        kdePackages.breeze-icons # Inherits=breeze-dark
+        (colloid-icon-theme.override { colorVariants = [ "purple" ]; })
+        kdePackages.breeze-icons # Inherits=breeze
         (self.theme.cursor.package pkgs)
       ];
 
