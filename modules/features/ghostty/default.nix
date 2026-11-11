@@ -3,9 +3,6 @@
   inputs,
   ...
 }:
-let
-  theme = self.theme.colors;
-in
 {
   flake.nixosModules.ghostty = { pkgs, ... }: {
     environment.systemPackages = [
@@ -24,22 +21,39 @@ in
         fontsConf = pkgs.makeFontsConf {
           fontDirectories = [ self.packages.${pkgs.stdenv.hostPlatform.system}.fonts ];
         };
-        tabColors = pkgs.writeText "ghostty-tab-colors.css" ''
-          tabbar tab {
-            color: ${theme.base04};
-          }
 
-          tabbar tab:hover {
-            background-color: ${theme.base01};
-          }
+        # explicit, or the desktop gtk.css would make the tab bar graphite
+        tabColors =
+          let
+            rules = c: ''
+              tabbar {
+                background-color: ${c.base};
+              }
 
-          tabbar tab:selected,
-          tabbar tab:selected:hover {
-            color: ${theme.base05};
-            background-color: ${theme.base01};
-            box-shadow: inset 0 -2px ${theme.base0D};
-          }
-        '';
+              tabbar tab,
+              tabbar tab:hover,
+              tabbar tab:selected {
+                background: none;
+                color: ${c.subtle};
+              }
+
+              tabbar tab:hover {
+                color: ${c.text};
+              }
+
+              tabbar tab:selected {
+                color: ${c.text};
+                box-shadow: inset 0 -2px ${c.iris};
+              }
+            '';
+          in
+          pkgs.writeText "ghostty-tab-colors.css" ''
+            ${rules self.theme.terminal.light}
+
+            @media (prefers-color-scheme: dark) {
+            ${rules self.theme.terminal.dark}
+            }
+          '';
       in
       inputs.wrapper-modules.wrappers.ghostty.wrap {
         inherit pkgs;
@@ -62,30 +76,7 @@ in
             "${tabColors}"
           ];
 
-          foreground = theme.base05;
-          background = theme.base00;
-          cursor-color = theme.base05;
-          selection-foreground = theme.base00;
-          selection-background = theme.base05;
-
-          palette = [
-            "0=${theme.base00}"
-            "1=${theme.base08}"
-            "2=${theme.base0B}"
-            "3=${theme.base0A}"
-            "4=${theme.base0D}"
-            "5=${theme.base0E}"
-            "6=${theme.base0C}"
-            "7=${theme.base05}"
-            "8=${theme.base03}"
-            "9=${theme.base08}"
-            "10=${theme.base0B}"
-            "11=${theme.base0A}"
-            "12=${theme.base0D}"
-            "13=${theme.base0E}"
-            "14=${theme.base0C}"
-            "15=${theme.base07}"
-          ];
+          theme = "light:Rose Pine Dawn,dark:Rose Pine";
 
           keybind = [
             "alt+h=goto_split:left"
