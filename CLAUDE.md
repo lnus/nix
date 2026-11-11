@@ -102,7 +102,7 @@ only place host composition is decided), and `hardware.nix`.
 
 A wrapped package is sealed, so a feature that other features (or the host) add to
 exposes a `wrapper` option on its NixOS module, typed `deferredModule`, and
-`.wrap`s it onto its package. niri does this as `programs.niri.wrapper`.
+`.wrap`s it onto its package. niri does this as `programs.niri.wrapper`, noctalia as `programs.noctalia.wrapper`.
 Contributions merge like any module: lists append, attrsets merge.
 
 - **The host** sets host-only bits there, e.g. miku's niri outputs.

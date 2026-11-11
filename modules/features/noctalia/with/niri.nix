@@ -1,13 +1,13 @@
-{ self, ... }: {
+{ ... }: {
   flake.nixosModules.noctalia =
     {
+      config,
       options,
       lib,
-      pkgs,
       ...
     }:
     let
-      noctalia = lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.noctalia;
+      noctalia = lib.getExe config.programs.noctalia.package;
       msg =
         cmd:
         [
