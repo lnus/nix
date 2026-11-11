@@ -47,7 +47,7 @@
           };
 
           settings = {
-            theme = "gruvbox";
+            theme = "rose_pine"; # light/dark needs helix master
 
             editor = {
               line-number = "relative";
