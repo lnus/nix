@@ -62,8 +62,14 @@
             center = [ "clock" ];
           };
 
-          notification.background_opacity = glassOpacity;
-          osd.background_opacity = glassOpacity;
+          notification = {
+            background_opacity = glassOpacity;
+            border = false;
+          };
+          osd = {
+            background_opacity = glassOpacity;
+            border = false;
+          };
 
           dock.enabled = false;
           desktop_widgets.enabled = false;
