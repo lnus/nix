@@ -87,6 +87,9 @@
             color-scheme = "prefer-dark";
             gtk-theme = gtkTheme;
             icon-theme = iconTheme;
+            font-name = "${self.theme.fonts.sans} 10";
+            document-font-name = "${self.theme.fonts.serif} 11";
+            monospace-font-name = "${self.theme.fonts.mono} 10";
           };
         }
       ];
