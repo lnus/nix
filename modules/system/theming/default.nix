@@ -11,50 +11,61 @@
         gtk-application-prefer-dark-theme=true
       '';
 
-      # libadwaita ignores gtk-theme-name and only reads named color overrides from
-      # ~/.config/gtk-4.0/gtk.css, so generate that from the shared palette instead
-      libadwaitaCss =
-        with self.theme.colors;
-        pkgs.writeText "gtk4-theme.css" ''
-          @define-color accent_color ${base0D};
-          @define-color accent_bg_color ${base0D};
-          @define-color accent_fg_color ${base00};
+      # libadwaita ignores gtk-theme-name and only reads its colour variables from
+      # ~/.config/gtk-4.0/gtk.css, so generate that from the shared palette instead.
+      libadwaitaColors =
+        c:
+        let
+          vars = {
+            accent-color = c.accent;
+            accent-bg-color = c.accent;
+            accent-fg-color = c.on-accent;
 
-          @define-color destructive_color ${base08};
-          @define-color destructive_bg_color ${base08};
-          @define-color destructive_fg_color ${base00};
-          @define-color success_color ${base0B};
-          @define-color success_bg_color ${base0B};
-          @define-color success_fg_color ${base00};
-          @define-color warning_color ${base0A};
-          @define-color warning_bg_color ${base0A};
-          @define-color warning_fg_color ${base00};
-          @define-color error_color ${base08};
-          @define-color error_bg_color ${base08};
-          @define-color error_fg_color ${base00};
+            destructive-color = c.error;
+            destructive-bg-color = c.error;
+            destructive-fg-color = c.on-accent;
+            success-color = c.success;
+            success-bg-color = c.success;
+            success-fg-color = c.on-accent;
+            warning-color = c.warning;
+            warning-bg-color = c.warning;
+            warning-fg-color = c.on-accent;
+            error-color = c.error;
+            error-bg-color = c.error;
+            error-fg-color = c.on-accent;
 
-          @define-color window_bg_color ${base00};
-          @define-color window_fg_color ${base05};
-          @define-color view_bg_color ${base00};
-          @define-color view_fg_color ${base05};
-          @define-color headerbar_bg_color ${base01};
-          @define-color headerbar_fg_color ${base05};
-          @define-color headerbar_border_color ${base02};
-          @define-color headerbar_backdrop_color ${base00};
-          @define-color sidebar_bg_color ${base01};
-          @define-color sidebar_fg_color ${base05};
-          @define-color sidebar_backdrop_color ${base00};
-          @define-color secondary_sidebar_bg_color ${base01};
-          @define-color secondary_sidebar_fg_color ${base05};
-          @define-color card_bg_color ${base01};
-          @define-color card_fg_color ${base05};
-          @define-color dialog_bg_color ${base01};
-          @define-color dialog_fg_color ${base05};
-          @define-color popover_bg_color ${base01};
-          @define-color popover_fg_color ${base05};
-          @define-color thumbnail_bg_color ${base01};
-          @define-color thumbnail_fg_color ${base05};
-        '';
+            window-bg-color = c.background;
+            window-fg-color = c.text;
+            view-bg-color = c.background;
+            view-fg-color = c.text;
+            headerbar-bg-color = c.background;
+            headerbar-fg-color = c.text;
+            headerbar-border-color = c.border;
+            headerbar-backdrop-color = c.background;
+            sidebar-bg-color = c.surface;
+            sidebar-fg-color = c.text;
+            sidebar-backdrop-color = c.surface;
+            secondary-sidebar-bg-color = c.surface;
+            secondary-sidebar-fg-color = c.text;
+            card-bg-color = c.surface;
+            card-fg-color = c.text;
+            dialog-bg-color = c.surface;
+            dialog-fg-color = c.text;
+            popover-bg-color = c.surface;
+            popover-fg-color = c.text;
+            thumbnail-bg-color = c.surface;
+            thumbnail-fg-color = c.text;
+          };
+        in
+        ":root {\n"
+        + pkgs.lib.concatStrings (pkgs.lib.mapAttrsToList (name: value: "  --${name}: ${value};\n") vars)
+        + "}\n";
+      libadwaitaCss = pkgs.writeText "gtk4-theme.css" ''
+        ${libadwaitaColors self.theme.ui.light}
+        @media (prefers-color-scheme: dark) {
+        ${libadwaitaColors self.theme.ui.dark}
+        }
+      '';
     in
     {
       environment.systemPackages = with pkgs; [
