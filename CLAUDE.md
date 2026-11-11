@@ -11,7 +11,7 @@ user-facing programs are configured as wrapped derivations via
 ## Commands
 
 ```sh
-nix build .#<name>                              # build a perSystem package, e.g. .#niri, .#kitty, .#nushell
+nix build .#<name>                              # build a perSystem package, e.g. .#niri, .#ghostty, .#nushell
 nh os build .                                   # build the miku host and diff it against the running system
 nix build .#nixosConfigurations.miku.config.system.build.toplevel --no-link  # same build without nh
 nix build .#nixosConfigurations.miku.config.system.build.vm  # build the VM variant (miku defines virtualisation.vmVariant)
@@ -55,7 +55,7 @@ than copying them.
 modules/
   parts.nix              # systems list only
   theme.nix              # flake.theme = { colors (Gruvbox base00..base0F); fonts; cursor; }, read as self.theme.<part>
-  features/              # one wrapped user program per file/dir: niri/, helix/, nushell/, kitty/, ...
+  features/              # one wrapped user program per file/dir: niri/, helix/, nushell/, ghostty/, ...
   attrs/                 # compositions of features/system modules, no new binaries (e.g. attrs/video)
   system/                # host-agnostic system config (boot, locale, user, audio, network, drivers) — no perSystem
   hosts/miku/            # default.nix wires nixosSystem; configuration.nix is the host's import list; hardware.nix
@@ -66,21 +66,21 @@ modules/
 A **feature** module exports two things named identically after the feature:
 
 ```nix
-# modules/features/kitty/default.nix
+# modules/features/ghostty/default.nix
 {self, inputs, ...}: {
   perSystem = {pkgs, ...}: {
-    packages.kitty = inputs.wrapper-modules.wrappers.kitty.wrap {
+    packages.ghostty = inputs.wrapper-modules.wrappers.ghostty.wrap {
       inherit pkgs;
       settings = { background = self.theme.colors.base00; ... };
     };
   };
-  flake.nixosModules.kitty = {pkgs, ...}: {
-    environment.systemPackages = [self.packages.${pkgs.stdenv.hostPlatform.system}.kitty];
+  flake.nixosModules.ghostty = {pkgs, ...}: {
+    environment.systemPackages = [self.packages.${pkgs.stdenv.hostPlatform.system}.ghostty];
   };
 }
 ```
 
-A host opts in with one import: `self.nixosModules.kitty` in its `configuration.nix`.
+A host opts in with one import: `self.nixosModules.ghostty` in its `configuration.nix`.
 Prefer a directory (`nushell/`, `helix/`) over a single file when the wrap call
 references sibling files by path (e.g. `nushell/config.nu`, `nushell/env.nu`).
 
@@ -140,14 +140,14 @@ merging. Override deliberately with `lib.mkForce`.
 
 ### Naming
 
-| Thing                | Convention                    | Example                    |
-| -------------------- | ----------------------------- | -------------------------- |
-| Wrapped package      | `<featureName>` (no prefix)   | `perSystem.packages.kitty` |
-| NixOS module         | `<featureName>`               | `flake.nixosModules.kitty` |
-| Hardware module      | `<hostname>Hardware`          | `mikuHardware`             |
-| Configuration module | `<hostname>Configuration`     | `mikuConfiguration`        |
-| Disabled file/dir    | `_`-prefix                    | `_experimental.nix`        |
-| Contribution file    | `<feature>/with/<target>.nix` | `noctalia/with/niri.nix`   |
+| Thing                | Convention                    | Example                      |
+| -------------------- | ----------------------------- | ---------------------------- |
+| Wrapped package      | `<featureName>` (no prefix)   | `perSystem.packages.ghostty` |
+| NixOS module         | `<featureName>`               | `flake.nixosModules.ghostty` |
+| Hardware module      | `<hostname>Hardware`          | `mikuHardware`               |
+| Configuration module | `<hostname>Configuration`     | `mikuConfiguration`          |
+| Disabled file/dir    | `_`-prefix                    | `_experimental.nix`          |
+| Contribution file    | `<feature>/with/<target>.nix` | `noctalia/with/niri.nix`     |
 
 ### Theme
 

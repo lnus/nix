@@ -1,6 +1,6 @@
 { self, ... }: {
   perSystem = { pkgs, ... }: {
-    # Shared font closure; consumed by wrapped apps (e.g. kitty) and installed system-wide.
+    # Shared font closure; consumed by wrapped apps (e.g. ghostty) and installed system-wide.
     packages.fonts = pkgs.buildEnv {
       name = "fonts";
       paths = with pkgs; [

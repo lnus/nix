@@ -1,0 +1,31 @@
+tabbar tabbox {
+  min-height: 0;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+tabbar .start-action,
+tabbar .end-action {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+tabbar tabbox > tabboxchild {
+  border-radius: 0;
+}
+
+tabbar tab {
+  min-height: 18px;
+  padding: 1px 4px;
+  border-radius: 0;
+}
+
+tabbar tab button.image-button {
+  opacity: 0;
+  min-width: 0;
+  min-height: 18px;
+}
+
+tabbar tab indicator {
+  transform: translateY(2px);
+}

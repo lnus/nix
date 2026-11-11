@@ -27,7 +27,7 @@
         noctalia-greeter
         noctalia
         firefox
-        kitty
+        ghostty
         fonts
         fcitx5
         zk
