@@ -4,7 +4,8 @@
   ...
 }:
 let
-  theme = self.theme.colors;
+  # the OSC sits on top of video, so it stays dark
+  theme = self.theme.ui.dark;
 in
 {
   flake.nixosModules.mpv = { pkgs, ... }: {
@@ -50,14 +51,14 @@ in
         modernz = {
           path = pkgs.mpvScripts.modernz;
           opts = {
-            seekbarfg_color = theme.base09;
-            seek_handle_color = theme.base0F;
-            seek_handle_border_color = theme.base09;
-            hover_effect_color = theme.base09;
-            seekbar_cache_color = theme.base04;
-            title_color = theme.base05;
-            thumbnail_box_color = theme.base00;
-            thumbnail_box_outline = theme.base02;
+            seekbarfg_color = theme.accent;
+            seek_handle_color = theme.accent;
+            seek_handle_border_color = theme.accent;
+            hover_effect_color = theme.accent;
+            seekbar_cache_color = theme.muted;
+            title_color = theme.text;
+            thumbnail_box_color = theme.background;
+            thumbnail_box_outline = theme.border;
           };
         };
         thumbfast.path = pkgs.mpvScripts.thumbfast;

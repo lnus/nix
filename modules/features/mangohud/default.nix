@@ -2,21 +2,23 @@
   flake.nixosModules.mangohud =
     { pkgs, lib, ... }:
     let
-      color = name: lib.removePrefix "#" self.theme.colors.${name};
+      ui = self.theme.ui.dark;
+      rp = self.theme.terminal.dark;
+      color = lib.removePrefix "#";
       config = pkgs.writeText "MangoHud.conf" ''
         horizontal
         hud_compact
         position=top-left
-        round_corners=0
+        round_corners=${toString self.theme.radius}
         background_alpha=0.6
         font_size=18
-        background_color=${color "base00"}
-        text_color=${color "base05"}
-        gpu_color=${color "base0B"}
-        cpu_color=${color "base0D"}
-        vram_color=${color "base0E"}
-        ram_color=${color "base0C"}
-        frametime_color=${color "base0A"}
+        background_color=${color ui.background}
+        text_color=${color ui.text}
+        gpu_color=${color rp.foam}
+        cpu_color=${color rp.iris}
+        vram_color=${color rp.rose}
+        ram_color=${color rp.pine}
+        frametime_color=${color rp.gold}
 
         fps
         frametime
