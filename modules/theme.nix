@@ -86,9 +86,9 @@
 
     # family names only; packages live in features/fonts
     fonts = {
-      sans = "Inter";
-      serif = "Lora";
-      mono = "MonaspiceKr Nerd Font";
+      sans = "IBM Plex Sans";
+      serif = "Source Serif 4";
+      mono = "CommitMono Nerd Font";
     };
 
     cursor = {

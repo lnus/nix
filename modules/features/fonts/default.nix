@@ -4,13 +4,9 @@
     packages.fonts = pkgs.buildEnv {
       name = "fonts";
       paths = with pkgs; [
-        (google-fonts.override {
-          fonts = [
-            "Lora"
-            "Inter"
-          ];
-        })
-        nerd-fonts.monaspace
+        (ibm-plex.override { families = [ "sans" ]; })
+        source-serif
+        nerd-fonts.commit-mono
         noto-fonts-cjk-sans
         noto-fonts-cjk-serif
       ];
