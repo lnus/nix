@@ -62,7 +62,7 @@
         settings =
           let
             pictures = "$HOME/Pictures"; # noctalia expands $VARS in path fields
-            glassOpacity = 0.55;
+            glassOpacity = 0.65;
             mono = self.theme.fonts.mono;
             muted = "on_surface_variant";
 
@@ -105,6 +105,7 @@
               shadow = true;
               widget_spacing = 4;
               hover_highlight = false;
+              font_weight = 400;
               start = [
                 "workspaces"
                 "gap"
@@ -164,7 +165,12 @@
               cpu_label = statLabel "CPU";
               cpu = statValue "cpu_usage";
               ram_label = statLabel "RAM";
-              ram = statValue "ram_used";
+              # sysmon has no compact memory unit; "4.9" plus "G" as the trailing label
+              ram = statValue "ram_used" // {
+                label_show_units = false;
+                custom_label = "G";
+                glyph_position = "after";
+              };
               bat_label = statLabel "BAT";
               battery = {
                 display_mode = "none";
@@ -206,6 +212,7 @@
               panel = {
                 shadow = true;
                 transparency_mode = "glass";
+                control_center_placement = "floating";
               };
               # answers polkit auth requests (greeter sync, 1Password system auth, ...)
               polkit_agent = true;
