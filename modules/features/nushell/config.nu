@@ -14,6 +14,10 @@ $env.config.cursor_shape = {
     vi_insert: "line"
     vi_normal: "block"
 }
+# the cursor shape already shows the vi mode
+$env.PROMPT_INDICATOR = ""
+$env.PROMPT_INDICATOR_VI_INSERT = ""
+$env.PROMPT_INDICATOR_VI_NORMAL = ""
 
 $env.config.table.mode = "light"
 $env.config.table.index_mode = "auto"

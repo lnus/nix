@@ -32,6 +32,8 @@
       "env.nu" = {
         path = ./env.nu;
       };
+
+      env.STARSHIP_CONFIG = "${./starship.toml}";
     };
   };
 }
