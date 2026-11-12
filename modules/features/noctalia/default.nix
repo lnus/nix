@@ -12,27 +12,52 @@
       packages.noctalia = (inputs.wrapper-modules.lib.wrapModule ./_module.nix).wrap {
         inherit pkgs;
 
-        colors = {
-          version = 2;
-        }
-        // builtins.mapAttrs (_: c: {
-          primary = c.accent;
-          on_primary = c.on-accent;
-          secondary = c.accent;
-          on_secondary = c.on-accent;
-          tertiary = c.accent;
-          on_tertiary = c.on-accent;
-          error = c.error;
-          on_error = c.on-accent;
-          surface = c.surface;
-          on_surface = c.text;
-          surface_container = c.raised;
-          on_surface_variant = c.muted;
-          outline_variant = c.border;
-          shadow = "#000000";
-          hover = c.raised;
-          on_hover = c.text;
-        }) self.theme.ui;
+        # 5.4.1's shell only reads format-1 keys and rejects a mode without `terminal`;
+        # the snake_case format from the docs only works in the `noctalia theme` CLI
+        colors = builtins.mapAttrs (
+          mode: c:
+          let
+            t = self.theme.terminal.${mode};
+            ansi = black: {
+              inherit black;
+              red = t.love;
+              green = t.pine;
+              yellow = t.gold;
+              blue = t.foam;
+              magenta = t.iris;
+              cyan = t.rose;
+              white = t.text;
+            };
+          in
+          {
+            mPrimary = c.accent;
+            mOnPrimary = c.on-accent;
+            mSecondary = c.accent;
+            mOnSecondary = c.on-accent;
+            mTertiary = c.accent;
+            mOnTertiary = c.on-accent;
+            mError = c.error;
+            mOnError = c.on-accent;
+            mSurface = c.surface;
+            mOnSurface = c.text;
+            mSurfaceVariant = c.raised;
+            mOnSurfaceVariant = c.muted;
+            mOutline = c.border;
+            mShadow = "#000000";
+            mHover = c.raised;
+            mOnHover = c.text;
+            terminal = {
+              foreground = t.text;
+              background = t.base;
+              cursor = t.text;
+              cursorText = t.base;
+              selectionFg = t.text;
+              selectionBg = t.overlay;
+              normal = ansi t.overlay;
+              bright = ansi t.muted;
+            };
+          }
+        ) self.theme.ui;
 
         settings =
           let
