@@ -59,8 +59,7 @@
               }
 
               tabbar tab:selected {
-                color: ${c.text};
-                box-shadow: inset 0 -2px ${c.accent};
+                color: ${c.accent};
               }
             '';
           in
@@ -87,7 +86,7 @@
 
         settings = {
           font-family = self.theme.fonts.mono;
-          font-size = 10;
+          font-size = 11;
           adjust-cell-height = "10%";
           window-padding-x = 9;
           window-padding-y = 9;
