@@ -15,6 +15,7 @@ nix build .#<name>                              # build a perSystem package, e.g
 nh os build .                                   # build the miku host and diff it against the running system
 nix build .#nixosConfigurations.miku.config.system.build.toplevel --no-link  # same build without nh
 nix build .#nixosConfigurations.miku.config.system.build.vm  # build the VM variant (miku defines virtualisation.vmVariant)
+nix run .#screenshot -- main some-branch        # boot each ref in a vm and screenshot the desktop into ./screenshots
 nix flake check --no-build                      # eval-check all outputs
 nix fmt                                         # format everything with nixfmt (nixpkgs style)
 nh search <query>                               # find a nixpkgs package (name, version, mainProgram)
@@ -58,6 +59,7 @@ modules/
   features/              # one wrapped user program per file/dir: niri/, helix/, nushell/, ghostty/, ...
   attrs/                 # compositions of features/system modules, no new binaries (e.g. attrs/video)
   system/                # host-agnostic system config (boot, locale, user, audio, network, drivers) — no perSystem
+  dev/                   # repo tooling, perSystem only (e.g. dev/screenshot)
   hosts/miku/            # default.nix wires nixosSystem; configuration.nix is the host's import list; hardware.nix
 ```
 
