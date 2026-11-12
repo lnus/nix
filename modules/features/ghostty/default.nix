@@ -81,6 +81,7 @@
         settings = {
           font-family = self.theme.fonts.mono;
           font-size = 10;
+          adjust-cell-height = "10%";
           window-padding-x = 9;
           window-padding-y = 9;
           gtk-titlebar = false;
