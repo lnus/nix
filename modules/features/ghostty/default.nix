@@ -40,19 +40,18 @@
           fontDirectories = [ self.packages.${pkgs.stdenv.hostPlatform.system}.fonts ];
         };
 
-        # explicit, or the desktop gtk.css would make the tab bar graphite
         tabColors =
           let
             rules = c: ''
               tabbar {
-                background-color: ${c.base};
+                background-color: ${c.background};
               }
 
               tabbar tab,
               tabbar tab:hover,
               tabbar tab:selected {
                 background: none;
-                color: ${c.subtle};
+                color: ${c.muted};
               }
 
               tabbar tab:hover {
@@ -61,16 +60,24 @@
 
               tabbar tab:selected {
                 color: ${c.text};
-                box-shadow: inset 0 -2px ${c.iris};
+                box-shadow: inset 0 -2px ${c.accent};
               }
             '';
           in
           pkgs.writeText "ghostty-tab-colors.css" ''
-            ${rules self.theme.terminal.light}
+            ${rules self.theme.ui.light}
 
             @media (prefers-color-scheme: dark) {
-            ${rules self.theme.terminal.dark}
+            ${rules self.theme.ui.dark}
             }
+          '';
+
+        # later keys win in a theme file
+        desktopTheme =
+          name: c:
+          pkgs.runCommand "ghostty-theme" { } ''
+            cat "${pkgs.ghostty}/share/ghostty/themes/${name}" > $out
+            printf 'background = ${c.background}\nforeground = ${c.text}\n' >> $out
           '';
       in
       inputs.wrapper-modules.wrappers.ghostty.wrap {
@@ -95,7 +102,7 @@
             "${tabColors}"
           ];
 
-          theme = "light:Rose Pine Dawn,dark:Rose Pine";
+          theme = "light:${desktopTheme "Rose Pine Dawn" self.theme.ui.light},dark:${desktopTheme "Rose Pine" self.theme.ui.dark}";
 
           keybind = [
             "alt+h=goto_split:left"
