@@ -16,7 +16,7 @@
 
     environment.variables.LS_COLORS = builtins.concatStringsSep ":" [
       "rs=0"
-      "di=01;35"
+      "di=01"
       "ln=03;35"
       "or=03;31"
       "mi=03;31"
@@ -27,9 +27,9 @@
       "cd=31"
       "su=01;31"
       "sg=01;31"
-      "tw=01;35"
-      "ow=01;35"
-      "st=01;35"
+      "tw=01"
+      "ow=01"
+      "st=01"
     ];
   };
 
