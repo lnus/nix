@@ -2,3 +2,6 @@ result
 
 # VM stuff
 *.qcow2
+
+# nix run .#screenshot
+screenshots/
