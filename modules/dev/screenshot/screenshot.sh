@@ -39,11 +39,12 @@ stage() {
   local log=$1 s="starting vm"
   grep -q 'waiting for unit graphical.target' "$log" && s="booting"
   grep -q 'niri\.\*\.sock' "$log" && s="waiting for niri"
-  grep -q 'wallpaper-set' "$log" && s="setting up"
+  grep -q "command -v noctalia" "$log" && s="setting up"
   grep -q 'spawn -- firefox' "$log" && s="opening firefox"
   grep -q 'spawn -- ghostty' "$log" && s="opening terminal"
   grep -q 'sending keys' "$log" && s="typing"
   grep -q 'grim ' "$log" && s="capturing"
+  grep -q "notify-send" "$log" && s="shell popups"
   echo "$s"
 }
 
@@ -101,14 +102,22 @@ for ref in "$@"; do
       fi
       sleep 1
     done
-    wait "$pid" && break
+    passed=0
+    wait "$pid" && passed=1 && break
     ((hung && attempt == 1)) || break
     printf '%s  %s↻%s %-10s %s%6s%s  %s\n' "$clear" "$yellow" "$reset" "boot hung" "$dim" "$(elapsed "$start")" "$reset" "retrying"
     echo "=== boot hung, retrying ===" >>"$log"
   done
-  if [[ -f $tmp/desktop.png ]]; then
-    mv "$tmp/desktop.png" "$out/$name.png"
-    ok "captured" "$(elapsed "$start")" "$(pretty "$out/$name.png")"
+  if ((passed)); then
+    shots=()
+    for png in "$tmp"/*.png; do
+      base=$(basename "$png" .png)
+      dest=$out/$name.png
+      [[ $base == desktop ]] || dest=$out/$name-$base.png
+      mv "$png" "$dest"
+      shots+=("$(pretty "$dest")")
+    done
+    ok "captured" "$(elapsed "$start")" "${shots[*]}"
   else
     fail "$(stage "$log")" "$(elapsed "$start")" "$log"
     failed=$((failed + 1))

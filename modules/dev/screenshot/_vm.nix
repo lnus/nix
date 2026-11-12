@@ -45,6 +45,8 @@ pkgs.testers.runNixOSTest {
       virtualisation = {
         memorySize = 8192;
         cores = 8;
+        # no live weather or other fetches, so shots only differ by config
+        restrictNetwork = true;
         # qemu_test has no opengl
         qemu.package = lib.mkForce pkgs.qemu;
         qemu.options = [
@@ -71,6 +73,7 @@ pkgs.testers.runNixOSTest {
         pkgs.grim
         pkgs.fastfetch
         pkgs.fontconfig
+        pkgs.libnotify
       ];
 
       # first-boot popups: autologin has no password to create the keyring with,
@@ -90,17 +93,29 @@ pkgs.testers.runNixOSTest {
     };
 
   testScript = ''
+    import shlex
+    import time
+
     def env():
         sock = machine.succeed(f"ls {rt}/niri.*.sock").strip()
         display = sock.removeprefix(f"{rt}/niri.").split(".")[0]
-        return f"XDG_RUNTIME_DIR={rt} WAYLAND_DISPLAY={display} NIRI_SOCKET={sock}"
+        return [
+            "env",
+            f"XDG_RUNTIME_DIR={rt}",
+            f"WAYLAND_DISPLAY={display}",
+            f"NIRI_SOCKET={sock}",
+            f"DBUS_SESSION_BUS_ADDRESS=unix:path={rt}/bus",
+        ]
 
-    def as_user(cmd):
-        return machine.succeed(f"su ${user} -s /bin/sh -c '{env()} {cmd}'")
+    def user_cmd(*argv):
+        return f"su ${user} -s /bin/sh -c {shlex.quote(shlex.join(env() + list(argv)))}"
+
+    def as_user(*argv):
+        return machine.succeed(user_cmd(*argv))
 
     def wait_for_window(app_id):
         machine.wait_until_succeeds(
-            f"su ${user} -s /bin/sh -c '{env()} niri msg windows' | grep -q 'App ID: \"{app_id}\"'",
+            f"{user_cmd('niri', 'msg', 'windows')} | grep -q 'App ID: \"{app_id}\"'",
             timeout=60,
         )
 
@@ -109,7 +124,10 @@ pkgs.testers.runNixOSTest {
     machine.wait_until_succeeds(f"ls {rt}/niri.*.sock", timeout=180)
     # let the shell and its startup animations settle
     machine.sleep(15)
-    as_user("noctalia msg wallpaper-set ${wallpaper'}")
+
+    noctalia = machine.execute("command -v noctalia")[0] == 0
+    if noctalia:
+        as_user("noctalia", "msg", "wallpaper-set", "${wallpaper'}")
 
     fonts = {
         name: machine.succeed(f"fc-match -f '%{{family[0]}}' {name}").strip()
@@ -123,16 +141,32 @@ pkgs.testers.runNixOSTest {
         " ${./specimen.html} > /tmp/specimen.html && chmod 644 /tmp/specimen.html"
     )
 
-    as_user("niri msg action spawn -- firefox --no-remote --profile /tmp/screenshot-firefox file:///tmp/specimen.html")
+    spawn = ["niri", "msg", "action", "spawn", "--"]
+    as_user(*spawn, "firefox", "--no-remote", "--profile", "/tmp/screenshot-firefox", "file:///tmp/specimen.html")
     wait_for_window("firefox")
-    as_user("niri msg action spawn -- ghostty")
+    as_user(*spawn, "ghostty")
     wait_for_window("com.mitchellh.ghostty")
     machine.sleep(3)
     ${lib.concatMapStrings (cmd: ''
       machine.send_chars(${builtins.toJSON "${cmd}\n"})
     '') commands}
     machine.sleep(8)
-    as_user("grim /tmp/desktop.png")
+    as_user("grim", "/tmp/desktop.png")
     machine.copy_from_machine("/tmp/desktop.png", "")
+
+    # the shell's popups over the same desktop; the control center opens where
+    # the osd shows (top center by default), so it gets its own shot
+    if noctalia:
+        as_user("notify-send", "-a", "nix", "-i", "nix-snowflake", "Build finished", "miku is ready to switch, 3 packages changed")
+        machine.sleep(1)
+        as_user("noctalia", "msg", "osd-show", '{"icon": "volume-high", "value": "65%", "progress": 0.65}')
+        time.sleep(0.5)
+        as_user("grim", "/tmp/shell.png")
+        machine.copy_from_machine("/tmp/shell.png", "")
+
+        as_user("noctalia", "msg", "panel-open", "control-center")
+        machine.sleep(1)
+        as_user("grim", "/tmp/control.png")
+        machine.copy_from_machine("/tmp/control.png", "")
   '';
 }
