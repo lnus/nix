@@ -27,6 +27,25 @@
     }:
     let
       mapfileRuntime = inputs'.tree-sitter-mapfile.packages.helix-runtime;
+      onDesktop = base: c: greys: {
+        inherits = base;
+        "ui.background" = { };
+        "ui.background.separator" = { };
+        "ui.bufferline" = {
+          fg = "muted";
+        };
+        "ui.window" = {
+          fg = "overlay";
+        };
+        palette = {
+          base = c.background;
+          surface = c.surface;
+          overlay = c.raised;
+          highlight_low = builtins.elemAt greys 0;
+          highlight_med = builtins.elemAt greys 1;
+          highlight_high = builtins.elemAt greys 2;
+        };
+      };
     in
     {
       packages.helix = inputs.wrapper-modules.wrappers.helix.wrap (
@@ -46,8 +65,21 @@
             '';
           };
 
+          themes = {
+            rose_pine_desktop = onDesktop "rose_pine" self.theme.ui.dark [
+              "#242426"
+              "#48484a"
+              "#636366"
+            ];
+            rose_pine_dawn_desktop = onDesktop "rose_pine_dawn" self.theme.ui.light [
+              "#ececf0"
+              "#d1d1d6"
+              "#c7c7cc"
+            ];
+          };
+
           settings = {
-            theme = "rose_pine"; # light/dark needs helix master
+            theme = "rose_pine_desktop"; # light/dark needs helix master
 
             editor = {
               line-number = "relative";
