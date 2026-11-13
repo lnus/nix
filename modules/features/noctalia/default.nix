@@ -62,7 +62,7 @@
         settings =
           let
             pictures = "$HOME/Pictures"; # noctalia expands $VARS in path fields
-            glassOpacity = 0.65;
+            glassOpacity = 0.8;
             mono = self.theme.fonts.mono;
             muted = "on_surface_variant";
 
