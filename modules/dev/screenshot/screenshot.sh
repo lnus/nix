@@ -45,6 +45,7 @@ stage() {
   grep -q 'sending keys' "$log" && s="typing"
   grep -q 'grim ' "$log" && s="capturing"
   grep -q "notify-send" "$log" && s="shell popups"
+  grep -q "theme-mode-set" "$log" && s="light mode"
   echo "$s"
 }
 

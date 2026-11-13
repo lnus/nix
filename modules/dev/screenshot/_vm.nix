@@ -151,22 +151,33 @@ pkgs.testers.runNixOSTest {
       machine.send_chars(${builtins.toJSON "${cmd}\n"})
     '') commands}
     machine.sleep(8)
-    as_user("grim", "/tmp/desktop.png")
-    machine.copy_from_machine("/tmp/desktop.png", "")
+
+    def grab(name):
+        as_user("grim", f"/tmp/{name}.png")
+        machine.copy_from_machine(f"/tmp/{name}.png", "")
 
     # the shell's popups over the same desktop; the control center opens where
     # the osd shows (top center by default), so it gets its own shot
-    if noctalia:
+    def shots(prefix=""):
+        grab(prefix.rstrip("-") or "desktop")
+        if not noctalia:
+            return
         as_user("notify-send", "-a", "nix", "-i", "nix-snowflake", "Build finished", "miku is ready to switch, 3 packages changed")
         machine.sleep(1)
         as_user("noctalia", "msg", "osd-show", '{"icon": "volume-high", "value": "65%", "progress": 0.65}')
         time.sleep(0.5)
-        as_user("grim", "/tmp/shell.png")
-        machine.copy_from_machine("/tmp/shell.png", "")
+        grab(prefix + "shell")
 
         as_user("noctalia", "msg", "panel-open", "control-center")
         machine.sleep(1)
-        as_user("grim", "/tmp/control.png")
-        machine.copy_from_machine("/tmp/control.png", "")
+        grab(prefix + "control")
+        as_user("noctalia", "msg", "panel-close")
+
+    shots()
+    # refs from before the light/dark work have no mode switch
+    if noctalia and machine.execute(user_cmd("noctalia", "msg", "theme-mode-set", "light"))[0] == 0:
+        # outlast the dark notification and osd
+        machine.sleep(8)
+        shots("light-")
   '';
 }
