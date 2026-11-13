@@ -72,9 +72,9 @@
     };
 
     cursor = {
-      name = "Adwaita";
+      name = "macOS";
       size = 24;
-      package = pkgs: pkgs.adwaita-icon-theme;
+      package = pkgs: pkgs.apple-cursor;
     };
   };
 }
