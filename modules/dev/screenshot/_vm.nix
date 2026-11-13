@@ -147,6 +147,12 @@ pkgs.testers.runNixOSTest {
     as_user(*spawn, "ghostty")
     wait_for_window("com.mitchellh.ghostty")
     machine.sleep(3)
+    # a second tab, so the tab bar shows; the first keeps a different title
+    machine.send_chars("cd /etc\n")
+    machine.sleep(1)
+    machine.send_key("alt-t")
+    machine.sleep(2)
+    machine.send_chars("cd ~/.local/state; clear\n")
     ${lib.concatMapStrings (cmd: ''
       machine.send_chars(${builtins.toJSON "${cmd}\n"})
     '') commands}
