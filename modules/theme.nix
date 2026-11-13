@@ -6,7 +6,7 @@
         background = "#1c1c1e";
         surface = "#2c2c2e"; # sidebars, cards, popovers, the bar
         raised = "#3a3a3c"; # controls and hover on a surface
-        border = "#38383a";
+        border = "#48484a";
         text = "#f5f5f7";
         muted = "#98989d";
         accent = "#c4a7e7";
