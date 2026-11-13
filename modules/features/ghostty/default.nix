@@ -59,11 +59,20 @@
               }
 
               tabbar tab:selected {
-                color: ${c.accent};
+                background: ${c.surface};
+                color: ${c.text};
               }
             '';
           in
           pkgs.writeText "ghostty-tab-colors.css" ''
+            tabbar tab {
+              border-radius: ${toString (self.theme.radius - 2)}px;
+            }
+
+            tabbar tab label {
+              font-family: "${self.theme.fonts.mono}";
+            }
+
             ${rules self.theme.ui.light}
 
             @media (prefers-color-scheme: dark) {

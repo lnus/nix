@@ -17,7 +17,6 @@ tabbar tabbox > tabboxchild {
 tabbar tab {
   min-height: 18px;
   padding: 1px 4px;
-  border-radius: 0;
 }
 
 tabbar tab button.image-button {
@@ -31,7 +30,6 @@ tabbar tab indicator {
 }
 
 tabbar tab label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 400;
 }
