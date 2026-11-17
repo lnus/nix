@@ -7,10 +7,10 @@
   flake.nixosModules.nushell = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
       self.packages.${pkgs.stdenv.hostPlatform.system}.nushell
+      self.packages.${pkgs.stdenv.hostPlatform.system}.direnv
       carapace
       deadnix
       difftastic
-      direnv
       fd
       gh
       lazygit
