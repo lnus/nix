@@ -33,7 +33,6 @@
         fcitx5
         zk
         udiskie
-        easyeffects
         jujutsu
         git
         mangohud
