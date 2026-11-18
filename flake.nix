@@ -11,6 +11,12 @@
       url = "github:lnus/tree-sitter-mapfile/v0.1.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # private repo: ssh, so nix fetches it with my key
+    shellac = {
+      url = "git+ssh://git@github.com/lnus/shellac.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

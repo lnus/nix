@@ -85,8 +85,29 @@
         "flake-parts": "flake-parts",
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs",
+        "shellac": "shellac",
         "tree-sitter-mapfile": "tree-sitter-mapfile",
         "wrapper-modules": "wrapper-modules"
+      }
+    },
+    "shellac": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794962518,
+        "narHash": "sha256-g/OK0sdcZDGttiVQuowDwyFOT/s6w3MhwtucRMcA19Q=",
+        "ref": "refs/heads/main",
+        "rev": "563b0b00efb0143d2d6f7699e2ea6012e138dfab",
+        "revCount": 9,
+        "type": "git",
+        "url": "ssh://git@github.com/lnus/shellac.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/lnus/shellac.git"
       }
     },
     "tree-sitter-mapfile": {

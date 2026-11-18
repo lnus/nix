@@ -26,6 +26,7 @@
         niri
         noctalia-greeter
         noctalia
+        shellac
         firefox
         ghostty
         fonts
