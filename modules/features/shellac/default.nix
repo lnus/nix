@@ -22,19 +22,14 @@
           };
         })
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
-          # One stationary wallpaper behind everything (niri's wiki, Overview):
-          # in the backdrop, seen through transparent workspaces. It doesn't
-          # slide on workspace switches, so the bar's glass always sits over
-          # the same pixels.
-          programs.niri.wrapper.settings = {
-            layer-rules = [
-              {
-                matches = [ { namespace = "^shellac-wallpaper$"; } ];
-                place-within-backdrop = true;
-              }
-            ];
-            layout.background-color = "transparent";
-          };
+          # The wallpaper sits on every workspace; shellac's backdrop (a
+          # blurred copy) fills the space around them in the overview.
+          programs.niri.wrapper.settings.layer-rules = [
+            {
+              matches = [ { namespace = "^shellac-backdrop$"; } ];
+              place-within-backdrop = true;
+            }
+          ];
         })
       ];
     };

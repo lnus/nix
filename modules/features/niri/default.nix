@@ -225,8 +225,7 @@
             mouse.accel-profile = "flat";
           };
 
-          # Over shellac's transparent workspaces, `spread` draws a hard-edged
-          # frame; without it, a darker, softer halo marks each workspace.
+          # no `spread`: a darker, softer halo marks each workspace
           overview.workspace-shadow = {
             softness = 60;
             spread = 0;
