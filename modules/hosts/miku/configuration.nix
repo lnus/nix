@@ -65,6 +65,14 @@
         };
       };
 
+      # shellac's nested niri (`shot`) opens on the side monitor, away from work
+      programs.niri.wrapper.settings.window-rules = [
+        {
+          matches = [ { app-id = "^niri$"; } ];
+          open-on-output = side;
+        }
+      ];
+
       # otherwise the greeter mirrors to all outputs and focus lands on the rotated side monitor
       services.displayManager.noctalia-greeter.settings.output.name = main;
 

@@ -30,6 +30,16 @@
               place-within-backdrop = true;
             }
           ];
+          # shellac's `shot` runs a nested niri as a window (app-id and title
+          # are fixed to "niri"). Open it out of the way, so it doesn't pop into
+          # the layout or take focus; hosts with a second screen send it there.
+          programs.niri.wrapper.settings.window-rules = [
+            {
+              matches = [ { app-id = "^niri$"; } ];
+              open-floating = true;
+              open-focused = false;
+            }
+          ];
         })
       ];
     };
