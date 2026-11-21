@@ -2,7 +2,7 @@
 {
   # github.com/lnus/shellac
   # user service in the graphical session; replaces noctalia's bar, wallpaper,
-  # media keys, night light and launcher.
+  # media keys, night light, launcher and notifications.
   flake.nixosModules.shellac =
     {
       options,
@@ -49,6 +49,7 @@
             wallpaper.enabled = lib.mkForce false;
             backdrop.enabled = lib.mkForce false;
             nightlight.enabled = lib.mkForce false;
+            notification.enable_daemon = false;
           };
         })
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
