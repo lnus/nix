@@ -97,11 +97,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795219963,
-        "narHash": "sha256-2FqXEenodbbAoRdxZeNiRojoMDzmiMBXt+fkWGgqBlg=",
+        "lastModified": 1795227034,
+        "narHash": "sha256-kwEE37wG+gamCyh0YmPvoTQnTiTCTq4OsToX1Bjk8HA=",
         "ref": "refs/heads/main",
-        "rev": "b57dc91e7f306a96fa030e31e11bd8c8f2340976",
-        "revCount": 60,
+        "rev": "1c263c1d7664856224af3381ea57a40383541901",
+        "revCount": 61,
         "type": "git",
         "url": "ssh://git@github.com/lnus/shellac.git"
       },

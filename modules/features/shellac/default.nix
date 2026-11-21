@@ -2,7 +2,7 @@
 {
   # github.com/lnus/shellac
   # user service in the graphical session; replaces noctalia's bar, wallpaper,
-  # media keys and night light.
+  # media keys, night light and launcher.
   flake.nixosModules.shellac =
     {
       options,
@@ -71,6 +71,10 @@
             }
           ];
           programs.niri.wrapper.binds = {
+            "Mod+D" = _: {
+              props.hotkey-overlay-title = "Launcher";
+              content.spawn = ipc "launcher toggle";
+            };
             "XF86AudioRaiseVolume" = key "volume up";
             "XF86AudioLowerVolume" = key "volume down";
             "XF86AudioMute" = key "volume mute";

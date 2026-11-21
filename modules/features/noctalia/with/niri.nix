@@ -39,11 +39,6 @@
           };
 
           binds = {
-            "Mod+D" = _: {
-              props.hotkey-overlay-title = "Launcher";
-              content.spawn = msg "panel-toggle launcher";
-            };
-
             "Mod+Shift+E" = _: {
               props.hotkey-overlay-title = "Session Menu";
               content.spawn = msg "panel-toggle session";
