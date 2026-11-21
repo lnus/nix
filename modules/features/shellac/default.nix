@@ -1,24 +1,54 @@
 { inputs, ... }:
 {
   # github.com/lnus/shellac
-  # user service in the graphical session; replaces noctalia's bar and wallpaper.
+  # user service in the graphical session; replaces noctalia's bar, wallpaper,
+  # media keys and night light.
   flake.nixosModules.shellac =
-    { options, lib, ... }:
+    {
+      options,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      ipc =
+        cmd:
+        [
+          (lib.getExe inputs.shellac.packages.${pkgs.stdenv.hostPlatform.system}.default)
+          "ipc"
+          "call"
+        ]
+        ++ (lib.splitString " " cmd);
+      key = cmd: _: {
+        props.allow-when-locked = true;
+        content.spawn = ipc cmd;
+      };
+    in
     {
       imports = [ inputs.shellac.nixosModules.default ];
 
       config = lib.mkMerge [
         {
-          # shellac expands `~/`, not $HOME
-          programs.shellac.settings.wallpaper.directory = "~/Pictures/Wallpapers";
+          programs.shellac.settings = {
+            # shellac expands `~/`, not $HOME
+            wallpaper.directory = "~/Pictures/Wallpapers";
+            # the night light's schedule: the sun in Falun. Mode and temperature
+            # are shellac's state, set from its bar.
+            nightlight = {
+              latitude = 60.6;
+              longitude = 15.6;
+            };
+          };
         }
         (lib.optionalAttrs (options.programs.noctalia ? wrapper) {
-          # shellac draws these; the rest of Noctalia stays. mkForce over
-          # noctalia's own `enabled = true`.
+          # shellac does these; the rest of Noctalia stays. mkForce over
+          # noctalia's own `enabled = true`. One night light only: a second
+          # gamma client gets nowhere.
           programs.noctalia.wrapper.settings = {
             bar.default.enabled = false;
             wallpaper.enabled = lib.mkForce false;
             backdrop.enabled = lib.mkForce false;
+            nightlight.enabled = lib.mkForce false;
           };
         })
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
@@ -40,6 +70,15 @@
               open-focused = false;
             }
           ];
+          programs.niri.wrapper.binds = {
+            "XF86AudioRaiseVolume" = key "volume up";
+            "XF86AudioLowerVolume" = key "volume down";
+            "XF86AudioMute" = key "volume mute";
+            "XF86AudioMicMute" = key "mic mute";
+            "XF86AudioPlay" = key "media toggle";
+            "XF86AudioNext" = key "media next";
+            "XF86AudioPrev" = key "media previous";
+          };
         })
       ];
     };

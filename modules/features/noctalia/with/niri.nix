@@ -55,34 +55,6 @@
               content.spawn = msg "session lock";
             };
 
-            "XF86AudioRaiseVolume" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "volume-up";
-            };
-            "XF86AudioLowerVolume" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "volume-down";
-            };
-            "XF86AudioMute" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "volume-mute";
-            };
-            "XF86AudioMicMute" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "mic-mute";
-            };
-            "XF86AudioPlay" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "media toggle";
-            };
-            "XF86AudioNext" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "media next";
-            };
-            "XF86AudioPrev" = _: {
-              props.allow-when-locked = true;
-              content.spawn = msg "media previous";
-            };
             "XF86MonBrightnessUp" = _: {
               props.allow-when-locked = true;
               content.spawn = msg "brightness-up";
