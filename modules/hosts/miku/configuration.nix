@@ -60,6 +60,12 @@
         ${side} = {
           mode = "1920x1080@144.001";
           scale = 1.0;
+          # ⅓ of 1080p is under some apps' min width (firefox ~638px), so a pair can't fill the screen
+          layout.preset-column-widths = [
+            { proportion = 0.35; }
+            { proportion = 0.5; }
+            { proportion = 0.65; }
+          ];
         };
       };
 
