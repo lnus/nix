@@ -59,9 +59,7 @@
         };
         ${side} = {
           mode = "1920x1080@144.001";
-          transform = "90";
           scale = 1.0;
-          layout.default-column-width.proportion = 1.0;
         };
       };
 
@@ -73,7 +71,7 @@
         }
       ];
 
-      # otherwise the greeter mirrors to all outputs and focus lands on the rotated side monitor
+      # otherwise the greeter mirrors to all outputs and focus lands on the side monitor
       services.displayManager.noctalia-greeter.settings.output.name = main;
 
       services.pipewire.wireplumber.extraConfig = {
