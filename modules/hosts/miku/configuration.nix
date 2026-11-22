@@ -69,6 +69,10 @@
         };
       };
 
+      # shellac runs straight from its checkout: a save reloads the desktop's
+      # shell, no bump; only a change to its flake.nix needs one
+      programs.shellac.checkout = "/home/linus/Projects/shellac/shell";
+
       # shellac's nested niri (`shot`) opens on the side monitor, away from work
       programs.niri.wrapper.settings.window-rules = [
         {
