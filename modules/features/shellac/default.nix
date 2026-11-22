@@ -50,6 +50,9 @@
             backdrop.enabled = lib.mkForce false;
             nightlight.enabled = lib.mkForce false;
             notification.enable_daemon = false;
+            # shellac's OSD and its volume blip; Noctalia's would double them
+            osd.enabled = false;
+            audio.enable_volume_sounds = false;
           };
         })
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
