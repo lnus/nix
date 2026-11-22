@@ -2,7 +2,7 @@
 {
   # github.com/lnus/shellac
   # user service in the graphical session; replaces noctalia's bar, wallpaper,
-  # media keys, night light, launcher and notifications.
+  # media keys, night light, launcher, notifications, idle and the lock screen.
   flake.nixosModules.shellac =
     {
       options,
@@ -38,6 +38,11 @@
               latitude = 60.6;
               longitude = 15.6;
             };
+            # seconds without input: lock, then the screens off 5 min later
+            idle = {
+              lock = 600;
+              screenOff = 900;
+            };
           };
         }
         (lib.optionalAttrs (options.programs.noctalia ? wrapper) {
@@ -56,6 +61,11 @@
             # one polkit agent per session: shellac's registers only with
             # Noctalia's off
             shell.polkit_agent = lib.mkForce false;
+            # shellac's idle locks with its own lock screen; niri takes one
+            # lock client at a time. Noctalia's lock stays for its session
+            # menu (and lock_before_suspend) until that's replaced too.
+            idle.behavior.lock.enabled = false;
+            idle.behavior.screen-off.enabled = false;
           };
         })
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
@@ -89,6 +99,11 @@
             "XF86AudioPlay" = key "media toggle";
             "XF86AudioNext" = key "media next";
             "XF86AudioPrev" = key "media previous";
+            "Super+Alt+L" = lib.mkForce (_: {
+              props.allow-when-locked = true;
+              props.hotkey-overlay-title = "Lock the Screen";
+              content.spawn = ipc "session lock";
+            });
           };
         })
       ];
