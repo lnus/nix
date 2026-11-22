@@ -128,7 +128,9 @@ $env.config.keybindings = [
 
 $env.config.hooks.env_change.PWD = [
     {||
-        direnv export json | from json | default {} | load-env
+        # stdenv devshells export a lowercase `shell` (the build bash); nu env
+        # names are case-insensitive, so it would overwrite SHELL
+        direnv export json | from json | default {} | reject -o shell | load-env
     }
 ]
 
