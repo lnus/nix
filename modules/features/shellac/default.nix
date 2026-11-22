@@ -53,6 +53,9 @@
             # shellac's OSD and its volume blip; Noctalia's would double them
             osd.enabled = false;
             audio.enable_volume_sounds = false;
+            # one polkit agent per session: shellac's registers only with
+            # Noctalia's off
+            shell.polkit_agent = lib.mkForce false;
           };
         })
         (lib.optionalAttrs (options.programs.niri ? wrapper) {
