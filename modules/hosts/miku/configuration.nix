@@ -95,6 +95,7 @@
               "alsa_output.pci-0000_01_00.1.hdmi-stereo"
               "alsa_output.usb-BurrBrown_from_Texas_Instruments_USB_AUDIO_CODEC-00.analog-stereo"
               "alsa_input.pci-0000_00_1f.3.analog-stereo"
+              "alsa_input.usb-Remo_Tech_Co.__Ltd._OBSBOT_Meet_2-02.analog-stereo"
             ];
 
         device-rename."monitor.alsa.rules" =
