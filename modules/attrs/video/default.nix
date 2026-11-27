@@ -17,6 +17,8 @@
       imports = modules;
       environment.systemPackages = with pkgs; [
         losslesscut
+        v4l-utils
+        cameractrls-gtk4
       ];
     }
   );
